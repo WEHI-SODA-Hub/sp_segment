@@ -38,22 +38,6 @@
                 }
             }
         },
-        "segmentation_options": {
-            "title": "Segmentation options",
-            "type": "object",
-            "fa_icon": "fas fa-image",
-            "description": "Parameters used to control the segmentation of images.",
-            "help_text": "These parameters control how the pipeline segments the images. You can set these parameters to customise the segmentation process.",
-            "properties": {
-                "pixel_size_microns": {
-                    "type": "number",
-                    "description": "Pixel size in microns.",
-                    "minimum": 0.1,
-                    "maximum": 10.0,
-                    "fa_icon": "fas fa-ruler-combined"
-                }
-            }
-        },
         "sopa_options": {
             "title": "SOPA options",
             "type": "object",
@@ -86,6 +70,22 @@
                     "type": "number",
                     "description": "Minimum area of cells in square pixels for cellpose.",
                     "fa_icon": "fas fa-arrows-alt"
+                }
+            }
+        },
+        "measurement_options": {
+            "title": "Cell measurement options",
+            "type": "object",
+            "fa_icon": "fas fa-image",
+            "description": "Parameters used for cell measurement.",
+            "help_text": "These parameters controls parameters used by the cellmeasurement step of the pipeline.",
+            "properties": {
+                "pixel_size_microns": {
+                    "type": "number",
+                    "description": "Pixel size in microns.",
+                    "minimum": 0.1,
+                    "maximum": 10.0,
+                    "fa_icon": "fas fa-ruler-combined"
                 }
             }
         },
@@ -215,10 +215,10 @@
             "$ref": "#/$defs/input_output_options"
         },
         {
-            "$ref": "#/$defs/segmentation_options"
+            "$ref": "#/$defs/sopa_options"
         },
         {
-            "$ref": "#/$defs/sopa_options"
+            "$ref": "#/$defs/measurement_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"

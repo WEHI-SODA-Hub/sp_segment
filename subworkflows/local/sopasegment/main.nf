@@ -3,7 +3,8 @@
  * Original source: https://github.com/nf-core/sopa
  * License: MIT
  */
-include { SOPACELLPOSE as SOPACELLPOSENUCLEAR } from '../sopacellpose/main.nf'
+include { SOPACELLPOSE as SOPACELLPOSENUCLEAR   } from '../sopacellpose/main.nf'
+include { SOPACELLPOSE as SOPACELLPOSEWHOLECELL } from '../sopacellpose/main.nf'
 
 process SOPACONVERT {
     label "process_high"
@@ -91,20 +92,31 @@ workflow SOPASEGMENT {
             (0..<n_patches).collect { index -> [ meta, zarr, index, n_patches ] } }
         .combine(ch_sopa, by: 0)
         .map { meta, zarr, index, n_patches, tiff, nuclear_channel, membrane_channels, skip_measurements ->
-            [ meta, zarr, index, n_patches, nuclear_channel.first() ]
+            [ meta, zarr, index, n_patches, nuclear_channel.first(), membrane_channels.first() ]
         }.set { ch_cellpose }
 
     //
     // Run SOPA with cellpose for nuclear segmentation
     //
     SOPACELLPOSENUCLEAR(
+        ch_cellpose.map { meta, zarr, index, n_patches, nuclear_channel, membrane_channels ->
+            [ meta, zarr, index, n_patches, nuclear_channel, [] ]
+        }, // remove membrane channels for nuclear segmentation
+        SOPACONVERT.out.spatial_data
+    )
+
+    //
+    // Run SOPA with cellpose for whole-cell segmentation
+    //
+    SOPACELLPOSEWHOLECELL(
         ch_cellpose,
         SOPACONVERT.out.spatial_data
     )
 
     emit:
-    zarr        = SOPACONVERT.out.spatial_data       // channel: [ val(meta), *.zarr ]
-    boundaries  = SOPACELLPOSENUCLEAR.out.boundaries // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
+    zarr                 = SOPACONVERT.out.spatial_data         // channel: [ val(meta), *.zarr ]
+    nuclear_boundaries   = SOPACELLPOSENUCLEAR.out.boundaries   // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
+    wholecell_boundaries = SOPACELLPOSEWHOLECELL.out.boundaries // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
 
-    versions = ch_versions                           // channel: [ versions.yml ]
+    versions = ch_versions                                      // channel: [ versions.yml ]
 }
