@@ -7,6 +7,15 @@ lint:
     - conf/igenomes.config
     - conf/igenomes_ignored.config
     - assets/multiqc_config.yml
+    - .github/workflows/nf-test.yml
+    - .github/workflows/awsfulltest.yml
+    - .github/actions/get-shards/action.yml
+    - .github/actions/nf-test/action.yml
+    - .github/actions/
+    - assets/nf-core-spatialproteomics_logo_light.png
+    - docs/images/nf-core-spatialproteomics_logo_light.png
+    - docs/images/nf-core-spatialproteomics_logo_dark.png
+    - tests/default.nf.test
   files_unchanged:
     - .github/CONTRIBUTING.md
     - assets/sendmail_template.txt
@@ -16,16 +25,19 @@ lint:
     - .github/ISSUE_TEMPLATE/feature_request.yml
     - .github/PULL_REQUEST_TEMPLATE.md
     - .github/workflows/branch.yml
+    - .github/workflows/linting_comment.yml
+    - .github/workflows/linting.yml
     - docs/README.md
+    - .prettierignore
+    - .prettierrc.yml
   multiqc_config: false
   nextflow_config: false
-nf_core_version: 3.0.2
+nf_core_version: 3.3.1
 org_path: null
 repository_type: pipeline
 template:
   author: WEHI SODA Hub
-  description: Cell segmentation and downstream analysis pipeline for the multiplexed
-    ion bream imaging (MIBI) spatial platform
+  description: Cell segmentation and downstream analysis pipeline for the COMET and MIBI spatial platforms
   force: true
   is_nfcore: true
   name: spatialmibi
