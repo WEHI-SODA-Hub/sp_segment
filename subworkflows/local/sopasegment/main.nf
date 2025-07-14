@@ -3,6 +3,7 @@
  * Original source: https://github.com/nf-core/sopa
  * License: MIT
  */
+include { SOPACELLPOSE as SOPACELLPOSENUCLEAR } from '../sopacellpose/main.nf'
 
 process SOPACONVERT {
     label "process_high"
@@ -54,55 +55,6 @@ process SOPAPATCHIFYIMAGE {
     """
 }
 
-process SOPASEGMENTATIONCELLPOSENUCLEAR {
-    label "process_single"
-
-    conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine == 'apptainer' && !task.ext.singularity_pull_docker_container
-        ? 'docker://quentinblampey/sopa:2.0.7-cellpose'
-        : 'docker.io/quentinblampey/sopa:2.0.7-cellpose'}"
-
-    input:
-    tuple val(meta), path(zarr), val(index), val(n_patches), val(nuclear_channel)
-
-    output:
-    tuple val(meta), path("*.zarr/.sopa_cache/cellpose_boundaries/${index}.parquet"), emit: cellpose_parquet
-
-    script:
-    def args = task.ext.args ?: ''
-    """
-    sopa segmentation cellpose \\
-        ${args} \\
-        --patch-index ${index} \\
-        --channels ${nuclear_channel} \\
-        --diameter ${params.cellpose_diameter} \\
-        --min-area ${params.cellpose_min_area} \\
-        ${zarr}
-    """
-}
-
-process SOPARESOLVECELLPOSENUCLEAR {
-    label "process_low"
-
-    conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine == 'apptainer' && !task.ext.singularity_pull_docker_container
-        ? 'docker://quentinblampey/sopa:2.0.7'
-        : 'docker.io/quentinblampey/sopa:2.0.7'}"
-
-    input:
-    tuple val(meta), path(zarr), val(cellpose_parquet)
-
-    output:
-    tuple val(meta), path("*.zarr/shapes/cellpose_boundaries/*.parquet"), emit: cellpose_boundaries
-
-    when:
-
-    script:
-    """
-    sopa resolve cellpose ${zarr}
-    """
-}
-
 workflow SOPASEGMENT {
 
     take:
@@ -115,7 +67,6 @@ workflow SOPASEGMENT {
     ch_sopa.map { meta, tiff, nuclear_channel, membrane_channels, skip_measurements ->
         [ meta, tiff ]
     }.set { ch_convert }
-
 
     //
     // Run SOPA convert to convert tiff to zarr format
@@ -144,31 +95,16 @@ workflow SOPASEGMENT {
         }.set { ch_cellpose }
 
     //
-    // Run SOPA segmentation with cellpose
+    // Run SOPA with cellpose for nuclear segmentation
     //
-    SOPASEGMENTATIONCELLPOSENUCLEAR(
-        ch_cellpose
-    )
-
-    // Collect cellpose segmentation boundaries into one channel per sample
-    SOPASEGMENTATIONCELLPOSENUCLEAR.out.cellpose_parquet
-        .groupTuple()
-        .join( SOPACONVERT.out.spatial_data, by: 0 )
-        .map { meta, cellpose_parquet, zarr ->
-            [ meta, zarr, cellpose_parquet ]
-        }
-        .set { ch_resolve_cellpose }
-
-    //
-    // Resolve Cellpose segmentation boundaries
-    //
-    SOPARESOLVECELLPOSENUCLEAR(
-        ch_resolve_cellpose
+    SOPACELLPOSENUCLEAR(
+        ch_cellpose,
+        SOPACONVERT.out.spatial_data
     )
 
     emit:
-    zarr        = SOPACONVERT.out.spatial_data                        // channel: [ val(meta), *.zarr ]
-    boundaries  = SOPARESOLVECELLPOSENUCLEAR.out.cellpose_boundaries  // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
+    zarr        = SOPACONVERT.out.spatial_data       // channel: [ val(meta), *.zarr ]
+    boundaries  = SOPACELLPOSENUCLEAR.out.boundaries // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
 
-    versions = ch_versions                                            // channel: [ versions.yml ]
+    versions = ch_versions                           // channel: [ versions.yml ]
 }
