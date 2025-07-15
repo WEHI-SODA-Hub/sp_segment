@@ -28,162 +28,76 @@
                 "default": false,
                 "errorMessage": "Run cellpose must be a boolean"
             },
-            "run_analyse": {
-                "type": "boolean",
-                "default": false,
-                "errorMessage": "Run analyse must be a boolean"
-            },
-            "an_expression_file": {
-                "type": "string",
-                "format": "file-path",
-                "exists": true,
-                "pattern": "^\\S+\\.csv(\\.gz)?$",
-                "errorMessage": "Expression file must exist and contain spaces and must have extension '.csv' or '.csv.gz'"
-            },
-            "an_hierarchy_file": {
-                "type": "string",
-                "format": "file-path",
-                "exists": true,
-                "pattern": "^\\S+\\.y(a)?ml$",
-                "errorMessage": "Hierarchy file must exist and must contain spaces and must have extension '.yml' or '.yaml'"
-            },
-            "an_sample_id": {
-                "type": "string",
-                "pattern": "^\\S+$",
-                "errorMessage": "Sample ID cannot contain spaces"
-            },
-            "an_marker_column": {
-                "type": "string",
-                "pattern": "^[\\w-]+$",
-                "errorMessage": "Marker column must be provided as a single word without spaces"
-            },
-            "an_markers": {
-                "type": "string",
-                "pattern": "^[\\w-\\+_]+(:[\\w-\\+_]+)*$",
-                "errorMessage": "Markers must be provided as a colon-separated list without spaces"
-            },
-            "an_are_markers_split": {
-                "type": "boolean",
-                "errorMessage": "Are markers split must be a boolean"
-            },
-            "an_cell_types": {
-                "type": "string",
-                "pattern": "^[\\w-\\+_]+(:[\\w-\\+_]+)*$",
-                "errorMessage": "Cell types must be provided as a colon-separated list without spaces"
-            },
-            "an_parent_types": {
-                "type": "string",
-                "pattern": "^[\\w-\\+_]+(:[\\w-\\+_]+)*$",
-                "errorMessage": "Parent types must be provided as a colon-separated list without spaces"
-            },
-            "an_metadata_cols": {
-                "type": "string",
-                "pattern": "^[\\w-\\+_]+(:[\\w-\\+_]+)*$",
-                "errorMessage": "Metadata columns must be provided as a colon-separated list without spaces"
-            },
-            "an_plot_metas": {
-                "type": "string",
-                "pattern": "^[\\w-\\+_]+(:[\\w-\\+_]+)*$",
-                "errorMessage": "Metadata columns to plot must be provided as a colon-separated list without spaces"
-            },
-            "an_plot_heatmaps": {
-                "type": "boolean",
-                "errorMessage": "Plot heatmaps must be a boolean"
-            },
-            "an_plot_props": {
-                "type": "boolean",
-                "errorMessage": "Plot properties must be a boolean"
-            },
-            "an_plot_umap": {
-                "type": "boolean",
-                "errorMessage": "Plot UMAP must be a boolean"
-            },
-            "an_plot_clusters": {
-                "type": "boolean",
-                "errorMessage": "Plot clusters must be a boolean"
-            },
-            "an_plot_spatial": {
-                "type": "boolean",
-                "errorMessage": "Plot spatial must be a boolean"
-            },
-            "an_save_rdata": {
-                "type": "boolean",
-                "errorMessage": "Save RData must be a boolean"
-            },
-            "seg_tiff": {
+            "tiff": {
                 "type": "string",
                 "format": "file-path",
                 "exists": true,
                 "pattern": "^\\S+\\.tiff?$",
                 "errorMessage": "TIFF file must exist, cannot contain spaces and must have extension '.tiff/.tif'"
             },
-            "seg_nuclear_channel": {
+            "nuclear_channel": {
                 "type": "string",
                 "pattern": "^[\\w-]+$",
                 "errorMessage": "Nuclear channel must be provided as a single word without spaces"
             },
-            "seg_membrane_channels": {
+            "membrane_channels": {
                 "type": "string",
                 "pattern": "^[\\w-]+(:[\\w-]+)*$",
                 "errorMessage": "Membrane channels must be provided as a colon-separated list without spaces"
             },
-            "seg_combine_method": {
+            "mesmer_combine_method": {
                 "type": "string",
                 "pattern": "^(prod|max)$",
                 "errorMessage": "Combine method must be either 'prod' or 'max'"
             },
-            "seg_level": {
+            "mesmer_level": {
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 10,
                 "errorMessage": "Segmentation level must be an integer between 0 and 10"
             },
-            "seg_maxima_threshold": {
+            "mesmer_maxima_threshold": {
                 "type": "number",
                 "minimum": 0,
                 "errorMessage": "Maxima threshold must be a number greater than or equal to 0"
             },
-            "seg_interior_threshold": {
+            "mesmer_interior_threshold": {
                 "type": "number",
                 "minimum": 0,
                 "maximum": 1,
                 "errorMessage": "Interior threshold must be a number between 0 and 1"
             },
-            "seg_maxima_smooth": {
+            "mesmer_maxima_smooth": {
                 "type": "number",
                 "minimum": 0,
                 "errorMessage": "Maxima smoothing must be a number greater than or equal to 0"
             },
-            "seg_min_nuclei_area": {
+            "mesmer_min_nuclei_area": {
                 "type": "number",
                 "minimum": 0,
                 "errorMessage": "Minimum nuclei area must be a number greater than or equal to 0"
             },
-            "seg_remove_border_cells": {
+            "mesmer_remove_border_cells": {
                 "type": "boolean",
                 "default": true,
                 "errorMessage": "Remove border cells must be a boolean"
             },
-            "seg_include_measurements": {
-                "type": "boolean",
-                "errorMessage": "Include measurements must be a boolean"
-            },
-            "seg_pixel_expansion": {
+            "mesmer_pixel_expansion": {
                 "type": "integer",
                 "minimum": 0,
                 "errorMessage": "Pixel expansion must be an integer greater than or equal to 0"
             },
-            "seg_padding": {
+            "mesmer_padding": {
                 "type": "integer",
                 "minimum": 0,
                 "errorMessage": "Padding must be an integer greater than or equal to 0"
             },
-            "seg_skip_measurements": {
+            "skip_measurements": {
                 "type": "boolean",
                 "default": false,
                 "errorMessage": "Skip measurements must be a boolean"
             }
         },
-        "required": ["sample"]
+        "required": ["sample", "tiff"]
     }
 }

@@ -6,7 +6,6 @@
 
 
 include { paramsSummaryMap       } from 'plugin/nf-schema'
-include { ANALYSE                } from '../subworkflows/local/analyse'
 include { BACKGROUNDSUBTRACT     } from '../subworkflows/local/backgroundsubtract'
 include { BACKSUBMESMER          } from '../subworkflows/local/backsubmesmer'
 include { MESMERONLY             } from '../subworkflows/local/mesmeronly'
@@ -31,61 +30,41 @@ workflow SPATIALPROTEOMICS {
     //
     // Construct channel for background subtraction/segmentation workflow
     //
-    // TODO: can we somehow preserve key-value pairs in the samplesheet channel?
-    //       Then we could manage these args in a less cumbersome way
     ch_samplesheet.map {
         sample,
         run_backsub,
         run_mesmer,
         run_cellpose,
-        run_analyse,
-        an_expression_file,
-        an_hierarchy_file,
-        an_sample_id,
-        an_marker_column,
-        an_markers,
-        an_are_markers_split,
-        an_cell_types,
-        an_parent_types,
-        an_metadata_cols,
-        an_plot_metas,
-        an_plot_heatmaps,
-        an_plot_props,
-        an_plot_umap,
-        an_plot_clusters,
-        an_plot_spatial,
-        an_save_rdata,
-        seg_tiff,
-        seg_nuclear_channel,
-        seg_membrane_channels,
-        seg_combine_method,
-        seg_level,
-        seg_maxima_threshold,
-        seg_interior_threshold,
-        seg_maxima_smooth,
-        seg_min_nuclei_area,
-        seg_remove_border_cells,
-        seg_include_measurements,
-        seg_pixel_expansion,
-        seg_padding,
-        seg_skip_measurements -> [
+        tiff,
+        nuclear_channel,
+        membrane_channels,
+        mesmer_combine_method,
+        mesmer_level,
+        mesmer_maxima_threshold,
+        mesmer_interior_threshold,
+        mesmer_maxima_smooth,
+        mesmer_min_nuclei_area,
+        mesmer_remove_border_cells,
+        mesmer_pixel_expansion,
+        mesmer_padding,
+        skip_measurements -> [
             sample,
             run_backsub,
             run_mesmer,
             run_cellpose,
-            seg_tiff,
-            seg_nuclear_channel,
-            seg_membrane_channels,
-            seg_combine_method,
-            seg_level,
-            seg_maxima_threshold,
-            seg_interior_threshold,
-            seg_maxima_smooth,
-            seg_min_nuclei_area,
-            seg_remove_border_cells,
-            seg_pixel_expansion,
-            seg_padding,
-            seg_skip_measurements
+            tiff,
+            nuclear_channel,
+            membrane_channels,
+            mesmer_combine_method,
+            mesmer_level,
+            mesmer_maxima_threshold,
+            mesmer_interior_threshold,
+            mesmer_maxima_smooth,
+            mesmer_min_nuclei_area,
+            mesmer_remove_border_cells,
+            mesmer_pixel_expansion,
+            mesmer_padding,
+            skip_measurements
         ]
     }.branch { it ->
         backsub_only: it[1].contains(true) && !it[2].contains(true) &&
@@ -105,21 +84,21 @@ workflow SPATIALPROTEOMICS {
             run_backsub,
             run_mesmer,
             run_cellpose,
-            seg_tiff,
-            seg_nuclear_channel,
-            seg_membrane_channels,
-            seg_combine_method,
-            seg_level,
-            seg_maxima_threshold,
-            seg_interior_threshold,
-            seg_maxima_smooth,
-            seg_min_nuclei_area,
-            seg_remove_border_cells,
-            seg_pixel_expansion,
-            seg_padding,
-            seg_skip_measurements -> [
+            tiff,
+            nuclear_channel,
+            membrane_channels,
+            mesmer_combine_method,
+            mesmer_level,
+            mesmer_maxima_threshold,
+            mesmer_interior_threshold,
+            mesmer_maxima_smooth,
+            mesmer_min_nuclei_area,
+            mesmer_remove_border_cells,
+            mesmer_pixel_expansion,
+            mesmer_padding,
+            skip_measurements -> [
                 sample,
-                seg_tiff,
+                tiff,
             ]
         }
     )
@@ -149,119 +128,33 @@ workflow SPATIALPROTEOMICS {
         run_backsub,
         run_mesmer,
         run_cellpose,
-        run_analyse,
-        an_expression_file,
-        an_hierarchy_file,
-        an_sample_id,
-        an_marker_column,
-        an_markers,
-        an_are_markers_split,
-        an_cell_types,
-        an_parent_types,
-        an_metadata_cols,
-        an_plot_metas,
-        an_plot_heatmaps,
-        an_plot_props,
-        an_plot_umap,
-        an_plot_clusters,
-        an_plot_spatial,
-        an_save_rdata,
-        seg_tiff,
-        seg_nuclear_channel,
-        seg_membrane_channels,
-        seg_combine_method,
-        seg_level,
-        seg_maxima_threshold,
-        seg_interior_threshold,
-        seg_maxima_smooth,
-        seg_min_nuclei_area,
-        seg_remove_border_cells,
-        seg_include_measurements,
-        seg_pixel_expansion,
-        seg_padding,
-        seg_skip_measurements -> [
+        tiff,
+        nuclear_channel,
+        membrane_channels,
+        mesmer_combine_method,
+        mesmer_level,
+        mesmer_maxima_threshold,
+        mesmer_interior_threshold,
+        mesmer_maxima_smooth,
+        mesmer_min_nuclei_area,
+        mesmer_remove_border_cells,
+        mesmer_pixel_expansion,
+        mesmer_padding,
+        skip_measurements -> [
             sample,
-            seg_tiff,
-            seg_nuclear_channel,
-            seg_membrane_channels,
-            seg_skip_measurements
+            tiff,
+            nuclear_channel,
+            membrane_channels,
+            skip_measurements
         ]
     }.set { ch_cellpose_samplesheet }
 
+    // TODO: add sopa segment with bg subtract workflow
     //
     // Run CELLPOSE subworkflow for samples that ONLY require cellpose segmentation
     //
     SOPASEGMENT(
         ch_cellpose_samplesheet
-    )
-
-    //
-    // Construct channel for only ANALYSE subworkflow
-    //
-    ch_samplesheet.filter {
-        it[4].contains(true) // run_analyse true for sample
-    }.map {
-        sample,
-        run_backsub,
-        run_mesmer,
-        run_analyse,
-        an_expression_file,
-        an_hierarchy_file,
-        an_sample_id,
-        an_marker_column,
-        an_markers,
-        an_are_markers_split,
-        an_cell_types,
-        an_parent_types,
-        an_metadata_cols,
-        an_plot_metas,
-        an_plot_heatmaps,
-        an_plot_props,
-        an_plot_umap,
-        an_plot_clusters,
-        an_plot_spatial,
-        an_save_rdata,
-        seg_tiff,
-        seg_nuclear_channel,
-        seg_membrane_channels,
-        seg_combine_method,
-        seg_level,
-        seg_maxima_threshold,
-        seg_interior_threshold,
-        seg_maxima_smooth,
-        seg_min_nuclei_area,
-        seg_remove_border_cells,
-        seg_include_measurements,
-        seg_pixel_expansion,
-        seg_padding,
-        seg_skip_measurements -> [
-            sample,
-            an_expression_file,
-            an_hierarchy_file,
-            an_sample_id,
-            an_marker_column,
-            an_markers,
-            an_are_markers_split,
-            an_cell_types,
-            an_parent_types,
-            an_metadata_cols,
-            an_plot_metas,
-            an_plot_heatmaps,
-            an_plot_props,
-            an_plot_umap,
-            an_plot_clusters,
-            an_plot_spatial,
-            an_save_rdata
-        ]
-    }.set { ch_analyse_samplesheet }
-
-    //
-    // Run the main ANALYSE subworkflow
-    //
-    // TODO: fix sample_id column issue with blank values (will pass a blank
-    // list as sample_id if it is null to quarto notebook, which will crash)
-    ANALYSE(
-        ch_analyse_samplesheet
     )
 
     //
