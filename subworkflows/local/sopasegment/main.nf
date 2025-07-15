@@ -3,8 +3,10 @@
  * Original source: https://github.com/nf-core/sopa
  * License: MIT
  */
-include { SOPACELLPOSE as SOPACELLPOSENUCLEAR   } from '../sopacellpose/main.nf'
-include { SOPACELLPOSE as SOPACELLPOSEWHOLECELL } from '../sopacellpose/main.nf'
+include { SOPACELLPOSE as SOPACELLPOSENUCLEAR     } from '../sopacellpose/main.nf'
+include { SOPACELLPOSE as SOPACELLPOSEWHOLECELL   } from '../sopacellpose/main.nf'
+include { PARQUETTOTIFF as PARQUETTOTIFFNUCLEAR   } from '../../../modules/local/parquettotiff/main.nf'
+include { PARQUETTOTIFF as PARQUETTOTIFFWHOLECELL } from '../../../modules/local/parquettotiff/main.nf'
 
 process SOPACONVERT {
     label "process_high"
@@ -111,6 +113,27 @@ workflow SOPASEGMENT {
     SOPACELLPOSEWHOLECELL(
         ch_cellpose,
         SOPACONVERT.out.spatial_data
+    )
+
+    //
+    // Convert nuclear segmentation parquet to tiff
+    //
+    PARQUETTOTIFFNUCLEAR(
+        SOPACELLPOSENUCLEAR.out.boundaries
+            .join(ch_sopa, by: 0)
+            .map { meta, boundaries, tiff, nuc_chan, mem_chans, skip_measure ->
+                [ meta, boundaries, tiff, 'nuclear' ]
+            }
+    )
+
+    // Convert whole-cell segmentation parquet to tiff
+    //
+    PARQUETTOTIFFWHOLECELL(
+        SOPACELLPOSEWHOLECELL.out.boundaries
+            .join(ch_sopa, by: 0)
+            .map { meta, boundaries, tiff, nuc_chan, mem_chans, skip_measure ->
+                [ meta, boundaries, tiff, 'whole-cell' ]
+            }
     )
 
     emit:
