@@ -50,7 +50,7 @@
                 "pattern": "^(prod|max)$",
                 "errorMessage": "Combine method must be either 'prod' or 'max'"
             },
-            "mesmer_level": {
+            "mesmer_segmentation_level": {
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 10,

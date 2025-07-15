@@ -3,8 +3,8 @@
  * Original source: https://github.com/nf-core/sopa
  * License: MIT
  */
-process SOPA_CONVERT {
-    label "process_high"
+process SOPA_RESOLVECELLPOSE {
+    label "process_low"
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine == 'apptainer' && !task.ext.singularity_pull_docker_container
@@ -12,18 +12,15 @@ process SOPA_CONVERT {
         : 'docker.io/quentinblampey/sopa:2.0.7'}"
 
     input:
-    tuple val(meta), path(tiff)
+    tuple val(meta), path(zarr), val(cellpose_parquet)
 
     output:
-    tuple val(meta), path("*.zarr"), emit: spatial_data
+    tuple val(meta), path("*.zarr/shapes/cellpose_boundaries/*.parquet"), emit: cellpose_boundaries
+
+    when:
 
     script:
-    def args = task.ext.args ?: ''
     """
-    sopa convert \\
-        ${args} \\
-        --sdata-path ${meta.id}.zarr \\
-        --technology ${params.technology} \\
-        ${tiff}
+    sopa resolve cellpose ${zarr}
     """
 }

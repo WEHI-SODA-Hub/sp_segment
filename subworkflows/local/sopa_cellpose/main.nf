@@ -4,58 +4,8 @@
  * License: MIT
  */
 
-process SOPA_SEGMENTATIONCELLPOSE {
-    label "process_single"
-
-    conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine == 'apptainer' && !task.ext.singularity_pull_docker_container
-        ? 'docker://quentinblampey/sopa:2.0.7-cellpose'
-        : 'docker.io/quentinblampey/sopa:2.0.7-cellpose'}"
-
-    input:
-    tuple val(meta), path(zarr), val(index), val(n_patches), val(nuclear_channel), val(membrane_channels)
-
-    output:
-    tuple val(meta), path("*.zarr/.sopa_cache/cellpose_boundaries/${index}.parquet"), emit: cellpose_parquet
-
-    script:
-    def args = task.ext.args ?: ''
-    def membrane_channel_args = membrane_channels ? membrane_channels.split(":").collect(
-        { "--channels ${it}" }
-    ).join(' ') : ''
-    def channels = "--channels ${nuclear_channel} ${membrane_channel_args}"
-    """
-    sopa segmentation cellpose \\
-        ${args} \\
-        --patch-index ${index} \\
-        ${channels} \\
-        --diameter ${params.cellpose_diameter} \\
-        --min-area ${params.cellpose_min_area} \\
-        ${zarr}
-    """
-}
-
-process SOPA_RESOLVECELLPOSE {
-    label "process_low"
-
-    conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine == 'apptainer' && !task.ext.singularity_pull_docker_container
-        ? 'docker://quentinblampey/sopa:2.0.7'
-        : 'docker.io/quentinblampey/sopa:2.0.7'}"
-
-    input:
-    tuple val(meta), path(zarr), val(cellpose_parquet)
-
-    output:
-    tuple val(meta), path("*.zarr/shapes/cellpose_boundaries/*.parquet"), emit: cellpose_boundaries
-
-    when:
-
-    script:
-    """
-    sopa resolve cellpose ${zarr}
-    """
-}
+include { SOPA_SEGMENTATIONCELLPOSE } from '../../../modules/local/sopa/segmentationcellpose/main.nf'
+include { SOPA_RESOLVECELLPOSE      } from '../../../modules/local/sopa/resolvecellpose/main.nf'
 
 workflow SOPA_CELLPOSE {
 

@@ -1,3 +1,8 @@
+/*
+ * This module uses code adapted from nf-core sopa
+ * Original source: https://github.com/nf-core/sopa
+ * License: MIT
+ */
 process SOPA_PATCHIFYIMAGE {
     label "process_single"
 
