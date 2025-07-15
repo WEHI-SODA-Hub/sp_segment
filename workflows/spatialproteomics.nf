@@ -10,6 +10,7 @@ include { BACKGROUNDSUBTRACT     } from '../subworkflows/local/backgroundsubtrac
 include { BACKSUBMESMER          } from '../subworkflows/local/backsubmesmer'
 include { MESMERONLY             } from '../subworkflows/local/mesmeronly'
 include { SOPA_SEGMENT           } from '../subworkflows/local/sopa_segment'
+include { SOPA_SEGMENT_WBACKSUB  } from '../subworkflows/local/sopa_segment_wbacksub'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_spatialproteomics_pipeline'
 
@@ -142,19 +143,43 @@ workflow SPATIALPROTEOMICS {
         mesmer_padding,
         skip_measurements -> [
             sample,
+            run_backsub,
             tiff,
             nuclear_channel,
             membrane_channels,
             skip_measurements
         ]
+    }.branch { it ->
+        with_backsub: it[1].contains(true)// run_backsub true
+        no_backsub: !it[1].contains(true) // run_backsub false
     }.set { ch_cellpose_samplesheet }
 
-    // TODO: add sopa segment with bg subtract workflow
+    //
+    // Run CELLPOSE subworkflow for samples that require background subtraction
+    //
+    SOPA_SEGMENT_WBACKSUB(
+        ch_cellpose_samplesheet.with_backsub.map { sample,
+            run_backsub,
+            tiff,
+            nuclear_channel,
+            membrane_channels,
+            skip_measurements ->
+            [ sample, tiff, nuclear_channel, membrane_channels, skip_measurements ]
+        }
+    )
+
     //
     // Run CELLPOSE subworkflow for samples that ONLY require cellpose segmentation
     //
     SOPA_SEGMENT(
-        ch_cellpose_samplesheet
+        ch_cellpose_samplesheet.no_backsub.map { sample,
+            run_backsub,
+            tiff,
+            nuclear_channel,
+            membrane_channels,
+            skip_measurements ->
+            [ sample, tiff, nuclear_channel, membrane_channels, skip_measurements ]
+        }
     )
 
     //
