@@ -89,7 +89,7 @@ def main(
     )
 
     # Write TIFF output
-    imwrite(sys.stdout.buffer, mask)
+    imwrite(sys.stdout.buffer, np.flipud(mask))
 
 
 if __name__ == "__main__":

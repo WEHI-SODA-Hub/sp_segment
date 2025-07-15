@@ -7,6 +7,7 @@ include { SOPACELLPOSE as SOPACELLPOSENUCLEAR     } from '../sopacellpose/main.n
 include { SOPACELLPOSE as SOPACELLPOSEWHOLECELL   } from '../sopacellpose/main.nf'
 include { PARQUETTOTIFF as PARQUETTOTIFFNUCLEAR   } from '../../../modules/local/parquettotiff/main.nf'
 include { PARQUETTOTIFF as PARQUETTOTIFFWHOLECELL } from '../../../modules/local/parquettotiff/main.nf'
+include { CELLMEASUREMENT                         } from '../../../modules/local/cellmeasurement/main.nf'
 
 process SOPACONVERT {
     label "process_high"
@@ -126,6 +127,7 @@ workflow SOPASEGMENT {
             }
     )
 
+    //
     // Convert whole-cell segmentation parquet to tiff
     //
     PARQUETTOTIFFWHOLECELL(
@@ -134,6 +136,36 @@ workflow SOPASEGMENT {
             .map { meta, boundaries, tiff, nuc_chan, mem_chans, skip_measure ->
                 [ meta, boundaries, tiff, 'whole-cell' ]
             }
+    )
+
+    //
+    // Create a channel for cell measurement
+    //
+    PARQUETTOTIFFNUCLEAR.out.tiff
+        .join(PARQUETTOTIFFWHOLECELL.out.tiff, by: 0)
+        .join(ch_sopa, by: 0)
+        .map {
+            meta,
+            nuclear_tiff,
+            wholecell_tiff,
+            tiff,
+            nuc_chan,
+            mem_chans,
+            skip_measurements -> [
+                meta,
+                tiff,
+                nuclear_tiff,
+                wholecell_tiff,
+                skip_measurements
+            ]
+        }.set { ch_cellmeasurement }
+
+    //
+    // Run CELLMEASUREMENT module on the whole-cell and nuclear segmentation masks
+    //
+    CELLMEASUREMENT(
+        ch_cellmeasurement,
+        params.pixel_size_microns
     )
 
     emit:
