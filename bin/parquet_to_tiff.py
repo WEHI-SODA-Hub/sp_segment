@@ -75,8 +75,6 @@ def main(
     bounds = (
         0, 0, size_x, size_y
     )
-    # TODO: This creates a wrongly oriented mask -- it is flipped vertically in
-    # QuPath, need to fix...
     mask = rasterize(
         shapes=shapes,
         out_shape=(size_y, size_x),  # Note: rasterio uses (height, width)
@@ -90,9 +88,8 @@ def main(
         all_touched=True  # Fill shapes
     )
 
-    # Write TIFF output, flipping the mask vertically
-    # because affine transform uses (0, 0) coords at the bottom-left corner
-    imwrite(sys.stdout.buffer, np.flipud(mask))
+    # Write TIFF output
+    imwrite(sys.stdout.buffer, mask)
 
 
 if __name__ == "__main__":
