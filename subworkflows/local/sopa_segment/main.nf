@@ -3,66 +3,18 @@
  * Original source: https://github.com/nf-core/sopa
  * License: MIT
  */
-include { SOPACELLPOSE as SOPACELLPOSENUCLEAR     } from '../sopacellpose/main.nf'
-include { SOPACELLPOSE as SOPACELLPOSEWHOLECELL   } from '../sopacellpose/main.nf'
+include { SOPA_CELLPOSE as SOPA_CELLPOSENUCLEAR   } from '../sopa_cellpose/main.nf'
+include { SOPA_CELLPOSE as SOPA_CELLPOSEWHOLECELL } from '../sopa_cellpose/main.nf'
+include { SOPA_CONVERT                            } from '../../../modules/local/sopa/convert/main.nf'
+include { SOPA_PATCHIFYIMAGE                      } from '../../../modules/local/sopa/patchifyimage/main.nf'
 include { PARQUETTOTIFF as PARQUETTOTIFFNUCLEAR   } from '../../../modules/local/parquettotiff/main.nf'
 include { PARQUETTOTIFF as PARQUETTOTIFFWHOLECELL } from '../../../modules/local/parquettotiff/main.nf'
 include { CELLMEASUREMENT                         } from '../../../modules/local/cellmeasurement/main.nf'
 
-process SOPACONVERT {
-    label "process_high"
-
-    conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine == 'apptainer' && !task.ext.singularity_pull_docker_container
-        ? 'docker://quentinblampey/sopa:2.0.7'
-        : 'docker.io/quentinblampey/sopa:2.0.7'}"
-
-    input:
-    tuple val(meta), path(tiff)
-
-    output:
-    tuple val(meta), path("*.zarr"), emit: spatial_data
-
-    script:
-    def args = task.ext.args ?: ''
-    """
-    sopa convert \\
-        ${args} \\
-        --sdata-path ${meta.id}.zarr \\
-        --technology ${params.technology} \\
-        ${tiff}
-    """
-}
-
-process SOPAPATCHIFYIMAGE {
-    label "process_single"
-
-    conda "${moduleDir}/environment.yml"
-    container "${workflow.containerEngine == 'apptainer' && !task.ext.singularity_pull_docker_container
-        ? 'docker://quentinblampey/sopa:2.0.7'
-        : 'docker.io/quentinblampey/sopa:2.0.7'}"
-
-    input:
-    tuple val(meta), path(zarr)
-
-    output:
-    tuple val(meta), path("*.zarr/.sopa_cache/patches_file_image"), path("*.zarr/shapes/image_patches"), emit: patches
-
-    script:
-    def args = task.ext.args ?: ''
-    """
-    sopa patchify image \\
-        ${args} \\
-        ${zarr} \\
-        --patch-width-pixel ${params.patch_width_pixel} \\
-        --patch-overlap-pixel ${params.patch_overlap_pixel}
-    """
-}
-
-workflow SOPASEGMENT {
+workflow SOPA_SEGMENT {
 
     take:
-    ch_sopa // channel: [ (meta, tiff, nuclear_channel, membrane_channels) ]
+    ch_sopa // channel: [ (meta, tiff, nuclear_channel, membrane_channels, skip_measurements) ]
 
     main:
 
@@ -75,20 +27,20 @@ workflow SOPASEGMENT {
     //
     // Run SOPA convert to convert tiff to zarr format
     //
-    SOPACONVERT(
+    SOPA_CONVERT(
         ch_convert
     )
 
     //
     // Run SOPA patchify to create image patches
     //
-    SOPAPATCHIFYIMAGE(
-        SOPACONVERT.out.spatial_data
+    SOPA_PATCHIFYIMAGE(
+        SOPA_CONVERT.out.spatial_data
     )
 
     // Create a channel for each patch
-    SOPAPATCHIFYIMAGE.out.patches
-        .join( SOPACONVERT.out.spatial_data, by: 0 )
+    SOPA_PATCHIFYIMAGE.out.patches
+        .join( SOPA_CONVERT.out.spatial_data, by: 0 )
         .map { meta, patches_file_image, image_patches, zarr ->
             [ meta, zarr, patches_file_image.text.trim().toInteger() ] }
         .flatMap { meta, zarr, n_patches ->
@@ -101,26 +53,26 @@ workflow SOPASEGMENT {
     //
     // Run SOPA with cellpose for nuclear segmentation
     //
-    SOPACELLPOSENUCLEAR(
+    SOPA_CELLPOSENUCLEAR(
         ch_cellpose.map { meta, zarr, index, n_patches, nuclear_channel, membrane_channels ->
             [ meta, zarr, index, n_patches, nuclear_channel, [] ]
         }, // remove membrane channels for nuclear segmentation
-        SOPACONVERT.out.spatial_data
+        SOPA_CONVERT.out.spatial_data
     )
 
     //
     // Run SOPA with cellpose for whole-cell segmentation
     //
-    SOPACELLPOSEWHOLECELL(
+    SOPA_CELLPOSEWHOLECELL(
         ch_cellpose,
-        SOPACONVERT.out.spatial_data
+        SOPA_CONVERT.out.spatial_data
     )
 
     //
     // Convert nuclear segmentation parquet to tiff
     //
     PARQUETTOTIFFNUCLEAR(
-        SOPACELLPOSENUCLEAR.out.boundaries
+        SOPA_CELLPOSENUCLEAR.out.boundaries
             .join(ch_sopa, by: 0)
             .map { meta, boundaries, tiff, nuc_chan, mem_chans, skip_measure ->
                 [ meta, boundaries, tiff, 'nuclear' ]
@@ -131,7 +83,7 @@ workflow SOPASEGMENT {
     // Convert whole-cell segmentation parquet to tiff
     //
     PARQUETTOTIFFWHOLECELL(
-        SOPACELLPOSEWHOLECELL.out.boundaries
+        SOPA_CELLPOSEWHOLECELL.out.boundaries
             .join(ch_sopa, by: 0)
             .map { meta, boundaries, tiff, nuc_chan, mem_chans, skip_measure ->
                 [ meta, boundaries, tiff, 'whole-cell' ]
@@ -169,9 +121,9 @@ workflow SOPASEGMENT {
     )
 
     emit:
-    zarr                 = SOPACONVERT.out.spatial_data         // channel: [ val(meta), *.zarr ]
-    nuclear_boundaries   = SOPACELLPOSENUCLEAR.out.boundaries   // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
-    wholecell_boundaries = SOPACELLPOSEWHOLECELL.out.boundaries // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
+    zarr                 = SOPA_CONVERT.out.spatial_data         // channel: [ val(meta), *.zarr ]
+    nuclear_boundaries   = SOPA_CELLPOSENUCLEAR.out.boundaries   // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
+    wholecell_boundaries = SOPA_CELLPOSEWHOLECELL.out.boundaries // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
 
     versions = ch_versions                                      // channel: [ versions.yml ]
 }

@@ -4,7 +4,7 @@
  * License: MIT
  */
 
-process SOPASEGMENTATIONCELLPOSE {
+process SOPA_SEGMENTATIONCELLPOSE {
     label "process_single"
 
     conda "${moduleDir}/environment.yml"
@@ -35,7 +35,7 @@ process SOPASEGMENTATIONCELLPOSE {
     """
 }
 
-process SOPARESOLVECELLPOSE {
+process SOPA_RESOLVECELLPOSE {
     label "process_low"
 
     conda "${moduleDir}/environment.yml"
@@ -57,7 +57,7 @@ process SOPARESOLVECELLPOSE {
     """
 }
 
-workflow SOPACELLPOSE {
+workflow SOPA_CELLPOSE {
 
     take:
     ch_patches // channel: [ (meta, zarr, index, n_patches, nuclear_channel, membrane_channels) ]
@@ -70,12 +70,12 @@ workflow SOPACELLPOSE {
     //
     // Run SOPA segmentation with cellpose
     //
-    SOPASEGMENTATIONCELLPOSE(
+    SOPA_SEGMENTATIONCELLPOSE(
         ch_patches
     )
 
     // Collect cellpose segmentation boundaries into one channel per sample
-    SOPASEGMENTATIONCELLPOSE.out.cellpose_parquet
+    SOPA_SEGMENTATIONCELLPOSE.out.cellpose_parquet
         .groupTuple()
         .join( ch_spatial_data, by: 0 )
         .map { meta, cellpose_parquet, zarr ->
@@ -86,12 +86,12 @@ workflow SOPACELLPOSE {
     //
     // Resolve Cellpose segmentation boundaries
     //
-    SOPARESOLVECELLPOSE(
+    SOPA_RESOLVECELLPOSE(
         ch_resolve_cellpose
     )
 
     emit:
-    boundaries  = SOPARESOLVECELLPOSE.out.cellpose_boundaries  // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
+    boundaries  = SOPA_RESOLVECELLPOSE.out.cellpose_boundaries  // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
 
     versions = ch_versions                                     // channel: [ versions.yml ]
 }

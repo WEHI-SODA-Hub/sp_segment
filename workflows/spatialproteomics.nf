@@ -9,7 +9,7 @@ include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { BACKGROUNDSUBTRACT     } from '../subworkflows/local/backgroundsubtract'
 include { BACKSUBMESMER          } from '../subworkflows/local/backsubmesmer'
 include { MESMERONLY             } from '../subworkflows/local/mesmeronly'
-include { SOPASEGMENT            } from '../subworkflows/local/sopasegment'
+include { SOPA_SEGMENT           } from '../subworkflows/local/sopa_segment'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_spatialproteomics_pipeline'
 
@@ -153,7 +153,7 @@ workflow SPATIALPROTEOMICS {
     //
     // Run CELLPOSE subworkflow for samples that ONLY require cellpose segmentation
     //
-    SOPASEGMENT(
+    SOPA_SEGMENT(
         ch_cellpose_samplesheet
     )
 

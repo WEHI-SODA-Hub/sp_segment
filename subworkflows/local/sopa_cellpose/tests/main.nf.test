@@ -1,14 +1,14 @@
 // TODO nf-core: Once you have added the required tests, please run the following command to build this file:
-// nf-core subworkflows test sopacellpose
+// nf-core subworkflows test sopa_cellpose
 nextflow_workflow {
 
-    name "Test Subworkflow SOPACELLPOSE"
+    name "Test Subworkflow SOPA_CELLPOSE"
     script "../main.nf"
-    workflow "SOPACELLPOSE"
+    workflow "SOPA_CELLPOSE"
 
     tag "subworkflows"
     tag "subworkflows_"
-    tag "subworkflows/sopacellpose"
+    tag "subworkflows/sopa_cellpose"
     // TODO nf-core: Add tags for all modules used within this subworkflow. Example:
     tag "samtools"
     tag "samtools/sort"
