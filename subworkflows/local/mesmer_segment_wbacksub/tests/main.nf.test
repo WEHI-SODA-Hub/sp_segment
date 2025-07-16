@@ -1,14 +1,14 @@
 // TODO nf-core: Once you have added the required tests, please run the following command to build this file:
-// nf-core subworkflows test backsubmesmer
+// nf-core subworkflows test mesmer_segment_wbacksub
 nextflow_workflow {
 
-    name "Test Subworkflow BACKSUBMESMER"
+    name "Test Subworkflow MESMER_SEGMENT_WBACKSUB"
     script "../main.nf"
-    workflow "BACKSUBMESMER"
+    workflow "MESMER_SEGMENT_WBACKSUB"
 
     tag "subworkflows"
     tag "subworkflows_"
-    tag "subworkflows/backsubmesmer"
+    tag "subworkflows/mesmer_segment_wbacksub"
     // TODO nf-core: Add tags for all modules used within this subworkflow. Example:
     tag "samtools"
     tag "samtools/sort"

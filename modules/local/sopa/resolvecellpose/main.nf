@@ -17,8 +17,6 @@ process SOPA_RESOLVECELLPOSE {
     output:
     tuple val(meta), path("*.zarr/shapes/cellpose_boundaries/*.parquet"), emit: cellpose_boundaries
 
-    when:
-
     script:
     """
     sopa resolve cellpose ${zarr}

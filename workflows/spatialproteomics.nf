@@ -5,14 +5,14 @@
 */
 
 
-include { paramsSummaryMap       } from 'plugin/nf-schema'
-include { BACKGROUNDSUBTRACT     } from '../subworkflows/local/backgroundsubtract'
-include { BACKSUBMESMER          } from '../subworkflows/local/backsubmesmer'
-include { MESMERONLY             } from '../subworkflows/local/mesmeronly'
-include { SOPA_SEGMENT           } from '../subworkflows/local/sopa_segment'
-include { SOPA_SEGMENT_WBACKSUB  } from '../subworkflows/local/sopa_segment_wbacksub'
-include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_spatialproteomics_pipeline'
+include { paramsSummaryMap        } from 'plugin/nf-schema'
+include { BACKGROUNDSUBTRACT      } from '../subworkflows/local/backgroundsubtract'
+include { MESMER_SEGMENT_WBACKSUB } from '../subworkflows/local/mesmer_segment_wbacksub'
+include { MESMER_SEGMENT          } from '../subworkflows/local/mesmer_segment'
+include { SOPA_SEGMENT            } from '../subworkflows/local/sopa_segment'
+include { SOPA_SEGMENT_WBACKSUB   } from '../subworkflows/local/sopa_segment_wbacksub'
+include { softwareVersionsToYAML  } from '../subworkflows/nf-core/utils_nfcore_pipeline'
+include { methodsDescriptionText  } from '../subworkflows/local/utils_nfcore_spatialproteomics_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,23 +99,23 @@ workflow SPATIALPROTEOMICS {
             mesmer_padding,
             skip_measurements -> [
                 sample,
-                tiff,
+                tiff
             ]
         }
     )
 
     //
-    // Run the BACKSUBMESMER subworkflow for samples that require
+    // Run the MESMER_SEGMENT_WBACKSUB subworkflow for samples that require
     // background subtraction and mesmer segmentation
     //
-    BACKSUBMESMER(
+    MESMER_SEGMENT_WBACKSUB(
         ch_segmentation_samplesheet.backsub_mesmer
     )
 
     //
-    // Run MESMERONLY subworkflow for samples that ONLY require mesmer segmentation
+    // Run MESMER_SEGMENT subworkflow for samples that ONLY require mesmer segmentation
     //
-    MESMERONLY(
+    MESMER_SEGMENT(
         ch_segmentation_samplesheet.mesmer_only
     )
 

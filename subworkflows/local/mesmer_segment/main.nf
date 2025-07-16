@@ -1,19 +1,17 @@
-include { EXTRACTMARKERS             } from '../../../modules/local/extractmarkers/main.nf'
-include { BACKSUB                    } from '../../../modules/nf-core/backsub/main.nf'
 include { MESMERSEGMENT as MESMERWC  } from '../../../modules/local/mesmersegment/main.nf'
 include { MESMERSEGMENT as MESMERNUC } from '../../../modules/local/mesmersegment/main.nf'
 include { CELLMEASUREMENT            } from '../../../modules/local/cellmeasurement/main.nf'
 
-workflow BACKSUBMESMER {
+workflow MESMER_SEGMENT {
 
     take:
-    ch_backsub_mesmer // channel: segmentation parameters
+    ch_mesmer_segment // channel: segmentation parameters
 
     main:
 
     ch_versions = Channel.empty()
 
-    ch_backsub_mesmer.map {
+    ch_mesmer_segment.map {
         sample,
         run_backsub,
         run_mesmer,
@@ -22,7 +20,7 @@ workflow BACKSUBMESMER {
         nuclear_channel,
         membrane_channels,
         mesmer_combine_method,
-        mesmer_segmentation_level,
+        mesmer_level,
         mesmer_maxima_threshold,
         mesmer_interior_threshold,
         mesmer_maxima_smooth,
@@ -33,64 +31,20 @@ workflow BACKSUBMESMER {
         skip_measurements -> [
             sample,
             tiff,
-        ]
-    }.set { ch_backsub }
-
-    //
-    // Extract markers from the input tiff file
-    //
-    EXTRACTMARKERS(
-        ch_backsub
-    )
-
-    //
-    // Run BACKSUB module on tiff with extracted markers
-    //
-    BACKSUB(
-        ch_backsub,
-        EXTRACTMARKERS.out.markers
-    )
-
-    // Prepare channel for input to mesmer
-    BACKSUB.out.backsub_tif
-        .join(ch_backsub_mesmer)
-
-    ch_backsub_mesmer
-        .join(BACKSUB.out.backsub_tif)
-        .map {
-            sample,
-            run_backsub,
-            run_mesmer,
-            run_cellpose,
-            tiff,
             nuclear_channel,
             membrane_channels,
             mesmer_combine_method,
-            mesmer_segmentation_level,
+            mesmer_level,
             mesmer_maxima_threshold,
             mesmer_interior_threshold,
             mesmer_maxima_smooth,
             mesmer_min_nuclei_area,
             mesmer_remove_border_cells,
             mesmer_pixel_expansion,
-            mesmer_padding,
-            skip_measurements,
-            backsub_tif -> [
-                sample,
-                backsub_tif,
-                nuclear_channel,
-                membrane_channels,
-                mesmer_combine_method,
-                mesmer_segmentation_level,
-                mesmer_maxima_threshold,
-                mesmer_interior_threshold,
-                mesmer_maxima_smooth,
-                mesmer_min_nuclei_area,
-                mesmer_remove_border_cells,
-                mesmer_pixel_expansion,
-                mesmer_padding
-            ]
-        }.set { ch_mesmer }
+            mesmer_padding
+        ]
+    }.set { ch_mesmer }
+
 
     //
     // Run MESMERSEGMENT module on the background subtracted tiff
@@ -109,10 +63,8 @@ workflow BACKSUBMESMER {
         "nuclear"
     )
 
-    // Create channel for CELLMEASUREMENT input
-    // adding the backsubtracted tiff and the segmentation masks
-    ch_backsub_mesmer
-        .join(BACKSUB.out.backsub_tif)
+    // Create channel for CELLMEASUREMENT input adding the segmentation masks
+    ch_mesmer_segment
         .join(MESMERNUC.out.segmentation_mask)
         .join(MESMERWC.out.segmentation_mask)
         .map {
@@ -124,7 +76,7 @@ workflow BACKSUBMESMER {
             nuclear_channel,
             membrane_channels,
             mesmer_combine_method,
-            mesmer_segmentation_level,
+            mesmer_level,
             mesmer_maxima_threshold,
             mesmer_interior_threshold,
             mesmer_maxima_smooth,
@@ -133,11 +85,10 @@ workflow BACKSUBMESMER {
             mesmer_pixel_expansion,
             mesmer_padding,
             skip_measurements,
-            backsub_tif,
             nuclear_mask,
             whole_cell_mask -> [
                 sample,
-                backsub_tif,
+                tiff,
                 nuclear_mask,
                 whole_cell_mask,
                 skip_measurements
