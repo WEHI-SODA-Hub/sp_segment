@@ -19,8 +19,7 @@ workflow SOPA_SEGMENT_WBACKSUB {
             sample,
             tiff,
             nuclear_channel,
-            membrane_channels,
-            skip_measurements -> [
+            membrane_channels -> [
                 sample,
                 tiff
             ]
@@ -34,9 +33,8 @@ workflow SOPA_SEGMENT_WBACKSUB {
             tiff,
             nuclear_channel,
             membrane_channels,
-            skip_measurements,
             backsub_tiff ->
-            [ sample, backsub_tiff, nuclear_channel, membrane_channels, skip_measurements ]
+            [ sample, backsub_tiff, nuclear_channel, membrane_channels ]
         }.set { ch_sopa }
 
     SOPA_SEGMENT(

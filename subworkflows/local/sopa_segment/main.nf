@@ -14,14 +14,17 @@ include { CELLMEASUREMENT                         } from '../../../modules/local
 workflow SOPA_SEGMENT {
 
     take:
-    ch_sopa // channel: [ (meta, tiff, nuclear_channel, membrane_channels, skip_measurements) ]
+    ch_sopa // channel: [ (meta, tiff, nuclear_channel, membrane_channels) ]
 
     main:
 
     ch_versions = Channel.empty()
 
-    ch_sopa.map { meta, tiff, nuclear_channel, membrane_channels, skip_measurements ->
-        [ meta, tiff ]
+    ch_sopa.map {
+        meta,
+        tiff,
+        _nuclear_channel,
+        _membrane_channels -> [ meta, tiff ]
     }.set { ch_convert }
 
     //
@@ -41,12 +44,12 @@ workflow SOPA_SEGMENT {
     // Create a channel for each patch
     SOPA_PATCHIFYIMAGE.out.patches
         .join( SOPA_CONVERT.out.spatial_data, by: 0 )
-        .map { meta, patches_file_image, image_patches, zarr ->
+        .map { meta, patches_file_image, _image_patches, zarr ->
             [ meta, zarr, patches_file_image.text.trim().toInteger() ] }
         .flatMap { meta, zarr, n_patches ->
             (0..<n_patches).collect { index -> [ meta, zarr, index, n_patches ] } }
         .combine(ch_sopa, by: 0)
-        .map { meta, zarr, index, n_patches, tiff, nuclear_channel, membrane_channels, skip_measurements ->
+        .map { meta, zarr, index, n_patches, _tiff, nuclear_channel, membrane_channels ->
             [ meta, zarr, index, n_patches, nuclear_channel.first(), membrane_channels.first() ]
         }.set { ch_cellpose }
 
@@ -54,7 +57,7 @@ workflow SOPA_SEGMENT {
     // Run SOPA with cellpose for nuclear segmentation
     //
     SOPA_CELLPOSENUCLEAR(
-        ch_cellpose.map { meta, zarr, index, n_patches, nuclear_channel, membrane_channels ->
+        ch_cellpose.map { meta, zarr, index, n_patches, nuclear_channel, _membrane_channels ->
             [ meta, zarr, index, n_patches, nuclear_channel, [] ]
         }, // remove membrane channels for nuclear segmentation
         SOPA_CONVERT.out.spatial_data
@@ -74,7 +77,7 @@ workflow SOPA_SEGMENT {
     PARQUETTOTIFFNUCLEAR(
         SOPA_CELLPOSENUCLEAR.out.boundaries
             .join(ch_sopa, by: 0)
-            .map { meta, boundaries, tiff, nuc_chan, mem_chans, skip_measure ->
+            .map { meta, boundaries, tiff, _nuc_chan, _mem_chans ->
                 [ meta, boundaries, tiff, 'nuclear' ]
             }
     )
@@ -85,7 +88,7 @@ workflow SOPA_SEGMENT {
     PARQUETTOTIFFWHOLECELL(
         SOPA_CELLPOSEWHOLECELL.out.boundaries
             .join(ch_sopa, by: 0)
-            .map { meta, boundaries, tiff, nuc_chan, mem_chans, skip_measure ->
+            .map { meta, boundaries, tiff, _nuc_chan, _mem_chans ->
                 [ meta, boundaries, tiff, 'whole-cell' ]
             }
     )
@@ -101,14 +104,12 @@ workflow SOPA_SEGMENT {
             nuclear_tiff,
             wholecell_tiff,
             tiff,
-            nuc_chan,
-            mem_chans,
-            skip_measurements -> [
+            _nuc_chan,
+            _mem_chans -> [
                 meta,
                 tiff,
                 nuclear_tiff,
-                wholecell_tiff,
-                skip_measurements
+                wholecell_tiff
             ]
         }.set { ch_cellmeasurement }
 

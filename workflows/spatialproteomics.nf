@@ -47,8 +47,7 @@ workflow SPATIALPROTEOMICS {
         mesmer_min_nuclei_area,
         mesmer_remove_border_cells,
         mesmer_pixel_expansion,
-        mesmer_padding,
-        skip_measurements -> [
+        mesmer_padding -> [
             sample,
             run_backsub,
             run_mesmer,
@@ -64,8 +63,7 @@ workflow SPATIALPROTEOMICS {
             mesmer_min_nuclei_area,
             mesmer_remove_border_cells,
             mesmer_pixel_expansion,
-            mesmer_padding,
-            skip_measurements
+            mesmer_padding
         ]
     }.branch { it ->
         backsub_only: it[1].contains(true) && !it[2].contains(true) &&
@@ -82,22 +80,21 @@ workflow SPATIALPROTEOMICS {
     BACKGROUNDSUBTRACT(
         ch_segmentation_samplesheet.backsub_only.map {
             sample,
-            run_backsub,
-            run_mesmer,
-            run_cellpose,
+            _run_backsub,
+            _run_mesmer,
+            _run_cellpose,
             tiff,
-            nuclear_channel,
-            membrane_channels,
-            mesmer_combine_method,
-            mesmer_level,
-            mesmer_maxima_threshold,
-            mesmer_interior_threshold,
-            mesmer_maxima_smooth,
-            mesmer_min_nuclei_area,
-            mesmer_remove_border_cells,
-            mesmer_pixel_expansion,
-            mesmer_padding,
-            skip_measurements -> [
+            _nuclear_channel,
+            _membrane_channels,
+            _mesmer_combine_method,
+            _mesmer_level,
+            _mesmer_maxima_threshold,
+            _mesmer_interior_threshold,
+            _mesmer_maxima_smooth,
+            _mesmer_min_nuclei_area,
+            _mesmer_remove_border_cells,
+            _mesmer_pixel_expansion,
+            _mesmer_padding -> [
                 sample,
                 tiff
             ]
@@ -127,27 +124,25 @@ workflow SPATIALPROTEOMICS {
     }.map {
         sample,
         run_backsub,
-        run_mesmer,
-        run_cellpose,
+        _run_mesmer,
+        _run_cellpose,
         tiff,
         nuclear_channel,
         membrane_channels,
-        mesmer_combine_method,
-        mesmer_level,
-        mesmer_maxima_threshold,
-        mesmer_interior_threshold,
-        mesmer_maxima_smooth,
-        mesmer_min_nuclei_area,
-        mesmer_remove_border_cells,
-        mesmer_pixel_expansion,
-        mesmer_padding,
-        skip_measurements -> [
+        _mesmer_combine_method,
+        _mesmer_level,
+        _mesmer_maxima_threshold,
+        _mesmer_interior_threshold,
+        _mesmer_maxima_smooth,
+        _mesmer_min_nuclei_area,
+        _mesmer_remove_border_cells,
+        _mesmer_pixel_expansion,
+        _mesmer_padding -> [
             sample,
             run_backsub,
             tiff,
             nuclear_channel,
-            membrane_channels,
-            skip_measurements
+            membrane_channels
         ]
     }.branch { it ->
         with_backsub: it[1].contains(true)// run_backsub true
@@ -159,12 +154,11 @@ workflow SPATIALPROTEOMICS {
     //
     SOPA_SEGMENT_WBACKSUB(
         ch_cellpose_samplesheet.with_backsub.map { sample,
-            run_backsub,
+            _run_backsub,
             tiff,
             nuclear_channel,
-            membrane_channels,
-            skip_measurements ->
-            [ sample, tiff, nuclear_channel, membrane_channels, skip_measurements ]
+            membrane_channels ->
+            [ sample, tiff, nuclear_channel, membrane_channels ]
         }
     )
 
@@ -173,12 +167,11 @@ workflow SPATIALPROTEOMICS {
     //
     SOPA_SEGMENT(
         ch_cellpose_samplesheet.no_backsub.map { sample,
-            run_backsub,
+            _run_backsub,
             tiff,
             nuclear_channel,
-            membrane_channels,
-            skip_measurements ->
-            [ sample, tiff, nuclear_channel, membrane_channels, skip_measurements ]
+            membrane_channels ->
+            [ sample, tiff, nuclear_channel, membrane_channels ]
         }
     )
 
@@ -195,7 +188,7 @@ workflow SPATIALPROTEOMICS {
 
 
     emit:
-    versions       = ch_versions                 // channel: [ path(versions.yml) ]
+    versions       = ch_collated_versions     // channel: [ path(versions.yml) ]
 
 }
 

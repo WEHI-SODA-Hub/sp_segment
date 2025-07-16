@@ -10,8 +10,7 @@ process CELLMEASUREMENT {
     tuple val(meta),
         path(tiff),
         path(nuclear_mask),
-        path(whole_cell_mask),
-        val(skip_measurements)
+        path(whole_cell_mask)
     val(pixel_size_microns)
 
     output:
@@ -25,7 +24,7 @@ process CELLMEASUREMENT {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
-    def skip_measurements_arg = skip_measurements.first() ? '--skip-measurements=true' : '--skip-measurements=false'
+    def skip_measurements_arg = params.skip_measurements ? '--skip-measurements=true' : '--skip-measurements=false'
     """
     /entrypoint.sh \\
         --args="${args} \\

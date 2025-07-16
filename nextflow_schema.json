@@ -60,7 +60,16 @@
                     "type": "integer",
                     "description": "Pixel overlap of patches.",
                     "fa_icon": "fas fa-crop"
-                },
+                }
+            }
+        },
+        "cellpose_options": {
+            "title": "Cellpose options",
+            "type": "object",
+            "fa_icon": "fas fa-vial",
+            "description": "Parameters used by Cellpose for the cell segmentation.",
+            "help_text": "These parameters control how the Cellpose cell segmentation algorithm runs. You can set these parameters to customise how Cellpose handles the segmentation.",
+            "properties": {
                 "cellpose_diameter": {
                     "type": "integer",
                     "description": "Diameter of cells in pixels for cellpose.",
@@ -70,6 +79,27 @@
                     "type": "number",
                     "description": "Minimum area of cells in square pixels for cellpose.",
                     "fa_icon": "fas fa-arrows-alt"
+                },
+                "cellpose_flow_threshold": {
+                    "type": "number",
+                    "description": "Flow threshold for cellpose.",
+                    "fa_icon": "fas fa-tachometer-alt"
+                },
+                "cellpose_cellprob_threshold": {
+                    "type": "number",
+                    "description": "Cell probability threshold for cellpose.",
+                    "fa_icon": "fas fa-check-circle"
+                },
+                "cellpose_model_type": {
+                    "type": "string",
+                    "description": "Cellpose model type to use for segmentation.",
+                    "fa_icon": "fas fa-cogs"
+                },
+                "cellpose_pretrained_model": {
+                    "type": "string",
+                    "format": "file-path",
+                    "description": "Path to a pre-trained Cellpose model.",
+                    "fa_icon": "fas fa-file-upload"
                 }
             }
         },
@@ -80,6 +110,13 @@
             "description": "Parameters used for cell measurement.",
             "help_text": "These parameters controls parameters used by the cellmeasurement step of the pipeline.",
             "properties": {
+                "skip_measurements": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Skip cell measurement step.",
+                    "fa_icon": "fas fa-stopwatch",
+                    "help_text": "Set this to `true` to skip the cell measurement step of the pipeline. Nuclei and whole-cells will still be merged but compartment metrics will not be calculated (this can save processing time)."
+                },
                 "pixel_size_microns": {
                     "type": "number",
                     "description": "Pixel size in microns.",
@@ -216,6 +253,9 @@
         },
         {
             "$ref": "#/$defs/sopa_options"
+        },
+        {
+            "$ref": "#/$defs/cellpose_options"
         },
         {
             "$ref": "#/$defs/measurement_options"

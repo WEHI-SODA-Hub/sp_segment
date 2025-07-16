@@ -13,9 +13,9 @@ workflow MESMER_SEGMENT {
 
     ch_mesmer_segment.map {
         sample,
-        run_backsub,
-        run_mesmer,
-        run_cellpose,
+        _run_backsub,
+        _run_mesmer,
+        _run_cellpose,
         tiff,
         nuclear_channel,
         membrane_channels,
@@ -27,8 +27,7 @@ workflow MESMER_SEGMENT {
         mesmer_min_nuclei_area,
         mesmer_remove_border_cells,
         mesmer_pixel_expansion,
-        mesmer_padding,
-        skip_measurements -> [
+        mesmer_padding -> [
             sample,
             tiff,
             nuclear_channel,
@@ -69,29 +68,27 @@ workflow MESMER_SEGMENT {
         .join(MESMERWC.out.segmentation_mask)
         .map {
             sample,
-            run_backsub,
-            run_mesmer,
-            run_cellpose,
+            _run_backsub,
+            _run_mesmer,
+            _run_cellpose,
             tiff,
-            nuclear_channel,
-            membrane_channels,
-            mesmer_combine_method,
-            mesmer_level,
-            mesmer_maxima_threshold,
-            mesmer_interior_threshold,
-            mesmer_maxima_smooth,
-            mesmer_min_nuclei_area,
-            mesmer_remove_border_cells,
-            mesmer_pixel_expansion,
-            mesmer_padding,
-            skip_measurements,
+            _nuclear_channel,
+            _membrane_channels,
+            _mesmer_combine_method,
+            _mesmer_level,
+            _mesmer_maxima_threshold,
+            _mesmer_interior_threshold,
+            _mesmer_maxima_smooth,
+            _mesmer_min_nuclei_area,
+            _mesmer_remove_border_cells,
+            _mesmer_pixel_expansion,
+            _mesmer_padding,
             nuclear_mask,
             whole_cell_mask -> [
                 sample,
                 tiff,
                 nuclear_mask,
-                whole_cell_mask,
-                skip_measurements
+                whole_cell_mask
             ]
         }.set { ch_cellmeasurement }
 
