@@ -11,9 +11,6 @@ nextflow_process {
     test("sopa_convert - tiff") {
 
         when {
-            params {
-                module_args = '--scale-factors 1'
-            }
             process {
                 """
                 input[0] = [

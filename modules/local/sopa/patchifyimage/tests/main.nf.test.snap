@@ -1,0 +1,68 @@
+{
+    "sopa_patchifyimage - zarr": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "patches_file_image:md5,7c5aba41f53293b712fd86d08ed5b36e",
+                        [
+                            ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
+                            ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
+                            "shapes.parquet:md5,d0403d80632ac962138b734523e01b55"
+                        ]
+                    ]
+                ],
+                "patches": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "patches_file_image:md5,7c5aba41f53293b712fd86d08ed5b36e",
+                        [
+                            ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
+                            ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
+                            "shapes.parquet:md5,d0403d80632ac962138b734523e01b55"
+                        ]
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-07-17T15:58:00.161552282"
+    },
+    "sopa_patchifyimage - zarr - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "patches_file_image:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "image_patches:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "patches": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "patches_file_image:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "image_patches:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-07-17T15:52:08.421562598"
+    }
+}

@@ -26,4 +26,19 @@ process SOPA_PATCHIFYIMAGE {
         --patch-width-pixel ${params.patch_width_pixel} \\
         --patch-overlap-pixel ${params.patch_overlap_pixel}
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    mkdir -p ${prefix}.zarr/.sopa_cache
+    mkdir -p ${prefix}.zarr/shapes
+
+    touch ${prefix}.zarr/.sopa_cache/patches_file_image
+    touch ${prefix}.zarr/shapes/image_patches
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        sopa: \$(sopa --version | sed 's/sopa //')
+    END_VERSIONS
+    """
 }
