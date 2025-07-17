@@ -55,6 +55,7 @@ workflow MESMER_SEGMENT {
             _run_cellpose,
             tiff,
             _nuclear_channel,
+            _membrane_channels,
             nuclear_mask,
             whole_cell_mask -> [
                 sample,

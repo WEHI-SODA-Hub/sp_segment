@@ -20,8 +20,10 @@ process MESMERSEGMENT {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def membrane_channel_args = membrane_channels.first().split(":")
-        .collect { "--membrane-channel ${it}" }.join(' ')
+    def membrane_channel_args = membrane_channels.first() != [] ?
+        membrane_channels.first().split(":").collect {
+            "--membrane-channel ${it}"
+        }.join(' ') : ''
     """
     mesmer-segment \\
         ${tiff} \\
