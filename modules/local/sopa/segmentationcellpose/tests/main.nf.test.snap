@@ -1,0 +1,73 @@
+{
+    "sopa_segmentationcellpose - patched zarr": {
+        "content": [
+            {
+                "0": [
+                    
+                ],
+                "cellpose_parquet": [
+                    
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-07-17T16:30:26.883119375"
+    },
+    "sopa_segmentationcellpose - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "0.parquet:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "cellpose_parquet": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "0.parquet:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-07-17T21:08:11.604878245"
+    },
+    "sopa_segmentationcellpose - patched zarr - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "0.parquet:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "cellpose_parquet": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "0.parquet:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-07-17T16:37:25.487378741"
+    }
+}

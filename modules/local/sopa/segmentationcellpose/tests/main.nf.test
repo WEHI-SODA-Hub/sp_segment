@@ -1,0 +1,48 @@
+nextflow_process {
+
+    name "Test Process SOPA_SEGMENTATIONCELLPOSE"
+    script "../main.nf"
+    process "SOPA_SEGMENTATIONCELLPOSE"
+
+    tag "modules"
+    tag "modules_local"
+    tag "sopa_segmentationcellpose"
+
+    // Just a stub as this module has complex input requirements
+    // will be tested in subworkflow instead
+
+    test("sopa_segmentationcellpose - stub") {
+
+        options "-stub"
+
+        when {
+            params {
+                cellpose_diameter = 30
+                cellpose_min_area = 0
+            }
+            process {
+                """
+                zarrDir = file("test.zarr", type: 'dir')
+                zarrDir.mkdir()
+
+                input[0] = [
+                    [ id:'test' ], // meta map
+                    zarrDir,
+                    0, // index
+                    4, // n_patches
+                    "DAPI", // nuclear_channel
+                    "CD45" // membrane_channels
+                ]
+                """
+            }
+        }
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}
