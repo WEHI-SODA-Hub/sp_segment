@@ -44,14 +44,14 @@ def create_synthetic_multichannel_image(
     channel_2 = (channel_1 + channel_0).astype(np.uint16)
 
     # Stack channels together (C, Y, X format)
-    multichannel_data = np.stack([channel_0, channel_1, channel_2], axis=0)
+    multichannel_data = np.stack([channel_0, channel_1, channel_2], axis=2)
 
     ome_xml = create_ome_metadata(size_x, size_y, num_channels=3)
 
     with TiffWriter(output_path) as tiff:
         tiff.write(
             multichannel_data,
-            metadata={'axes': 'CYX'},
+            metadata={'axes': 'YXC'},
             description=ome_xml,
             # Add TIFF tags to indicate this is an OME-TIFF
             extratags=[
