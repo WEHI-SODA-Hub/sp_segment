@@ -21,16 +21,7 @@ workflow MESMER_SEGMENT_WBACKSUB {
             _run_cellpose,
             tiff,
             _nuclear_channel,
-            _membrane_channels,
-            _mesmer_combine_method,
-            _mesmer_level,
-            _mesmer_maxima_threshold,
-            _mesmer_interior_threshold,
-            _mesmer_maxima_smooth,
-            _mesmer_min_nuclei_area,
-            _mesmer_remove_border_cells,
-            _mesmer_pixel_expansion,
-            _mesmer_padding -> [
+            _membrane_channels -> [
                 sample,
                 tiff
             ]
@@ -48,15 +39,6 @@ workflow MESMER_SEGMENT_WBACKSUB {
             _tiff,
             nuclear_channel,
             membrane_channels,
-            mesmer_combine_method,
-            mesmer_level,
-            mesmer_maxima_threshold,
-            mesmer_interior_threshold,
-            mesmer_maxima_smooth,
-            mesmer_min_nuclei_area,
-            mesmer_remove_border_cells,
-            mesmer_pixel_expansion,
-            mesmer_padding,
             backsub_tiff -> [
                 sample,
                 run_backsub,
@@ -64,16 +46,7 @@ workflow MESMER_SEGMENT_WBACKSUB {
                 run_cellpose,
                 backsub_tiff,
                 nuclear_channel,
-                membrane_channels,
-                mesmer_combine_method,
-                mesmer_level,
-                mesmer_maxima_threshold,
-                mesmer_interior_threshold,
-                mesmer_maxima_smooth,
-                mesmer_min_nuclei_area,
-                mesmer_remove_border_cells,
-                mesmer_pixel_expansion,
-                mesmer_padding
+                membrane_channels
             ]
         }.set { ch_mesmer }
 

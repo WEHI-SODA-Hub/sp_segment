@@ -18,8 +18,8 @@ workflow SOPA_SEGMENT_WBACKSUB {
         ch_sopa_wbacksub.map {
             sample,
             tiff,
-            nuclear_channel,
-            membrane_channels -> [
+            _nuclear_channel,
+            _membrane_channels -> [
                 sample,
                 tiff
             ]
@@ -30,7 +30,7 @@ workflow SOPA_SEGMENT_WBACKSUB {
     ch_sopa_wbacksub
         .join( BACKGROUNDSUBTRACT.out.backsub_tif )
         .map { sample,
-            tiff,
+            _tiff,
             nuclear_channel,
             membrane_channels,
             backsub_tiff ->

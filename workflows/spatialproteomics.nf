@@ -31,89 +31,47 @@ workflow SPATIALPROTEOMICS {
     //
     // Construct channel for background subtraction/segmentation workflow
     //
-    ch_samplesheet.map {
-        sample,
-        run_backsub,
-        run_mesmer,
-        run_cellpose,
-        tiff,
-        nuclear_channel,
-        membrane_channels,
-        mesmer_combine_method,
-        mesmer_level,
-        mesmer_maxima_threshold,
-        mesmer_interior_threshold,
-        mesmer_maxima_smooth,
-        mesmer_min_nuclei_area,
-        mesmer_remove_border_cells,
-        mesmer_pixel_expansion,
-        mesmer_padding -> [
-            sample,
-            run_backsub,
-            run_mesmer,
-            run_cellpose,
-            tiff,
-            nuclear_channel,
-            membrane_channels,
-            mesmer_combine_method,
-            mesmer_level,
-            mesmer_maxima_threshold,
-            mesmer_interior_threshold,
-            mesmer_maxima_smooth,
-            mesmer_min_nuclei_area,
-            mesmer_remove_border_cells,
-            mesmer_pixel_expansion,
-            mesmer_padding
-        ]
-    }.branch { it ->
-        backsub_only: it[1].contains(true) && !it[2].contains(true) &&
-                        !it[3].contains(true) // run_backsub true, run_mesmer false, run_cellpose false
+    ch_samplesheet.branch { it ->
+        backsub_only: it[1].contains(true) &&  // run_backsub true
+                        !it[2].contains(true) && // run_mesmer false
+                        !it[3].contains(true)    // run_cellpose false
         backsub_mesmer: it[1].contains(true) && it[2].contains(true) // run_backsub true, run_mesmer true
         mesmer_only: !it[1].contains(true) && it[2].contains(true) // run_backsub false, run_mesmer true
-    }.set { ch_segmentation_samplesheet }
+    }.set { ch_mesmer }
 
-    // TODO: setup test data compatible with background subtraction
     //
     // Run the BACKGROUNDSUBTRACT subworkflow for samples that ONLY require
     // background subtraction (no segmentation)
     //
     BACKGROUNDSUBTRACT(
-        ch_segmentation_samplesheet.backsub_only.map {
+        ch_mesmer.backsub_only.map {
             sample,
             _run_backsub,
             _run_mesmer,
             _run_cellpose,
             tiff,
             _nuclear_channel,
-            _membrane_channels,
-            _mesmer_combine_method,
-            _mesmer_level,
-            _mesmer_maxima_threshold,
-            _mesmer_interior_threshold,
-            _mesmer_maxima_smooth,
-            _mesmer_min_nuclei_area,
-            _mesmer_remove_border_cells,
-            _mesmer_pixel_expansion,
-            _mesmer_padding -> [
+            _membrane_channels -> [
                 sample,
                 tiff
             ]
         }
     )
 
+
     //
     // Run the MESMER_SEGMENT_WBACKSUB subworkflow for samples that require
     // background subtraction and mesmer segmentation
     //
     MESMER_SEGMENT_WBACKSUB(
-        ch_segmentation_samplesheet.backsub_mesmer
+        ch_mesmer.backsub_mesmer
     )
 
     //
     // Run MESMER_SEGMENT subworkflow for samples that ONLY require mesmer segmentation
     //
     MESMER_SEGMENT(
-        ch_segmentation_samplesheet.mesmer_only
+        ch_mesmer.mesmer_only
     )
 
     //
@@ -128,16 +86,7 @@ workflow SPATIALPROTEOMICS {
         _run_cellpose,
         tiff,
         nuclear_channel,
-        membrane_channels,
-        _mesmer_combine_method,
-        _mesmer_level,
-        _mesmer_maxima_threshold,
-        _mesmer_interior_threshold,
-        _mesmer_maxima_smooth,
-        _mesmer_min_nuclei_area,
-        _mesmer_remove_border_cells,
-        _mesmer_pixel_expansion,
-        _mesmer_padding -> [
+        membrane_channels -> [
             sample,
             run_backsub,
             tiff,

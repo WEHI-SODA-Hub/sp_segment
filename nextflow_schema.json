@@ -103,6 +103,68 @@
                 }
             }
         },
+        "mesmer_options": {
+            "title": "Mesmer options",
+            "type": "object",
+            "fa_icon": "fas fa-vial",
+            "description": "Parameters used by the MesmerSegmentation tool.",
+            "help_text": "These parameters control how the Mesmer cell segmentation tool runs. You can set these parameters to customise the MesmerSegmentation parameters.",
+            "properties": {
+                "mesmer_combine_method": {
+                    "type": "string",
+                    "description": "Method used to combine membrane channels (product or max).",
+                    "fa_icon": "fas fa-compress-arrows-alt",
+                    "enum": ["prod", "max"]
+                },
+                "mesmer_segmentation_level": {
+                    "type": "integer",
+                    "description": "Segmentation level (legacy parameter).",
+                    "fa_icon": "fas fa-layer-group",
+                    "minimum": 0,
+                    "maximum": 10
+                },
+                "mesmer_maxima_threshold": {
+                    "type": "number",
+                    "description": "Controls segmentation level directly in mesmer, (lower values = more cells, higher values = fewer cells). ",
+                    "fa_icon": "fas fa-tachometer-alt",
+                    "minimum": 0
+                },
+                "mesmer_interior_threshold": {
+                    "type": "number",
+                    "description": "Controls how conservative model is in distinguishing cell from background (lower values = larger cells, higher values = smaller cells).",
+                    "fa_icon": "fas fa-tachometer-alt"
+                },
+                "mesmer_maxima_smooth": {
+                    "type": "number",
+                    "description": "Controls what is considered a unique cell (lower values = more separate cells, higher values = fewer cells).",
+                    "fa_icon": "fas fa-tachometer-alt",
+                    "minimum": 0
+                },
+                "mesmer_min_nuclei_area": {
+                    "type": "number",
+                    "description": "Minimum area of nuclei to keep in square pixels.",
+                    "fa_icon": "fas fa-arrows-alt",
+                    "minimum": 0
+                },
+                "mesmer_remove_border_cells": {
+                    "type": "boolean",
+                    "description": "Remove cells that touch the image border.",
+                    "fa_icon": "fas fa-border-all"
+                },
+                "mesmer_pixel_expansion": {
+                    "type": "integer",
+                    "description": "Manual pixel expansion after segmentation.",
+                    "fa_icon": "fas fa-expand-arrows-alt",
+                    "minimum": 0
+                },
+                "mesmer_padding": {
+                    "type": "integer",
+                    "description": "Number of pixels to crop the image by on each side before segmentation.",
+                    "fa_icon": "fas fa-crop",
+                    "minimum": 0
+                }
+            }
+        },
         "measurement_options": {
             "title": "Cell measurement options",
             "type": "object",
@@ -256,6 +318,9 @@
         },
         {
             "$ref": "#/$defs/cellpose_options"
+        },
+        {
+            "$ref": "#/$defs/mesmer_options"
         },
         {
             "$ref": "#/$defs/measurement_options"
