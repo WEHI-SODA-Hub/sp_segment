@@ -25,6 +25,11 @@ process SOPA_CONVERT {
         --sdata-path ${meta.id}.zarr \\
         --technology ${params.technology} \\
         ${tiff}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        sopa: \$(sopa --version | sed 's/sopa //')
+    END_VERSIONS
     """
 
     stub:

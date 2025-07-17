@@ -25,6 +25,11 @@ process SOPA_PATCHIFYIMAGE {
         ${zarr} \\
         --patch-width-pixel ${params.patch_width_pixel} \\
         --patch-overlap-pixel ${params.patch_overlap_pixel}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        sopa: \$(sopa --version | sed 's/sopa //')
+    END_VERSIONS
     """
 
     stub:

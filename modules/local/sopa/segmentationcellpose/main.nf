@@ -31,5 +31,22 @@ process SOPA_SEGMENTATIONCELLPOSE {
         --diameter ${params.cellpose_diameter} \\
         --min-area ${params.cellpose_min_area} \\
         ${zarr}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        sopa: \$(sopa --version | sed 's/sopa //')
+    END_VERSIONS
+    """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    mkdir -p ${prefix}.zarr/.sopa_cache/cellpose_boundaries
+    touch ${prefix}.zarr/.sopa_cache/cellpose_boundaries/${index}.parquet
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        sopa: \$(sopa --version | sed 's/sopa //')
+    END_VERSIONS
     """
 }
