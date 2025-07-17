@@ -5,9 +5,7 @@
                 "0": [
                     [
                         {
-                            "id": [
-                                "analyse_samplesheet.csv:md5,bf995bff1feac8b4fc2b4f46e7ae5b08"
-                            ]
+                            "id": "test"
                         },
                         "test_markers.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
@@ -18,9 +16,7 @@
                 "markers": [
                     [
                         {
-                            "id": [
-                                "analyse_samplesheet.csv:md5,bf995bff1feac8b4fc2b4f46e7ae5b08"
-                            ]
+                            "id": "test"
                         },
                         "test_markers.csv:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
@@ -34,7 +30,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-06-19T12:12:23.296865602"
+        "timestamp": "2025-07-17T13:42:31.196455818"
     },
     "extractmarkers - tiff": {
         "content": [
@@ -42,11 +38,9 @@
                 "0": [
                     [
                         {
-                            "id": [
-                                "analyse_samplesheet.csv:md5,bf995bff1feac8b4fc2b4f46e7ae5b08"
-                            ]
+                            "id": "test"
                         },
-                        "test_markers.csv:md5,4b612101a8ba4a1c4c2f3f95b78bc366"
+                        "test_markers.csv:md5,e6772b607244ac42fdd6332674ab04cc"
                     ]
                 ],
                 "1": [
@@ -55,11 +49,9 @@
                 "markers": [
                     [
                         {
-                            "id": [
-                                "analyse_samplesheet.csv:md5,bf995bff1feac8b4fc2b4f46e7ae5b08"
-                            ]
+                            "id": "test"
                         },
-                        "test_markers.csv:md5,4b612101a8ba4a1c4c2f3f95b78bc366"
+                        "test_markers.csv:md5,e6772b607244ac42fdd6332674ab04cc"
                     ]
                 ],
                 "versions": [
@@ -71,6 +63,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-06-19T12:11:54.556332537"
+        "timestamp": "2025-07-17T13:42:03.667387774"
     }
 }

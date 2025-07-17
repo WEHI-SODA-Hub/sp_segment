@@ -12,12 +12,10 @@ nextflow_process {
 
         when {
             process {
-                // NOTE: This test file doesn't actually work, but I don't have a test comet image at the moment
                 """
                 input[0] = [
                     [ id:'test' ], // meta map
-                    file('https://github.com/nf-core/test-datasets/raw/modules/data/imaging/segmentation/nuclear_image.tif', checkIfExists: true)
-
+                    file('${projectDir}/tests/data/comet/synthetic_multichannel.tif')
                 ]
                 """
             }
@@ -41,7 +39,7 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id:'test' ], // meta map
-                    file('https://github.com/nf-core/test-datasets/raw/modules/data/imaging/segmentation/nuclear_image.tif', checkIfExists: true)
+                    file('${projectDir}/tests/data/comet/synthetic_multichannel.tif')
                 ]
                 """
             }

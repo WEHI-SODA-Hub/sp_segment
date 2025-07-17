@@ -26,4 +26,15 @@ process SOPA_CONVERT {
         --technology ${params.technology} \\
         ${tiff}
     """
+
+    stub:
+    prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    touch ${prefix}.zarr
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        sopa: \$(sopa --version | sed 's/sopa //')
+    END_VERSIONS
+    """
 }
