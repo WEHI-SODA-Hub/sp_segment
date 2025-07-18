@@ -1,0 +1,67 @@
+{
+    "mesmer_segment - tiff": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.geojson:md5,290f1b6275f85a9a55368946e3414228"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_whole-cell.tiff:md5,20ee420fad9347f4072d2c0a0c43033d"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_nuclear.tiff:md5,49dd1652948c2e2d4bb56b67d171e1a7"
+                    ]
+                ],
+                "3": [
+                    
+                ],
+                "annotations": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.geojson:md5,290f1b6275f85a9a55368946e3414228"
+                    ]
+                ],
+                "nuclear_tif": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_nuclear.tiff:md5,49dd1652948c2e2d4bb56b67d171e1a7"
+                    ]
+                ],
+                "versions": [
+                    
+                ],
+                "whole_cell_tif": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_whole-cell.tiff:md5,20ee420fad9347f4072d2c0a0c43033d"
+                    ]
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-07-18T10:40:35.726792001"
+    }
+}

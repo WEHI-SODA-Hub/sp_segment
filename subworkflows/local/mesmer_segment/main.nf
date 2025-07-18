@@ -5,7 +5,7 @@ include { CELLMEASUREMENT            } from '../../../modules/local/cellmeasurem
 workflow MESMER_SEGMENT {
 
     take:
-    ch_mesmer_segment // channel: segmentation parameters
+    ch_mesmer_segment // channel: [ (sample, run_backsub, run_mesmer, run_cellpose, tiff, nuclear_channel, membrane_channels) ]
 
     main:
 
