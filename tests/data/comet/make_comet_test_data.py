@@ -52,11 +52,7 @@ def create_synthetic_multichannel_image(
         tiff.write(
             multichannel_data,
             metadata={'axes': 'YXC'},
-            description=ome_xml,
-            # Add TIFF tags to indicate this is an OME-TIFF
-            extratags=[
-                ('ImageDescription', 's', 0, ome_xml, True),  # OME-XML in ImageDescription
-            ]
+            description=ome_xml
         )
     print(f"Synthetic multichannel image saved to: {output_path}")
     return multichannel_data, ome_xml
@@ -81,14 +77,13 @@ def create_ome_metadata(size_x, size_y, num_channels=3):
     <Image ID="Image:0" Name="SyntheticMultichannel">
         <Pixels ID="Pixels:0:0" DimensionOrder="XYZCT" SizeC="{num_channels}" SizeT="1" SizeX="{size_x}" SizeY="{size_y}" SizeZ="1" Type="uint16">'''
 
-    ome_xml += '''
-        <TiffData/>
-    '''
-
     # Add Channel elements
     for i, config in enumerate(channels_config):
         ome_xml += f'''
             <Channel ID="Channel:{i}" Color="{config['color']}" Name="{config['name']}" SamplesPerPixel="1"/>'''
+
+    ome_xml += '''
+            <TiffData/>'''
 
     # Add Plane elements
     for i in range(num_channels):
