@@ -6,6 +6,8 @@ lint:
     - assets/multiqc_config.yml
     - conf/igenomes.config
     - conf/igenomes_ignored.config
+    - conf/test.config
+    - conf/test_full.config
     - assets/multiqc_config.yml
     - .github/workflows/nf-test.yml
     - .github/workflows/awsfulltest.yml

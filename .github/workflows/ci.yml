@@ -35,7 +35,8 @@ jobs:
           - "docker"
           - "singularity"
         test_name:
-          - "test"
+          - "test_mesmer"
+          - "test_cellpose"
         isMaster:
           - ${{ github.base_ref == 'master' }}
         # Exclude conda and singularity on dev
@@ -80,13 +81,6 @@ jobs:
 
       - name: Clean up Disk space
         uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
-
-      - name: Download test data
-        run: |
-          cd ${GITHUB_WORKSPACE}
-          mkdir -p data
-          wget -q https://raw.githubusercontent.com/WEHI-SODA-Hub/spatialVis/refs/heads/main/data/simulated.csv -O data/simulated.csv
-          wget -q https://raw.githubusercontent.com/WEHI-SODA-Hub/spatialVis/refs/heads/main/data/hierarchy.yaml -O data/hierarchy.yaml
 
       - name: Log into Container registry ${{ env.CONTAINER_REGISTRY }}
         uses: docker/login-action@v2
