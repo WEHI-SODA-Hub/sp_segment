@@ -6,7 +6,7 @@
 </h1>
 
 [![GitHub Actions CI Status](https://github.com/WEHI-SODA-Hub/spatialproteomics/actions/workflows/ci.yml/badge.svg)](https://github.com/WEHI-SODA-Hub/spatialproteomics/actions/workflows/ci.yml)
-[![GitHub Actions Linting Status](https://github.com/WEHI-SODA-Hub/spatialproteomics/actions/workflows/linting.yml/badge.svg)](https://github.com/WEHI-SODA-Hub/spatialproteomics/actions/workflows/linting.yml)[![AWS CI](https://img.shields.io/badge/CI%20tests-full%20size-FF9900?labelColor=000000&logo=Amazon%20AWS)](https://nf-co.re/spatialproteomics/results)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![GitHub Actions Linting Status](https://github.com/WEHI-SODA-Hub/spatialproteomics/actions/workflows/linting.yml/badge.svg)](https://github.com/WEHI-SODA-Hub/spatialproteomics/actions/workflows/linting.yml)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
 [![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.04.2-23aa62.svg)](https://www.nextflow.io/)
@@ -15,37 +15,49 @@
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
 [![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/WEHI-SODA-Hub/spatialproteomics)
 
-[![Get help on Slack](http://img.shields.io/badge/slack-nf--core%20%23spatialproteomics-4A154B?labelColor=000000&logo=slack)](https://nfcore.slack.com/channels/spatialproteomics)[![Follow on Twitter](http://img.shields.io/badge/twitter-%40nf__core-1DA1F2?labelColor=000000&logo=twitter)](https://twitter.com/nf_core)[![Follow on Mastodon](https://img.shields.io/badge/mastodon-nf__core-6364ff?labelColor=FFFFFF&logo=mastodon)](https://mstdn.science/@nf_core)[![Watch on YouTube](http://img.shields.io/badge/youtube-nf--core-FF0000?labelColor=000000&logo=youtube)](https://www.youtube.com/c/nf-core)
-
 ## Introduction
 
 **WEHI-SODA-Hub/spatialproteomics** is a pipeline for processing COMET and MIBI data. It can perform:
 
-- Background subtraction (COMET) -- generates a background subtracted TIFF
-- Segmentation via Cellpose (COMET) or Mesmer (COMET/MIBI) -- generates a GeoJSON file with whole-cell/nuclear segmentations
-- QC/analysis report using [spatialVis](https://github.com/WEHI-SODA-Hub/spatialVis) for phenotyped data (COMET/MIBI) -- generates a html report and R data for further analysis
+- Background subtraction (COMET only) -- generates a background subtracted TIFF
+- Segmentation via Cellpose (COMET) or Mesmer (COMET/MIBI)
+  - generates a GeoJSON file with consolidated whole-cell/nuclear segmentations
+  - calculates cell compartment measurements and channel intensities
 
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
+![spatialproteomics workflow](assets/spatialproteomics_workflow.png)
+
+The pipeline uses the following tools:
+
+- [Background_subtraction](https://github.com/SchapiroLabor/Background_subtraction)
+  -- background subtraction tool for COMET.
+- [MesmerSegmentation](https://github.com/WEHI-SODA-Hub/mesmersegmentation) -- a
+  CLI for running Mesmer segmentation of MIBI and OME-XML TIFFs.
+- [cellmeasurement](https://github.com/WEHI-SODA-Hub/cellmeasurement) -- a
+  Groovy app that matches whole-cell segmentations with nuclei, and uses the
+  QuPath API to calculate compartment measurements and intensities.
+- [sopa](https://github.com/gustaveroussy/sopa) -- we use the sopa CLI tool to
+  patchify images and perform cellpose segmentation.
 
 ## Usage
 
 > [!NOTE]
-> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
+> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test_mesmer` or `-profile test_cellpose` before running the workflow on actual data.
 
-Usage will depend on your desired step.
+Usage will depend on your desired steps.
 
 ### Background subtraction
+
+> [!NOTE]
+> This step will only work with COMET OME-TIF files.
 
 Prepare a sample sheet as follows:
 
 `samplesheet.csv`:
 
 ```csv
-sample,function,seg_tiff
-sample1,backsub,/path/to/sample1.tiff
-sample2,backsub,/path/to/sample2.tiff
+sample,run_backsub,tiff
+sample1,true,/path/to/sample1.tiff
+sample2,true,/path/to/sample2.tiff
 ```
 
 You may also prefer to use YAML for your samplesheet, either is supported:
@@ -54,35 +66,15 @@ You may also prefer to use YAML for your samplesheet, either is supported:
 
 ```yaml
 - sample: sample1
-  function: backsub
+  run_backsub: backsub
   seg_tiff: /path/to/sample1.tiff
 - sample: sample2
-  function: backsub
-  seg_tiff: /path/to/sample2.tiff
+  run_backsub: backsub
+  tiff: /path/to/sample2.tiff
 ```
 
-Now, you can run the pipeline using:
-
-```bash
-nextflow run WEHI-SODA-Hub/spatialproteomics \
-   -profile <docker/singularity/.../institute> \
-   --input samplesheet.yml \
-   --outdir <OUTDIR>
-```
-
-### Analysis pipeline
-
-Prepare a samplesheet with your input data that looks as follows:
-
-`samplesheet.csv`:
-
-```csv
-sample,function,an_expression_file,an_hierarchy_file,an_markers
-sample1,analyse,data/simulated.csv,data/hierarchy.yaml,CD3:CD8:CD4:CD20:CD68
-sample2,analyse,data/simulated.csv,data/hierarchy.yaml,
-```
-
-Refer to the [spatialVis](https://github.com/WEHI-SODA-Hub/spatialVis) repository for more information on the input format and hierarchy file.
+If you don't specify any segmentation algorithm to run (mesmer or cellpose), the
+pipeline will run a background subtraction only.
 
 Now, you can run the pipeline using:
 
@@ -96,27 +88,111 @@ nextflow run WEHI-SODA-Hub/spatialproteomics \
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
-For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/spatialproteomics/usage) and the [parameter documentation](https://nf-co.re/spatialproteomics/parameters).
+### Mesmer segmentation
+
+If you want to run Mesmer as your segmentation algorithm, you can specify a
+config file like so:
+
+```csv
+sample,run_backsub,run_mesmer,tiff,nuclear_channel,membrane_channels
+sample1,true,true,/path/to/sample1.tiff,DAPI,CD45:CD8
+sample2,false,true,/path/to/sample2.tiff,DAPI,CD45
+```
+
+Nuclear channels only support one entry; membrane channels may have multiple
+values separated by `:` characters. You can also set the following parameters,
+either via CLI (e.g., `--mesmer_combine_method prod` or in a config file pass to
+the workflow via `-c`:
+
+| Parameter Name             | Description                                                                                                                             |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| mesmer_combine_method      | Method used to combine membrane channels (product or max).                                                                              |
+| mesmer_segmentation_level  | Segmentation level (legacy parameter).                                                                                                  |
+| mesmer_maxima_threshold    | Controls segmentation level directly in mesmer, (lower values = more cells, higher values = fewer cells).                               |
+| mesmer_interior_threshold  | Controls how conservative model is in distinguishing cell from background (lower values = larger cells, higher values = smaller cells). |
+| mesmer_maxima_smooth       | Controls what is considered a unique cell (lower values = more separate cells, higher values = fewer cells).                            |
+| mesmer_min_nuclei_area     | Minimum area of nuclei to keep in square pixels.                                                                                        |
+| mesmer_remove_border_cells | Remove cells that touch the image border.                                                                                               |
+| mesmer_pixel_expansion     | Manual pixel expansion after segmentation.                                                                                              |
+| mesmer_padding             | Number of pixels to crop the image by on each side before segmentation.                                                                 |
+
+> ![NOTE]
+> You cannot run both Mesmer and Cellpose segmentation on the same sample (with
+> the same name). If you want to run both on a sample, put it on a different
+> line and give it a different sample name.
+
+### Cellpose segmentation
+
+If you want to run Cellpose as your segmentation algorithm, you can specify a
+config file like so:
+
+```csv
+sample,run_backsub,run_cellpose,tiff,nuclear_channel,membrane_channels
+sample1,true,true,/path/to/sample1.tiff,DAPI,CD45:CD8
+sample2,false,true,/path/to/sample2.tiff,DAPI,CD45
+```
+
+As with Mesmer, nuclear channels only support one entry; membrane channels may
+have multiple values separated by `:` characters. You can also set the following
+parameters, either via CLI (e.g., `--mesmer_combine_method prod` or in a config
+file pass to the workflow via `-c`:
+
+| Parameter Name              | Description                                          |
+| --------------------------- | ---------------------------------------------------- |
+| cellpose_diameter           | Diameter of cells in pixels for cellpose.            |
+| cellpose_min_area           | Minimum area of cells in square pixels for cellpose. |
+| cellpose_flow_threshold     | Flow threshold for cellpose.                         |
+| cellpose_cellprob_threshold | Cell probability threshold for cellpose.             |
+| cellpose_model_type         | Cellpose model type to use for segmentation.         |
+| cellpose_pretrained_model   | Path to a pre-trained Cellpose model.                |
+
+Cellpose will run in a parallelised patched workflow using sopa. To control the
+patching process, you can use the `patch_width_pixel` and `patch_overlap_pixel`
+parameters.
+
+If you want to skip measurements (this may take some time for large images), you
+can use set the parameter `skip_measurements` to `true`.
 
 ## Pipeline output
 
-To see the results of an example test run with a full size dataset refer to the [results](https://nf-co.re/spatialproteomics/results) tab on the nf-core website pipeline page.
-For more details about the output files and reports, please refer to the
-[output documentation](https://nf-co.re/spatialproteomics/output).
+The pipeline will create the following outputs with background subtraction
+(COMET only):
+
+- `extractmarkers/sample.csv` -- marker names, background per channel and
+  exposure time
+- `backsub/sample.ome.tif` -- bakground subtracted tiff image.
+
+For sopa cellpose segmentation:
+
+- `sopa/sample.zarr` -- SpatialData converted image containing segmentations.
+- `parquettotiffwholecell/sample_whole-cell.tiff` -- tiff label masks from cellpose segmentation for
+  whole cell segmentation.
+- `parquettotiffnuclear/sample_nuclear.tiff` -- tiff label masks from cellpose segmentation for
+  nuclear segmentation.
+
+For mesmer segmentation:
+
+- `mesmerwc/sample_whole-cell.tiff` -- tiff label masks for cellpose whole-cell segmentation.
+- `mesmernuc/sample_nuclear.tiff` -- tiff label masks for cellpose nuclear segmentation.
+
+And for either method:
+
+- `cellmeasurement/sample.geojson` -- resolved whole-cell and nuclear
+  segmentations, optionally containing measurements and intensity values per
+  cell, compatible with QuPath.
 
 ## Credits
 
-WEHI-SODA-Hub/spatialproteomics was originally written by WEHI SODA Hub.
+WEHI-SODA-Hub/spatialproteomics was originally written by the WEHI SODA-Hub.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
+- Michael McKay (@mikemcka)
+- Emma Watson
 
 ## Contributions and Support
 
 If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
-
-For further information or help, don't hesitate to get in touch on the [Slack `#spatialproteomics` channel](https://nfcore.slack.com/channels/spatialproteomics) (you can join with [this invite](https://nf-co.re/join/slack)).
 
 ## Citations
 
@@ -127,7 +203,7 @@ For further information or help, don't hesitate to get in touch on the [Slack `#
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
-You can cite the `nf-core` publication as follows:
+This pipeline was created using the `nf-core` template. You can cite the `nf-core` publication as follows:
 
 > **The nf-core framework for community-curated bioinformatics pipelines.**
 >
