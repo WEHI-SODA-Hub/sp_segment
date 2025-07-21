@@ -116,7 +116,8 @@ the workflow via `-c`:
 | mesmer_pixel_expansion     | Manual pixel expansion after segmentation.                                                                                              |
 | mesmer_padding             | Number of pixels to crop the image by on each side before segmentation.                                                                 |
 
-> ![NOTE]
+
+> [!WARNING]
 > You cannot run both Mesmer and Cellpose segmentation on the same sample (with
 > the same name). If you want to run both on a sample, put it on a different
 > line and give it a different sample name.
