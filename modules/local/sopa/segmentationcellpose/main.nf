@@ -19,7 +19,8 @@ process SOPA_SEGMENTATIONCELLPOSE {
 
     script:
     def args = task.ext.args ?: ''
-    def membrane_channel_args = membrane_channels ? membrane_channels.split(":").collect(
+    def membrane_channel_args = membrane_channels && membrane_channels != "" ?
+        membrane_channels.split(":").collect(
         { "--channels ${it}" }
     ).join(' ') : ''
     def channels = "--channels ${nuclear_channel} ${membrane_channel_args}"

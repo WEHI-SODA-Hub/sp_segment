@@ -17,10 +17,20 @@
 
 ## Introduction
 
-**WEHI-SODA-Hub/spatialproteomics** is a pipeline for processing COMET and MIBI data. It can perform:
+**WEHI-SODA-Hub/spatialproteomics** is a pipeline for running cell segmentation
+on COMET and MIBI data. For COMET, background subtraction can be performed
+followed by patched cellpose segmentation, or non-patched mesmer segmentation.
+For MIBI, mesmer segmentation can be run. Whole-cell and nuclear segmentations
+are run separately, and then consolidated into whole cells with nuclei with full
+shape and intensity measurements per compartment. The output GeoJSON files can
+be viewed in QuPath.
+
+The pipeline performs these steps:
 
 - Background subtraction (COMET only) -- generates a background subtracted TIFF
-- Segmentation via Cellpose (COMET) or Mesmer (COMET/MIBI)
+- Segmentation via Cellpose (COMET) or Mesmer (COMET/MIBI) for nuclear and whole
+  cell
+- Cell measurement
   - generates a GeoJSON file with consolidated whole-cell/nuclear segmentations
   - calculates cell compartment measurements and channel intensities
 
@@ -115,7 +125,6 @@ the workflow via `-c`:
 | mesmer_remove_border_cells | Remove cells that touch the image border.                                                                                               |
 | mesmer_pixel_expansion     | Manual pixel expansion after segmentation.                                                                                              |
 | mesmer_padding             | Number of pixels to crop the image by on each side before segmentation.                                                                 |
-
 
 > [!WARNING]
 > You cannot run both Mesmer and Cellpose segmentation on the same sample (with

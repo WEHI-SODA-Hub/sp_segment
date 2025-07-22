@@ -1,0 +1,63 @@
+nextflow_workflow {
+
+    name "Test Subworkflow SOPA_SEGMENT_COMPARTMENT"
+    script "../main.nf"
+    workflow "SOPA_SEGMENT_COMPARTMENT"
+
+    tag "subworkflows"
+    tag "subworkflows_"
+    tag "subworkflows/sopa_segment_compartment"
+    tag "subworkflows/sopa_cellpose"
+    tag "sopa_convert"
+    tag "sopa_patchifyimage"
+    tag "sopa_cellpose"
+    tag "sopa_resolvecellpose"
+
+    test("sopa_segment_compartment - tiff - whole-cell") {
+
+        when {
+            workflow {
+                """
+                input[0] = Channel.of([
+                    [ id: 'test' ],
+                    file('${projectDir}/tests/data/comet/synthetic_bgsub.ome.tif'), // tiff
+                    ["DAPI"], // nuclear channel
+                    ["CD45"]  // membrane channels
+                ])
+                input[1] = 'whole-cell'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(workflow.out).match()}
+            )
+        }
+    }
+
+    test("sopa_segment_compartment - tiff - nuclear") {
+
+        when {
+            workflow {
+                """
+                input[0] = Channel.of([
+                    [ id: 'test' ],
+                    file('${projectDir}/tests/data/comet/synthetic_bgsub.ome.tif'), // tiff
+                    ["DAPI"], // nuclear channel
+                    [""]  // membrane channels
+                ])
+                input[1] = 'nuclear'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success},
+                { assert snapshot(workflow.out).match()}
+            )
+        }
+    }
+}

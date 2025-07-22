@@ -13,6 +13,7 @@ process SOPA_CONVERT {
 
     input:
     tuple val(meta), path(tiff)
+    val(compartment)
 
     output:
     tuple val(meta), path("*.zarr"), emit: spatial_data
@@ -22,7 +23,7 @@ process SOPA_CONVERT {
     """
     sopa convert \\
         ${args} \\
-        --sdata-path ${meta.id}.zarr \\
+        --sdata-path ${meta.id}_${compartment}.zarr \\
         --technology ${params.technology} \\
         ${tiff}
 
@@ -35,7 +36,7 @@ process SOPA_CONVERT {
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.zarr
+    touch ${prefix}_${compartment}.zarr
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

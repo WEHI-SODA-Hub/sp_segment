@@ -42,9 +42,7 @@ workflow SOPA_SEGMENT_WBACKSUB {
     )
 
     emit:
-    zarr                 = SOPA_SEGMENT.out.zarr                 // channel: [ val(meta), *.zarr ]
-    nuclear_boundaries   = SOPA_SEGMENT.out.nuclear_boundaries   // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
-    wholecell_boundaries = SOPA_SEGMENT.out.wholecell_boundaries // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]
+    annotations = SOPA_SEGMENT.out.annotations // channel: [ val(meta), *.geojson ]
 
-    versions = ch_versions                                       // channel: [ versions.yml ]
+    versions = ch_versions                     // channel: [ versions.yml ]
 }
