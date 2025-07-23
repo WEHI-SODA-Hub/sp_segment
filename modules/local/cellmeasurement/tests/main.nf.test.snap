@@ -7,22 +7,22 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,abca05b5f980f362bc39786e4bb7d610"
+                        "test.geojson:md5,59c0adb6e4821d0f68d544b4e2b52547"
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,911b2db92c964303bac36ad611f832a8"
+                    "versions.yml:md5,896331f4218260db47d0130709b743e3"
                 ],
                 "annotations": [
                     [
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,abca05b5f980f362bc39786e4bb7d610"
+                        "test.geojson:md5,59c0adb6e4821d0f68d544b4e2b52547"
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,911b2db92c964303bac36ad611f832a8"
+                    "versions.yml:md5,896331f4218260db47d0130709b743e3"
                 ]
             }
         ],
@@ -30,7 +30,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-07-23T12:44:33.01441161"
+        "timestamp": "2025-07-23T15:14:09.197398308"
     },
     "cellmeasurement - with cell expansion and skip measurements": {
         "content": [
@@ -77,7 +77,7 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,911b2db92c964303bac36ad611f832a8"
+                    "versions.yml:md5,896331f4218260db47d0130709b743e3"
                 ],
                 "annotations": [
                     [
@@ -88,7 +88,7 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,911b2db92c964303bac36ad611f832a8"
+                    "versions.yml:md5,896331f4218260db47d0130709b743e3"
                 ]
             }
         ],
@@ -96,7 +96,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-07-02T13:00:16.806661896"
+        "timestamp": "2025-07-23T15:14:36.771111734"
     },
     "cellmeasurement - skip measurements": {
         "content": [

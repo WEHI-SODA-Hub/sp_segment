@@ -23,7 +23,7 @@ process CELLMEASUREMENT {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    /entrypoint.sh \\
+    /cellmeasurement.sh \\
         --args="${args} \\
             --nuclear-mask=\$(readlink ${nuclear_mask}) \\
             --whole-cell-mask=\$(readlink ${whole_cell_mask}) \\
@@ -32,7 +32,7 @@ process CELLMEASUREMENT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        cellmeasurement: \$(/entrypoint.sh --version)
+        cellmeasurement: \$(/cellmeasurement.sh --version)
     END_VERSIONS
     """
 
@@ -43,7 +43,7 @@ process CELLMEASUREMENT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        cellmeasurement: \$(/entrypoint.sh --version)
+        cellmeasurement: \$(/cellmeasurement.sh --version)
     END_VERSIONS
     """
 }
