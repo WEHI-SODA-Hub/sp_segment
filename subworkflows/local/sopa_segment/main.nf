@@ -61,8 +61,7 @@ workflow SOPA_SEGMENT {
     // Run CELLMEASUREMENT module on the whole-cell and nuclear segmentation masks
     //
     CELLMEASUREMENT(
-        ch_cellmeasurement,
-        params.pixel_size_microns
+        ch_cellmeasurement
     )
 
     emit:

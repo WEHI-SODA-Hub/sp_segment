@@ -7,7 +7,7 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,5de548fd37fcb10c8e55a0dfe1499dbb"
+                        "test.geojson:md5,abca05b5f980f362bc39786e4bb7d610"
                     ]
                 ],
                 "1": [
@@ -18,7 +18,7 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,5de548fd37fcb10c8e55a0dfe1499dbb"
+                        "test.geojson:md5,abca05b5f980f362bc39786e4bb7d610"
                     ]
                 ],
                 "versions": [
@@ -30,7 +30,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-07-18T11:48:12.682864838"
+        "timestamp": "2025-07-23T12:44:33.01441161"
     },
     "cellmeasurement - with cell expansion and skip measurements": {
         "content": [

@@ -185,6 +185,12 @@
                     "minimum": 0.1,
                     "maximum": 10.0,
                     "fa_icon": "fas fa-ruler-combined"
+                },
+                "cell_expansion": {
+                    "type": "integer",
+                    "description": "Number of pixels to expand the whole-cell boundary.",
+                    "fa_icon": "fas fa-expand-arrows-alt",
+                    "minimum": 0
                 }
             }
         },

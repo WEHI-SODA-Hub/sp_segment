@@ -19,7 +19,6 @@ nextflow_process {
                     file('${projectDir}/tests/data/mesmer/test_data_nuclear.tiff'),
                     file('${projectDir}/tests/data/mesmer/test_data_whole-cell.tiff')
                 ]
-                input[1] = 0.5 // pixel_size_microns
                 """
             }
         }
@@ -46,7 +45,6 @@ nextflow_process {
                     file('${projectDir}/tests/data/mesmer/test_data_nuclear.tiff'),
                     file('${projectDir}/tests/data/mesmer/test_data_whole-cell.tiff')
                 ]
-                input[1] = 0.5 // pixel_size_microns
                 """
             }
         }

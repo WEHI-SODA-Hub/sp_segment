@@ -11,7 +11,6 @@ process CELLMEASUREMENT {
         path(tiff),
         path(nuclear_mask),
         path(whole_cell_mask)
-    val(pixel_size_microns)
 
     output:
     tuple val(meta), path("*.geojson"), emit: annotations
@@ -23,16 +22,13 @@ process CELLMEASUREMENT {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-
-    def skip_measurements_arg = params.skip_measurements ? '--skip-measurements=true' : '--skip-measurements=false'
     """
     /entrypoint.sh \\
         --args="${args} \\
             --nuclear-mask=\$(readlink ${nuclear_mask}) \\
             --whole-cell-mask=\$(readlink ${whole_cell_mask}) \\
             --tiff-file=\$(readlink ${tiff}) \\
-            --output-file=\$PWD/${prefix}.geojson \\
-            ${skip_measurements_arg}"
+            --output-file=\$PWD/${prefix}.geojson"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
