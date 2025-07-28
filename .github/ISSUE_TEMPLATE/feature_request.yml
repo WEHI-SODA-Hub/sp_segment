@@ -1,5 +1,5 @@
 name: Feature request
-description: Suggest an idea for the nf-core/spatialmibi pipeline
+description: Suggest an idea for the wehi-soda-hub/spatialproteomics pipeline
 labels: enhancement
 body:
   - type: textarea

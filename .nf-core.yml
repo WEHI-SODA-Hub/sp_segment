@@ -9,8 +9,11 @@ lint:
     - conf/test.config
     - conf/test_full.config
     - assets/multiqc_config.yml
+    - .github/ISSUE_TEMPLATE/config.yml
     - .github/workflows/nf-test.yml
+    - .github/workflows/awstest.yml
     - .github/workflows/awsfulltest.yml
+    - .github/workflows/fix-linting.yml
     - .github/actions/get-shards/action.yml
     - .github/actions/nf-test/action.yml
     - .github/actions/
