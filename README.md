@@ -77,11 +77,14 @@ You may also prefer to use YAML for your samplesheet, either is supported:
 ```yaml
 - sample: sample1
   run_backsub: backsub
-  seg_tiff: /path/to/sample1.tiff
+  tiff: /path/to/sample1.tiff
 - sample: sample2
   run_backsub: backsub
   tiff: /path/to/sample2.tiff
 ```
+
+> [!WARNING]
+> Please ensure that your image name and all directories in your file path do not contain spaces.
 
 If you don't specify any segmentation algorithm to run (mesmer or cellpose), the
 pipeline will run a background subtraction only.
