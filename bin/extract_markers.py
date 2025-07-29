@@ -17,12 +17,20 @@ from pathlib import Path
 
 import pandas as pd
 import typer
-from typing import Annotated
+from typing import Annotated, List
 from tifffile import TiffFile
 
 
-def main(tiff_path: Annotated[Path, typer.Argument(
-        help="Path to the TIFF input file.")]):
+def main(
+    tiff_path: Annotated[Path, typer.Argument(
+        help="Path to the TIFF input file."
+    )],
+    remove_marker: Annotated[List[str], typer.Option(
+        '--remove-marker',
+        '-r',
+        help="List of markers to remove from the output (case sensitive)."
+    )] = []
+):
     """
     Extracts markers, exposure times, and background channels from COMET
     OME-TIFF
@@ -40,6 +48,14 @@ def main(tiff_path: Annotated[Path, typer.Argument(
         name = ch.attrib.get('Name')
         channel_index = ch.attrib.get('ID')
         channel_meta.append({'index': channel_index, 'marker_name': name})
+
+    # Validate remove channel list
+    markers: List[str] = [cm['marker_name'] for cm in channel_meta]
+    for remove in remove_marker:
+        if remove not in markers:
+            raise ValueError(
+                f"Channel '{remove}' not found in the OME-TIFF metadata."
+            )
 
     # Extract exposure times
     planes = root.findall('.//ome:Plane', ns)
@@ -70,7 +86,13 @@ def main(tiff_path: Annotated[Path, typer.Argument(
     df = pd.DataFrame(channel_meta)
     df = df[['marker_name', 'background', 'exposure']]
     df['exposure'] = df['exposure'].astype(float)
-    df['remove'] = ''
+
+    # Handle removal of channels
+    markers_to_remove: List[str] = \
+        ['TRUE' if marker in remove_marker else ''
+            for marker in df['marker_name']]
+    df['remove'] = markers_to_remove
+
     df.to_csv(sys.stdout, index=False)
 
 

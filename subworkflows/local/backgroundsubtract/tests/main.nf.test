@@ -12,6 +12,9 @@ nextflow_workflow {
     test("backgroundsubtract - tiff") {
 
         when {
+            params {
+                remove_markers = 'TRITC'
+            }
             workflow {
                 """
                 input[0] = [

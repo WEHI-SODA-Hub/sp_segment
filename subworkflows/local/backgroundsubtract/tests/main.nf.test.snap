@@ -7,7 +7,7 @@
                         {
                             "id": "test"
                         },
-                        "test.ome.tif:md5,765ffce965f232fc3761666cce0fa95a"
+                        "test.ome.tif:md5,e9c527697ba38005638bd1951357bfaf"
                     ]
                 ],
                 "1": [
@@ -15,7 +15,7 @@
                         {
                             "id": "test"
                         },
-                        "test.csv:md5,863569d300cf67574c8f9735f69ac9d2"
+                        "test.csv:md5,3692adbd67412c39b64a138d3a0ee448"
                     ]
                 ],
                 "2": [
@@ -26,7 +26,7 @@
                         {
                             "id": "test"
                         },
-                        "test.ome.tif:md5,765ffce965f232fc3761666cce0fa95a"
+                        "test.ome.tif:md5,e9c527697ba38005638bd1951357bfaf"
                     ]
                 ],
                 "markers": [
@@ -34,7 +34,7 @@
                         {
                             "id": "test"
                         },
-                        "test.csv:md5,863569d300cf67574c8f9735f69ac9d2"
+                        "test.csv:md5,3692adbd67412c39b64a138d3a0ee448"
                     ]
                 ],
                 "versions": [
@@ -46,6 +46,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-07-23T12:49:16.512785974"
+        "timestamp": "2025-07-29T15:12:08.477703201"
     }
 }

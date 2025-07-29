@@ -20,6 +20,9 @@ nextflow_workflow {
     test("sopa_segment_wbacksub - tiff") {
 
         when {
+            params {
+                remove_markers = 'TRITC'
+            }
             workflow {
                 """
                 input[0] = Channel.of([

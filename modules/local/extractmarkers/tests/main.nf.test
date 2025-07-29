@@ -11,6 +11,9 @@ nextflow_process {
     test("extractmarkers - tiff") {
 
         when {
+            params {
+                module_args = '--remove-marker TRITC'
+            }
             process {
                 """
                 input[0] = [

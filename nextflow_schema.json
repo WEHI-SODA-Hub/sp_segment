@@ -38,6 +38,21 @@
                 }
             }
         },
+        "background_subtract_options": {
+            "title": "Background subtraction options",
+            "type": "object",
+            "fa_icon": "fas fa-adjust",
+            "description": "Parameters used for background subtraction.",
+            "help_text": "These parameters control how the background subtraction step of the pipeline runs. You can set these parameters to customise how the background subtraction is performed.",
+            "properties": {
+                "remove_markers": {
+                    "type": "string",
+                    "description": "Markers to remove from the background subtracted image.",
+                    "fa_icon": "fas fa-eraser",
+                    "help_test": "Comma-separated list of marker channels to remove from the background subtracted image. Note the channel name must match exactly (it is case sensitive)."
+                }
+            }
+        },
         "sopa_options": {
             "title": "SOPA options",
             "type": "object",
@@ -318,6 +333,9 @@
     "allOf": [
         {
             "$ref": "#/$defs/input_output_options"
+        },
+        {
+            "$ref": "#/$defs/background_subtract_options"
         },
         {
             "$ref": "#/$defs/sopa_options"
