@@ -51,7 +51,12 @@ The pipeline uses the following tools:
 ## Usage
 
 > [!NOTE]
-> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test_mesmer` or `-profile test_cellpose` before running the workflow on actual data.
+> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` (to test cellpose segmentation) or `-profile test_mesmer` to test mesmer segmentation before running the workflow on actual data.
+
+If you are running this pipeline from WEHI, it has been set up to run on [Seqera Platform](https://seqera.services.biocommons.org.au/).
+
+> [!NOTE]
+> If you don't have a .gradle directory in your home, make sure you create it with `mkdir $HOME/.gradle` before runnning the pipeline. You con't need to do this if you are running via WEHI's Seqera Platform mentioned above.
 
 Usage will depend on your desired steps.
 
