@@ -4,7 +4,7 @@
  * License: MIT
  */
 process SOPA_PATCHIFYIMAGE {
-    label "process_single"
+    label "process_low"
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine == 'apptainer' && !task.ext.singularity_pull_docker_container

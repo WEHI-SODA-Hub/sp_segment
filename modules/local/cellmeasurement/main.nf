@@ -1,7 +1,6 @@
 process CELLMEASUREMENT {
     tag "$meta.id"
-    label 'process_single'
-    label 'process_medium_memory'
+    label 'process_high'
 
     conda "${moduleDir}/environment.yml"
     container "ghcr.io/wehi-soda-hub/cellmeasurement:latest"

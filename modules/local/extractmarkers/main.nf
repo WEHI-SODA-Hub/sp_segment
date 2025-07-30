@@ -1,6 +1,6 @@
 process EXTRACTMARKERS {
     tag "$meta.id"
-    label 'process_single'
+    label 'process_low'
 
     conda "${moduleDir}/environment.yml"
     container 'community.wave.seqera.io/library/tifffile_pandas_typer:8947a22261c53cf2'

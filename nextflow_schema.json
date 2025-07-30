@@ -55,7 +55,7 @@
             "title": "SOPA options",
             "type": "object",
             "fa_icon": "fas fa-microscope",
-            "description": "Parameters used by SOPA for the cellpose segmentation workflow.",
+            "description": "Parameters used by SOPA for image patching.",
             "properties": {
                 "technology": {
                     "type": "string",

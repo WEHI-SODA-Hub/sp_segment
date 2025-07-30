@@ -45,9 +45,9 @@ template:
   description: Cell segmentation and downstream analysis pipeline for the COMET and MIBI spatial platforms
   force: true
   is_nfcore: true
-  name: spatialmibi
+  name: spatialproteomics
   org: nf-core
-  outdir: spatialmibi
+  outdir: spatialproteomics
   skip_features:
     - igenomes
     - multiqc
