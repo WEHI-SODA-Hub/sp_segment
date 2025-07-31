@@ -37,13 +37,13 @@
             },
             "nuclear_channel": {
                 "type": "string",
-                "pattern": "^[\\w-]+$",
-                "errorMessage": "Nuclear channel must be provided as a single word without spaces"
+                "pattern": "^[\\w-\" ]+$",
+                "errorMessage": "Nuclear channel must be provided as a single word"
             },
             "membrane_channels": {
                 "type": "string",
-                "pattern": "^[\\w-]+(:[\\w-]+)*$",
-                "errorMessage": "Membrane channels must be provided as a colon-separated list without spaces"
+                "pattern": "^[\\w-\" ]+(:[\\w-\" ]+)*$",
+                "errorMessage": "Membrane channels must be provided as a colon-separated list"
             }
         },
         "required": ["sample", "tiff"]

@@ -118,9 +118,12 @@ sample2,false,true,/path/to/sample2.tiff,DAPI,CD45
 ```
 
 Nuclear channels only support one entry; membrane channels may have multiple
-values separated by `:` characters. You can also set the following parameters,
-either via CLI (e.g., `--mesmer_combine_method prod` or in a config file pass to
-the workflow via `-c`:
+values separated by `:` characters. If your channels have spaces in them, make
+sure that you surround your channel name with quotes. For example, CD45:"HLA I".
+
+You can also set the following segmentation parameters for mesmer either via CLI
+(e.g., `--mesmer_combine_method prod` or in a config file pass to the workflow
+via `-c`:
 
 | Parameter Name             | Description                                                                                                                             |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
