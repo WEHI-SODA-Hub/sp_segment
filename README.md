@@ -171,6 +171,14 @@ parameters.
 If you want to skip measurements (this may take some time for large images), you
 can use set the parameter `skip_measurements` to `true`.
 
+## Dealing with large images
+
+You can run the pipeline with different profiles for different size images:
+
+- `small`: for images <150GB
+- `medium`: for images <300GB
+- `large`: for images <600GB
+
 ## Pipeline output
 
 The pipeline will create the following outputs with background subtraction
