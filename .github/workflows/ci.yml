@@ -39,11 +39,12 @@ jobs:
         isMaster:
           - ${{ github.base_ref == 'master' }}
         # Exclude conda and singularity on dev
+        # cellmeasurement doesn't support conda, and has issues with the docker container on CI
         exclude:
           - isMaster: false
             profile: "conda"
           - isMaster: false
-            profile: "singularity"
+            profile: "docker"
     steps:
       - name: Check out pipeline code
         uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4
