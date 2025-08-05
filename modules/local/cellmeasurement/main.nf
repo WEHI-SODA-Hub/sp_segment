@@ -1,6 +1,6 @@
 process CELLMEASUREMENT {
     tag "$meta.id"
-    label 'process_high'
+    label 'process_multi'
 
     conda "${moduleDir}/environment.yml"
     container "ghcr.io/wehi-soda-hub/cellmeasurement:latest"
@@ -27,7 +27,8 @@ process CELLMEASUREMENT {
             --nuclear-mask=\$(readlink ${nuclear_mask}) \\
             --whole-cell-mask=\$(readlink ${whole_cell_mask}) \\
             --tiff-file=\$(readlink ${tiff}) \\
-            --output-file=\$PWD/${prefix}.geojson"
+            --output-file=\$PWD/${prefix}.geojson \\
+            --threads=${task.cpus}"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
