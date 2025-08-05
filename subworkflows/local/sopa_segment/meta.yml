@@ -1,44 +1,36 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
 name: "sopa_segment"
-## TODO nf-core: Add a description of the subworkflow and list keywords
-description: Sort SAM/BAM/CRAM file
+description: Perform complete cell segmentation using SOPA (Spatial Omics Python Analysis) for both nuclear and whole-cell compartments, then extract cell measurements and export as GeoJSON annotations
 keywords:
-  - sort
-  - bam
-  - sam
-  - cram
-## TODO nf-core: Add a list of the modules and/or subworkflows used in the subworkflow
+  - segmentation
+  - sopa
+  - cellpose
+  - nuclear
+  - whole-cell
+  - cell
+  - measurement
+  - spatial
+  - omics
+  - microscopy
+  - geojson
+  - annotations
 components:
-  - samtools/sort
-  - samtools/index
-## TODO nf-core: List all of the channels used as input with a description and their structure
+  - sopa_segment_compartment
+  - cellmeasurement
 input:
-  - ch_bam:
-      type: file
+  - ch_sopa:
+      type: channel
       description: |
-        The input channel containing the BAM/CRAM/SAM files
-        Structure: [ val(meta), path(bam) ]
-      pattern: "*.{bam/cram/sam}"
-## TODO nf-core: List all of the channels used as output with a descriptions and their structure
+        The input channel containing TIFF files with nuclear and membrane channel information
+        Structure: [ val(meta), path(tiff), val(nuclear_channel), val(membrane_channels) ]
+      pattern: "*.{tiff,tif}"
 output:
-  - bam:
+  - annotations:
       type: file
       description: |
-        Channel containing BAM files
-        Structure: [ val(meta), path(bam) ]
-      pattern: "*.bam"
-  - bai:
-      type: file
-      description: |
-        Channel containing indexed BAM (BAI) files
-        Structure: [ val(meta), path(bai) ]
-      pattern: "*.bai"
-  - csi:
-      type: file
-      description: |
-        Channel containing CSI files
-        Structure: [ val(meta), path(csi) ]
-      pattern: "*.csi"
+        Channel containing GeoJSON files with cell measurements and annotations
+        Structure: [ val(meta), path(geojson) ]
+      pattern: "*.geojson"
   - versions:
       type: file
       description: |

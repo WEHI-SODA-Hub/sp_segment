@@ -1,44 +1,38 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
 name: "backgroundsubtract"
-## TODO nf-core: Add a description of the subworkflow and list keywords
-description: Sort SAM/BAM/CRAM file
+description: Perform background subtraction on OME-TIFF files by extracting marker metadata and applying background correction using mcmicro's backsub tool
 keywords:
-  - sort
-  - bam
-  - sam
-  - cram
-## TODO nf-core: Add a list of the modules and/or subworkflows used in the subworkflow
+  - background
+  - subtraction
+  - markers
+  - ome-tiff
+  - mcmicro
+  - backsub
+  - microscopy
+  - preprocessing
 components:
-  - samtools/sort
-  - samtools/index
-## TODO nf-core: List all of the channels used as input with a description and their structure
+  - extractmarkers
+  - nf-core/backsub
 input:
-  - ch_bam:
-      type: file
+  - ch_backsub:
+      type: channel
       description: |
-        The input channel containing the BAM/CRAM/SAM files
-        Structure: [ val(meta), path(bam) ]
-      pattern: "*.{bam/cram/sam}"
-## TODO nf-core: List all of the channels used as output with a descriptions and their structure
+        The input channel containing OME-TIFF files for background subtraction
+        Structure: [ val(meta), path(tiff) ]
+      pattern: "*.{tiff,tif}"
 output:
-  - bam:
+  - backsub_tif:
       type: file
       description: |
-        Channel containing BAM files
-        Structure: [ val(meta), path(bam) ]
-      pattern: "*.bam"
-  - bai:
+        Channel containing background-subtracted OME-TIFF files
+        Structure: [ val(meta), path(backsub_tif) ]
+      pattern: "*.ome.tif"
+  - markers:
       type: file
       description: |
-        Channel containing indexed BAM (BAI) files
-        Structure: [ val(meta), path(bai) ]
-      pattern: "*.bai"
-  - csi:
-      type: file
-      description: |
-        Channel containing CSI files
-        Structure: [ val(meta), path(csi) ]
-      pattern: "*.csi"
+        Channel containing marker metadata CSV files
+        Structure: [ val(meta), path(markers.csv) ]
+      pattern: "markers.csv"
   - versions:
       type: file
       description: |

@@ -1,60 +1,51 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "extractmarkers"
-## TODO nf-core: Add a description of the module and list keywords
-description: write your description here
+description: Extract markers, exposure times, and background channels from COMET OME-TIFF files and output as CSV compatible with mcmicro's background_subtraction tool
 keywords:
-  - sort
-  - example
-  - genomics
+  - markers
+  - ome-tiff
+  - metadata
+  - exposure
+  - background
+  - microscopy
+  - mcmicro
 tools:
   - "extractmarkers":
-      ## TODO nf-core: Add a description and other details for the software below
-      description: ""
+      description: "Python script that extracts markers from COMET OME-TIFF and writes comma-delimited output containing markers, exposure times and background channels compatible with input expected by mcmicro's background_subtraction tool"
       homepage: ""
       documentation: ""
       tool_dev_url: ""
       doi: ""
-      licence:
-      identifier:
+      licence: "MIT"
+      identifier: ""
 
-## TODO nf-core: Add a description of all of the variables used as input
 input:
-  # Only when we have meta
   - - meta:
         type: map
         description: |
           Groovy Map containing sample information
           e.g. `[ id:'sample1' ]`
-
-    ## TODO nf-core: Delete / customise this example input
-    - bam:
+    - tiff:
         type: file
-        description: Sorted BAM/CRAM/SAM file
-        pattern: "*.{bam,cram,sam}"
+        description: COMET OME-TIFF file containing multi-channel microscopy data with embedded metadata
+        pattern: "*.{tiff,tif}"
         ontologies:
-          - edam: "http://edamontology.org/format_2572" # BAM
-          - edam: "http://edamontology.org/format_2573" # CRAM
-          - edam: "http://edamontology.org/format_3462" # SAM
+          - edam: "http://edamontology.org/format_3591"
 
-## TODO nf-core: Add a description of all of the variables used as output
 output:
-  - bam:
-      #Only when we have meta
+  - markers:
       - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'sample1' ]`
-      ## TODO nf-core: Delete / customise this example output
-      - "*.bam":
+      - "${prefix}_markers.csv":
           type: file
-          description: Sorted BAM/CRAM/SAM file
-          pattern: "*.{bam,cram,sam}"
+          description: CSV file containing marker names, background channels, exposure times, and removal flags
+          pattern: "*_markers.csv"
           ontologies:
-            - edam: "http://edamontology.org/format_2572" # BAM
-            - edam: "http://edamontology.org/format_2573" # CRAM
-            - edam: "http://edamontology.org/format_3462" # SAM
+            - edam: "http://edamontology.org/format_3752"
 
   - versions:
       - "versions.yml":

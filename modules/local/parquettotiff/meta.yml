@@ -1,60 +1,59 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "parquettotiff"
-## TODO nf-core: Add a description of the module and list keywords
-description: write your description here
+description: Convert Cellpose Parquet files containing segmentation geometries into label-image TIFF files
 keywords:
-  - sort
-  - example
-  - genomics
+  - parquet
+  - tiff
+  - segmentation
+  - cellpose
+  - geometry
+  - rasterization
+  - label-image
+  - microscopy
 tools:
   - "parquettotiff":
-      ## TODO nf-core: Add a description and other details for the software below
-      description: ""
+      description: "Python script that converts a Cellpose Parquet file containing segmentation geometries into a label-image TIFF file by rasterizing WKB geometries"
       homepage: ""
       documentation: ""
       tool_dev_url: ""
       doi: ""
-      licence:
-      identifier:
+      licence: "MIT"
+      identifier: ""
 
-## TODO nf-core: Add a description of all of the variables used as input
 input:
-  # Only when we have meta
   - - meta:
         type: map
         description: |
           Groovy Map containing sample information
           e.g. `[ id:'sample1' ]`
-
-    ## TODO nf-core: Delete / customise this example input
-    - bam:
+    - parquet:
         type: file
-        description: Sorted BAM/CRAM/SAM file
-        pattern: "*.{bam,cram,sam}"
+        description: Cellpose Parquet file containing segmentation geometries in WKB format
+        pattern: "*.parquet"
+    - tiff:
+        type: file
+        description: Original TIFF file that the segmentation was run on (used for dimension extraction)
+        pattern: "*.{tiff,tif}"
         ontologies:
-          - edam: "http://edamontology.org/format_2572" # BAM
-          - edam: "http://edamontology.org/format_2573" # CRAM
-          - edam: "http://edamontology.org/format_3462" # SAM
+          - edam: "http://edamontology.org/format_3591"
+    - compartment:
+        type: string
+        description: Compartment type identifier (e.g., nuclear, whole_cell) used in output filename
 
-## TODO nf-core: Add a description of all of the variables used as output
 output:
-  - bam:
-      #Only when we have meta
+  - tiff:
       - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'sample1' ]`
-      ## TODO nf-core: Delete / customise this example output
-      - "*.bam":
+      - "*.tiff":
           type: file
-          description: Sorted BAM/CRAM/SAM file
-          pattern: "*.{bam,cram,sam}"
+          description: Label-image TIFF file with rasterized segmentation masks
+          pattern: "*.tiff"
           ontologies:
-            - edam: "http://edamontology.org/format_2572" # BAM
-            - edam: "http://edamontology.org/format_2573" # CRAM
-            - edam: "http://edamontology.org/format_3462" # SAM
+            - edam: "http://edamontology.org/format_3591"
 
   - versions:
       - "versions.yml":

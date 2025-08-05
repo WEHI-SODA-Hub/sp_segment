@@ -1,60 +1,62 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: "cellmeasurement"
-## TODO nf-core: Add a description of the module and list keywords
-description: write your description here
+description: Extract cell measurements from nuclear and whole-cell segmentation masks and export as GeoJSON annotations
 keywords:
-  - sort
-  - example
-  - genomics
+  - cell
+  - measurement
+  - segmentation
+  - microscopy
+  - image analysis
+  - geojson
 tools:
   - "cellmeasurement":
-      ## TODO nf-core: Add a description and other details for the software below
-      description: ""
-      homepage: ""
-      documentation: ""
-      tool_dev_url: ""
+      description: "Groovy application that extracts Regions of Interest (ROIs) from whole cell and nuclear mask images, matches them based on their centroids, calculates measurements and exports the cell objects as GeoJSON annotations"
+      homepage: "https://github.com/WEHI-SODA-Hub/cellmeasurement"
+      documentation: "https://github.com/WEHI-SODA-Hub/cellmeasurement#readme"
+      tool_dev_url: "https://github.com/WEHI-SODA-Hub/cellmeasurement"
       doi: ""
-      licence:
-      identifier:
+      licence: "MIT"
+      identifier: ""
 
-## TODO nf-core: Add a description of all of the variables used as input
 input:
-  # Only when we have meta
   - - meta:
         type: map
         description: |
           Groovy Map containing sample information
           e.g. `[ id:'sample1' ]`
-
-    ## TODO nf-core: Delete / customise this example input
-    - bam:
+    - tiff:
         type: file
-        description: Sorted BAM/CRAM/SAM file
-        pattern: "*.{bam,cram,sam}"
+        description: TIFF file containing multi-channel image data
+        pattern: "*.{tiff,tif}"
         ontologies:
-          - edam: "http://edamontology.org/format_2572" # BAM
-          - edam: "http://edamontology.org/format_2573" # CRAM
-          - edam: "http://edamontology.org/format_3462" # SAM
+          - edam: "http://edamontology.org/format_3591"
+    - nuclear_mask:
+        type: file
+        description: Nuclear segmentation mask file in TIFF format
+        pattern: "*.{tiff,tif}"
+        ontologies:
+          - edam: "http://edamontology.org/format_3591"
+    - whole_cell_mask:
+        type: file
+        description: Whole-cell segmentation mask file in TIFF format
+        pattern: "*.{tiff,tif}"
+        ontologies:
+          - edam: "http://edamontology.org/format_3591"
 
-## TODO nf-core: Add a description of all of the variables used as output
 output:
-  - bam:
-      #Only when we have meta
+  - annotations:
       - meta:
           type: map
           description: |
             Groovy Map containing sample information
             e.g. `[ id:'sample1' ]`
-      ## TODO nf-core: Delete / customise this example output
-      - "*.bam":
+      - "*.geojson":
           type: file
-          description: Sorted BAM/CRAM/SAM file
-          pattern: "*.{bam,cram,sam}"
+          description: GeoJSON file containing cell measurements and annotations
+          pattern: "*.geojson"
           ontologies:
-            - edam: "http://edamontology.org/format_2572" # BAM
-            - edam: "http://edamontology.org/format_2573" # CRAM
-            - edam: "http://edamontology.org/format_3462" # SAM
+            - edam: "http://edamontology.org/format_3464"
 
   - versions:
       - "versions.yml":
