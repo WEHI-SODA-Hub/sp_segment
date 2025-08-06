@@ -1,16 +1,10 @@
 # WEHI-SODA-Hub/spatialproteomics: Usage
 
-## :warning: Please read this documentation on the nf-core website: [https://nf-co.re/spatialproteomics/usage](https://nf-co.re/spatialproteomics/usage)
-
-> _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
-
 ## Introduction
-
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated or YAML file with a header row as shown in the examples below.
 
 ```bash
 --input '[path to samplesheet file]'
@@ -18,37 +12,50 @@ You will need to create a samplesheet with information about the samples you wou
 
 ### Multiple runs of the same sample
 
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
+Ensure that each row has a unique `sample` name. Even if you want to run two both Mesmer and Cellpose on the same sample, you will have to give them different sample names to run both methods without collisions.
 
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
+If you only want too perform background subtraction, the minimal sample sheet is:
+
+```csv
+sample,run_backsub,tiff
+sample1,true,/path/to/sample1.tiff
+sample2,true,/path/to/sample2.tiff
 ```
 
 ### Full samplesheet
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+A full sample sheet is shown below:
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
-
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+```csv
+sample,run_backsub,run_mesmer,run_cellpose,tiff
+sample1,true,true,false,/path/to/sample1.tiff
+sample2,true,false,true,/path/to/sample2.tiff
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+You may also prefer to use YAML for your samplesheet, either is supported:
+
+`samplesheet.yml`:
+
+```yaml
+- sample: sample1
+  run_backsub: true
+  run_mesmer: true
+  run_cellpose: false
+  tiff: /path/to/sample1.tiff
+- sample: sample2
+  run_backsub: true
+  run_mesmer: true
+  run_cellpose: false
+  tiff: /path/to/sample2.tiff
+```
+
+| Column         | Description                                                                                                           |
+| -------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `sample`       | Custom sample name.                                                                                                   |
+| `run_backsub`  | Run background subtraction on the image                                                                               |
+| `run_mesmer`   | Run mesmer segmentation on the image (note: only one of run_mesmer and run_cellpose can be true for one sample row)   |
+| `run_cellpose` | Run cellpose segmentation on the image (note: only one of run_mesmer and run_cellpose can be true for one sample row) |
+| `tiff`         | OME-TIFF for COMET or multi-channel TIFF from MIBI                                                                    |
 
 An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
 
@@ -57,7 +64,10 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run WEHI-SODA-Hub/spatialproteomics --input ./samplesheet.csv --outdir ./results --genome GRCh37 -profile docker
+nextflow run WEHI-SODA-Hub/spatialproteomics \
+   -profile <docker/singularity/.../institute> \
+   --input samplesheet.csv \
+   --outdir <OUTDIR>
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
@@ -88,13 +98,54 @@ nextflow run WEHI-SODA-Hub/spatialproteomics -profile docker -params-file params
 with:
 
 ```yaml title="params.yaml"
-input: './samplesheet.csv'
-outdir: './results/'
-genome: 'GRCh37'
-<...>
+input: "./samplesheet.csv"
+outdir: "./results/"
 ```
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
+
+### Mesmer parameters
+
+The following Mesmer parameters can be set:
+
+| Parameter Name             | Description                                                                                                                             |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| mesmer_combine_method      | Method used to combine membrane channels (product or max).                                                                              |
+| mesmer_segmentation_level  | Segmentation level (legacy parameter).                                                                                                  |
+| mesmer_maxima_threshold    | Controls segmentation level directly in mesmer, (lower values = more cells, higher values = fewer cells).                               |
+| mesmer_interior_threshold  | Controls how conservative model is in distinguishing cell from background (lower values = larger cells, higher values = smaller cells). |
+| mesmer_maxima_smooth       | Controls what is considered a unique cell (lower values = more separate cells, higher values = fewer cells).                            |
+| mesmer_min_nuclei_area     | Minimum area of nuclei to keep in square pixels.                                                                                        |
+| mesmer_remove_border_cells | Remove cells that touch the image border.                                                                                               |
+| mesmer_pixel_expansion     | Manual pixel expansion after segmentation.                                                                                              |
+| mesmer_padding             | Number of pixels to crop the image by on each side before segmentation.                                                                 |
+
+### Cellpose parameters
+
+| Parameter Name              | Description                                          |
+| --------------------------- | ---------------------------------------------------- |
+| cellpose_diameter           | Diameter of cells in pixels for cellpose.            |
+| cellpose_min_area           | Minimum area of cells in square pixels for cellpose. |
+| cellpose_flow_threshold     | Flow threshold for cellpose.                         |
+| cellpose_cellprob_threshold | Cell probability threshold for cellpose.             |
+| cellpose_model_type         | Cellpose model type to use for segmentation.         |
+| cellpose_pretrained_model   | Path to a pre-trained Cellpose model.                |
+
+### SOPA patching parameters
+
+| Parameter Name      | Description                                                              |
+| ------------------- | ------------------------------------------------------------------------ |
+| technology          | Image type used for zarr conversion, only `ome_tif` is supported (COMET) |
+| patch_width_pixel   | Width and height of image patch in pixels                                |
+| patch_overlap_pixel | Number of pixels that image patches will overlap                         |
+
+### Cell measurement options
+
+| Parameter Name     | Description                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------------ |
+| skip_measurements  | Do not calculate intensity and shape measurements for cell compartments (faster execution) |
+| pixel_size_microns | Pixel size in microns, use 0.28 for COMET.                                                 |
+| cell_expansion     | How many pixels to expand cytoplasm segmentation boundary by                               |
 
 ### Updating the pipeline
 
@@ -131,7 +182,7 @@ Use this parameter to choose a configuration profile. Profiles can give configur
 Several generic profiles are bundled with the pipeline which instruct the pipeline to use software packaged using different methods (Docker, Singularity, Podman, Shifter, Charliecloud, Apptainer, Conda) - see below.
 
 :::info
-We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility, however when this is not possible, Conda is also supported.
+We highly recommend the use of Docker or Singularity containers for full pipeline reproducibility. Conda is currently not supported for the pipeline.
 :::
 
 The pipeline also dynamically loads configurations from [https://github.com/nf-core/configs](https://github.com/nf-core/configs) when it runs, making multiple config profiles for various institutional clusters available at run time. For more information and to see if your system is available in these configs please see the [nf-core/configs documentation](https://github.com/nf-core/configs#documentation).
@@ -159,7 +210,7 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `wave`
   - A generic configuration profile to enable [Wave](https://seqera.io/wave/) containers. Use together with one of the above (requires Nextflow ` 24.03.0-edge` or later).
 - `conda`
-  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Please only use Conda as a last resort i.e. when it's not possible to run the pipeline with Docker, Singularity, Podman, Shifter, Charliecloud, or Apptainer.
+  - A generic configuration profile to be used with [Conda](https://conda.io/docs/). Not supported for this pipeline.
 
 ### `-resume`
 

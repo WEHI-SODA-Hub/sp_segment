@@ -9,7 +9,8 @@
 [![GitHub Actions Linting Status](https://github.com/WEHI-SODA-Hub/spatialproteomics/actions/workflows/linting.yml/badge.svg)](https://github.com/WEHI-SODA-Hub/spatialproteomics/actions/workflows/linting.yml)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
-[![Nextflow](https://img.shields.io/badge/nextflow%20DSL2-%E2%89%A524.04.2-23aa62.svg)](https://www.nextflow.io/)
+[![Nextflow](https://img.shields.io/badge/version-%E2%89%A524.04.2-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
+[![nf-core template version](https://img.shields.io/badge/nf--core_template-3.3.2-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/3.3.2)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
@@ -25,15 +26,6 @@ are run separately, and then consolidated into whole cells with nuclei with full
 shape and intensity measurements per compartment. The output GeoJSON files can
 be viewed in QuPath.
 
-The pipeline performs these steps:
-
-- Background subtraction (COMET only) -- generates a background subtracted TIFF
-- Segmentation via Cellpose (COMET) or Mesmer (COMET/MIBI) for nuclear and whole
-  cell
-- Cell measurement
-  - generates a GeoJSON file with consolidated whole-cell/nuclear segmentations
-  - calculates cell compartment measurements and channel intensities
-
 ![spatialproteomics workflow](assets/spatialproteomics_workflow.png)
 
 The pipeline uses the following tools:
@@ -48,6 +40,8 @@ The pipeline uses the following tools:
 - [sopa](https://github.com/gustaveroussy/sopa) -- we use the sopa CLI tool to
   patchify images and perform cellpose segmentation.
 
+Please see the [docs for more detailed information on pipeline usage and output](docs/README.md)
+
 ## Usage
 
 > [!NOTE]
@@ -58,7 +52,7 @@ If you are running this pipeline from WEHI, it has been set up to run on [Seqera
 > [!NOTE]
 > If you don't have a .gradle directory in your home, make sure you create it with `mkdir $HOME/.gradle` before runnning the pipeline. You con't need to do this if you are running via WEHI's Seqera Platform mentioned above.
 
-Usage will depend on your desired steps.
+Usage will depend on your desired steps. See [usage docs](docs/usage.md) for more detailed information.
 
 ### Background subtraction
 
@@ -70,9 +64,9 @@ Prepare a sample sheet as follows:
 `samplesheet.csv`:
 
 ```csv
-sample,run_backsub,tiff
-sample1,true,/path/to/sample1.tiff
-sample2,true,/path/to/sample2.tiff
+sample,run_backsub,run_mesmer,run_cellpose,tiff
+sample1,true,true,false,/path/to/sample1.tiff
+sample2,true,false,true,/path/to/sample2.tiff
 ```
 
 You may also prefer to use YAML for your samplesheet, either is supported:
@@ -81,10 +75,14 @@ You may also prefer to use YAML for your samplesheet, either is supported:
 
 ```yaml
 - sample: sample1
-  run_backsub: backsub
+  run_backsub: true
+  run_mesmer: true
+  run_cellpose: false
   tiff: /path/to/sample1.tiff
 - sample: sample2
-  run_backsub: backsub
+  run_backsub: true
+  run_mesmer: true
+  run_cellpose: false
   tiff: /path/to/sample2.tiff
 ```
 
@@ -121,21 +119,9 @@ Nuclear channels only support one entry; membrane channels may have multiple
 values separated by `:` characters. If your channels have spaces in them, make
 sure that you surround your channel name with quotes. For example, CD45:"HLA I".
 
-You can also set the following segmentation parameters for mesmer either via CLI
+You can also set the segmentation parameters for mesmer either via CLI
 (e.g., `--mesmer_combine_method prod` or in a config file pass to the workflow
-via `-c`:
-
-| Parameter Name             | Description                                                                                                                             |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| mesmer_combine_method      | Method used to combine membrane channels (product or max).                                                                              |
-| mesmer_segmentation_level  | Segmentation level (legacy parameter).                                                                                                  |
-| mesmer_maxima_threshold    | Controls segmentation level directly in mesmer, (lower values = more cells, higher values = fewer cells).                               |
-| mesmer_interior_threshold  | Controls how conservative model is in distinguishing cell from background (lower values = larger cells, higher values = smaller cells). |
-| mesmer_maxima_smooth       | Controls what is considered a unique cell (lower values = more separate cells, higher values = fewer cells).                            |
-| mesmer_min_nuclei_area     | Minimum area of nuclei to keep in square pixels.                                                                                        |
-| mesmer_remove_border_cells | Remove cells that touch the image border.                                                                                               |
-| mesmer_pixel_expansion     | Manual pixel expansion after segmentation.                                                                                              |
-| mesmer_padding             | Number of pixels to crop the image by on each side before segmentation.                                                                 |
+via `-c`. See [usage](docs/usage.md) for a full list.
 
 > [!WARNING]
 > You cannot run both Mesmer and Cellpose segmentation on the same sample (with
@@ -156,16 +142,7 @@ sample2,false,true,/path/to/sample2.tiff,DAPI,CD45
 As with Mesmer, nuclear channels only support one entry; membrane channels may
 have multiple values separated by `:` characters. You can also set the following
 parameters, either via CLI (e.g., `--mesmer_combine_method prod` or in a config
-file pass to the workflow via `-c`:
-
-| Parameter Name              | Description                                          |
-| --------------------------- | ---------------------------------------------------- |
-| cellpose_diameter           | Diameter of cells in pixels for cellpose.            |
-| cellpose_min_area           | Minimum area of cells in square pixels for cellpose. |
-| cellpose_flow_threshold     | Flow threshold for cellpose.                         |
-| cellpose_cellprob_threshold | Cell probability threshold for cellpose.             |
-| cellpose_model_type         | Cellpose model type to use for segmentation.         |
-| cellpose_pretrained_model   | Path to a pre-trained Cellpose model.                |
+file pass to the workflow via `-c`. See [usage](docs/usage.md) for a full list.
 
 Cellpose will run in a parallelised patched workflow using sopa. To control the
 patching process, you can use the `patch_width_pixel` and `patch_overlap_pixel`
@@ -181,34 +158,6 @@ You can run the pipeline with different profiles for different size images:
 - `small`: for images <150GB
 - `medium`: for images <300GB
 - `large`: for images <600GB
-
-## Pipeline output
-
-The pipeline will create the following outputs with background subtraction
-(COMET only):
-
-- `extractmarkers/sample.csv` -- marker names, background per channel and
-  exposure time
-- `backsub/sample.ome.tif` -- bakground subtracted tiff image.
-
-For sopa cellpose segmentation:
-
-- `sopa/sample.zarr` -- SpatialData converted image containing segmentations.
-- `parquettotiffwholecell/sample_whole-cell.tiff` -- tiff label masks from cellpose segmentation for
-  whole cell segmentation.
-- `parquettotiffnuclear/sample_nuclear.tiff` -- tiff label masks from cellpose segmentation for
-  nuclear segmentation.
-
-For mesmer segmentation:
-
-- `mesmerwc/sample_whole-cell.tiff` -- tiff label masks for cellpose whole-cell segmentation.
-- `mesmernuc/sample_nuclear.tiff` -- tiff label masks for cellpose nuclear segmentation.
-
-And for either method:
-
-- `cellmeasurement/sample.geojson` -- resolved whole-cell and nuclear
-  segmentations, optionally containing measurements and intensity values per
-  cell, compatible with QuPath.
 
 ## Credits
 

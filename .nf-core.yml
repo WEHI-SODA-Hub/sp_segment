@@ -37,7 +37,7 @@ lint:
     - .prettierrc.yml
   multiqc_config: false
   nextflow_config: false
-nf_core_version: 3.3.1
+nf_core_version: 3.3.2
 org_path: null
 repository_type: pipeline
 template:
