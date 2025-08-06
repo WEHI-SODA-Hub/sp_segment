@@ -12,7 +12,7 @@ keywords:
   - preprocessing
 components:
   - extractmarkers
-  - nf-core/backsub
+  - backsub
 input:
   - ch_backsub:
       type: channel

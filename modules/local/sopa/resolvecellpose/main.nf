@@ -16,6 +16,7 @@ process SOPA_RESOLVECELLPOSE {
 
     output:
     tuple val(meta), path("*.zarr/shapes/cellpose_boundaries/*.parquet"), emit: cellpose_boundaries
+    path "versions.yml"                                                 , emit: versions
 
     script:
     """

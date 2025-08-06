@@ -17,6 +17,7 @@ process SOPA_CONVERT {
 
     output:
     tuple val(meta), path("*.zarr"), emit: spatial_data
+    path "versions.yml"            , emit: versions
 
     script:
     def args = task.ext.args ?: ''

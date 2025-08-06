@@ -7,22 +7,26 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,1b85fca33d817c64f30bc140f5acd5ea"
+                        "test.geojson:md5,fa205d713c8b3e5cf338088223bf7596"
                     ]
                 ],
                 "1": [
-                    
+                    "versions.yml:md5,4365d84aefd2e681fc09e75b49725961",
+                    "versions.yml:md5,7bef09a7858e9f47bf9108e779ddc6a1",
+                    "versions.yml:md5,dd7c9a4feb0c5710a638318159023030"
                 ],
                 "annotations": [
                     [
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,1b85fca33d817c64f30bc140f5acd5ea"
+                        "test.geojson:md5,fa205d713c8b3e5cf338088223bf7596"
                     ]
                 ],
                 "versions": [
-                    
+                    "versions.yml:md5,4365d84aefd2e681fc09e75b49725961",
+                    "versions.yml:md5,7bef09a7858e9f47bf9108e779ddc6a1",
+                    "versions.yml:md5,dd7c9a4feb0c5710a638318159023030"
                 ]
             }
         ],
@@ -30,6 +34,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-07-23T12:55:24.302381319"
+        "timestamp": "2025-08-06T15:37:59.179530985"
     }
 }

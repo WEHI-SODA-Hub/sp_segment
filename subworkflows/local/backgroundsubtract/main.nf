@@ -16,6 +16,8 @@ workflow BACKGROUNDSUBTRACT {
     EXTRACTMARKERS(
         ch_backsub
     )
+    ch_versions = ch_versions.mix(EXTRACTMARKERS.out.versions.first())
+
 
     //
     // Run background subtraction module on tiff with extracted markers
@@ -24,6 +26,7 @@ workflow BACKGROUNDSUBTRACT {
         ch_backsub,
         EXTRACTMARKERS.out.markers
     )
+    ch_versions = ch_versions.mix(BACKSUB.out.versions.first())
 
     emit:
     backsub_tif   = BACKSUB.out.backsub_tif    // channel: [ val(meta), *.ome.tif ]

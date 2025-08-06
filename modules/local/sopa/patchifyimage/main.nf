@@ -16,6 +16,7 @@ process SOPA_PATCHIFYIMAGE {
 
     output:
     tuple val(meta), path("*.zarr/.sopa_cache/patches_file_image"), path("*.zarr/shapes/image_patches"), emit: patches
+    path "versions.yml"                                                                                , emit: versions
 
     script:
     def args = task.ext.args ?: ''

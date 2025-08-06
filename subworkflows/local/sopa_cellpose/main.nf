@@ -23,6 +23,8 @@ workflow SOPA_CELLPOSE {
     SOPA_SEGMENTATIONCELLPOSE(
         ch_patches
     )
+    ch_versions = ch_versions.mix(SOPA_SEGMENTATIONCELLPOSE.out.versions.first())
+
 
     // Collect cellpose segmentation boundaries into one channel per sample
     SOPA_SEGMENTATIONCELLPOSE.out.cellpose_parquet
@@ -39,6 +41,7 @@ workflow SOPA_CELLPOSE {
     SOPA_RESOLVECELLPOSE(
         ch_resolve_cellpose
     )
+    ch_versions = ch_versions.mix(SOPA_RESOLVECELLPOSE.out.versions.first())
 
     emit:
     boundaries  = SOPA_RESOLVECELLPOSE.out.cellpose_boundaries  // channel: [ val(meta), *.zarr/shapes/cellose_boundaries/*.parquet ]

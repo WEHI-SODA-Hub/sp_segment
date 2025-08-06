@@ -28,6 +28,7 @@ workflow SOPA_SEGMENT {
         },
         'nuclear'
     )
+    ch_versions = ch_versions.mix(SOPA_SEGMENT_NUCLEAR.out.versions.first())
 
     //
     // Run segmentation for whole-cell compartment
@@ -36,6 +37,7 @@ workflow SOPA_SEGMENT {
         ch_sopa,
         'whole-cell'
     )
+    ch_versions = ch_versions.mix(SOPA_SEGMENT_WHOLECELL.out.versions.first())
 
     //
     // Create a channel for cell measurement
@@ -63,6 +65,7 @@ workflow SOPA_SEGMENT {
     CELLMEASUREMENT(
         ch_cellmeasurement
     )
+    ch_versions = ch_versions.mix(CELLMEASUREMENT.out.versions.first())
 
     emit:
     annotations = CELLMEASUREMENT.out.annotations   // channel: [ val(meta), *.geojson ]

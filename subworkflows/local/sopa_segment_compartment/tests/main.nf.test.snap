@@ -10,7 +10,7 @@
                         [
                             [
                                 [
-                                    "0.parquet:md5,767d788e69a0d57927a2c1632f42f8db"
+                                    "0.parquet:md5,fe0e3b2caa7ed2820ac40d13a689d2bf"
                                 ],
                                 "patches_file_image:md5,b026324c6904b2a9cb4b88d6d61c81d1"
                             ],
@@ -118,7 +118,7 @@
                                 [
                                     ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
                                     ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    "shapes.parquet:md5,b0fb6187c4c7df4dff353ad918b02e37"
+                                    "shapes.parquet:md5,84f1a2c0e1b5cf1decf5a26981cce8b0"
                                 ],
                                 [
                                     ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
@@ -135,22 +135,28 @@
                         {
                             "id": "test"
                         },
-                        "test_whole-cell.tiff:md5,6df6ba77ef83b5c5f3c1e22c13efe363"
+                        "test_whole-cell.tiff:md5,c8155cf7bee85dfb06fb79464527f5c2"
                     ]
                 ],
                 "2": [
-                    
+                    "versions.yml:md5,01a97cc0d6583405a75efc4c6fccc71d",
+                    "versions.yml:md5,17192ede14c4118bed93c5ce081b5bb9",
+                    "versions.yml:md5,269475eaff9a1fbca3d7f0e3e35ebc39",
+                    "versions.yml:md5,49a1720f2a84a49cdc275753a0520d9b"
                 ],
                 "tiff": [
                     [
                         {
                             "id": "test"
                         },
-                        "test_whole-cell.tiff:md5,6df6ba77ef83b5c5f3c1e22c13efe363"
+                        "test_whole-cell.tiff:md5,c8155cf7bee85dfb06fb79464527f5c2"
                     ]
                 ],
                 "versions": [
-                    
+                    "versions.yml:md5,01a97cc0d6583405a75efc4c6fccc71d",
+                    "versions.yml:md5,17192ede14c4118bed93c5ce081b5bb9",
+                    "versions.yml:md5,269475eaff9a1fbca3d7f0e3e35ebc39",
+                    "versions.yml:md5,49a1720f2a84a49cdc275753a0520d9b"
                 ],
                 "zarr": [
                     [
@@ -160,7 +166,7 @@
                         [
                             [
                                 [
-                                    "0.parquet:md5,767d788e69a0d57927a2c1632f42f8db"
+                                    "0.parquet:md5,fe0e3b2caa7ed2820ac40d13a689d2bf"
                                 ],
                                 "patches_file_image:md5,b026324c6904b2a9cb4b88d6d61c81d1"
                             ],
@@ -268,7 +274,7 @@
                                 [
                                     ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
                                     ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    "shapes.parquet:md5,b0fb6187c4c7df4dff353ad918b02e37"
+                                    "shapes.parquet:md5,84f1a2c0e1b5cf1decf5a26981cce8b0"
                                 ],
                                 [
                                     ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
@@ -286,7 +292,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-07-22T12:32:57.392627799"
+        "timestamp": "2025-08-06T15:39:47.9431831"
     },
     "sopa_segment - tiff - whole-cell": {
         "content": [
@@ -588,7 +594,7 @@
                         [
                             [
                                 [
-                                    "0.parquet:md5,11bad839a18816b58e549ac7214c7a61"
+                                    "0.parquet:md5,aa55089035ebbba207f14c64e4bff40c"
                                 ],
                                 "patches_file_image:md5,b026324c6904b2a9cb4b88d6d61c81d1"
                             ],
@@ -696,7 +702,7 @@
                                 [
                                     ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
                                     ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    "shapes.parquet:md5,9e197dc038ab56d1b11d014195f58fd7"
+                                    "shapes.parquet:md5,cb014415362e15ece5abcf40259e96c5"
                                 ],
                                 [
                                     ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
@@ -713,22 +719,28 @@
                         {
                             "id": "test"
                         },
-                        "test_nuclear.tiff:md5,4041475d48eb4ac710274aeb44403ea9"
+                        "test_nuclear.tiff:md5,40a6f63731e25edbb90902dd905b0234"
                     ]
                 ],
                 "2": [
-                    
+                    "versions.yml:md5,01a97cc0d6583405a75efc4c6fccc71d",
+                    "versions.yml:md5,17192ede14c4118bed93c5ce081b5bb9",
+                    "versions.yml:md5,269475eaff9a1fbca3d7f0e3e35ebc39",
+                    "versions.yml:md5,49a1720f2a84a49cdc275753a0520d9b"
                 ],
                 "tiff": [
                     [
                         {
                             "id": "test"
                         },
-                        "test_nuclear.tiff:md5,4041475d48eb4ac710274aeb44403ea9"
+                        "test_nuclear.tiff:md5,40a6f63731e25edbb90902dd905b0234"
                     ]
                 ],
                 "versions": [
-                    
+                    "versions.yml:md5,01a97cc0d6583405a75efc4c6fccc71d",
+                    "versions.yml:md5,17192ede14c4118bed93c5ce081b5bb9",
+                    "versions.yml:md5,269475eaff9a1fbca3d7f0e3e35ebc39",
+                    "versions.yml:md5,49a1720f2a84a49cdc275753a0520d9b"
                 ],
                 "zarr": [
                     [
@@ -738,7 +750,7 @@
                         [
                             [
                                 [
-                                    "0.parquet:md5,11bad839a18816b58e549ac7214c7a61"
+                                    "0.parquet:md5,aa55089035ebbba207f14c64e4bff40c"
                                 ],
                                 "patches_file_image:md5,b026324c6904b2a9cb4b88d6d61c81d1"
                             ],
@@ -846,7 +858,7 @@
                                 [
                                     ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
                                     ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    "shapes.parquet:md5,9e197dc038ab56d1b11d014195f58fd7"
+                                    "shapes.parquet:md5,cb014415362e15ece5abcf40259e96c5"
                                 ],
                                 [
                                     ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
@@ -864,7 +876,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-07-22T12:34:58.833263333"
+        "timestamp": "2025-08-06T15:41:36.75390001"
     },
     "sopa_segment - tiff - nuclear": {
         "content": [

@@ -32,6 +32,8 @@ workflow SOPA_SEGMENT_COMPARTMENT {
         ch_convert,
         compartment
     )
+    ch_versions = ch_versions.mix(SOPA_CONVERT.out.versions.first())
+
 
     //
     // Run SOPA patchify to create image patches
@@ -39,6 +41,7 @@ workflow SOPA_SEGMENT_COMPARTMENT {
     SOPA_PATCHIFYIMAGE(
         SOPA_CONVERT.out.spatial_data
     )
+    ch_versions = ch_versions.mix(SOPA_PATCHIFYIMAGE.out.versions.first())
 
     // Create a channel for each patch
     SOPA_PATCHIFYIMAGE.out.patches
@@ -59,6 +62,7 @@ workflow SOPA_SEGMENT_COMPARTMENT {
         ch_cellpose,
         SOPA_CONVERT.out.spatial_data
     )
+    ch_versions = ch_versions.mix(SOPA_CELLPOSE.out.versions.first())
 
     //
     // Convert nuclear segmentation parquet to tiff
@@ -70,6 +74,7 @@ workflow SOPA_SEGMENT_COMPARTMENT {
                 [ meta, boundaries, tiff, compartment ]
             }
     )
+    ch_versions = ch_versions.mix(PARQUETTOTIFF.out.versions.first())
 
     emit:
     zarr                 = SOPA_CONVERT.out.spatial_data         // channel: [ val(meta), *.zarr ]

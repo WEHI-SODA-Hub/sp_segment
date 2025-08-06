@@ -104,6 +104,12 @@ outdir: "./results/"
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
 
+### Background subtraction parameters
+
+| Parameter Name | Description                                                     |
+| -------------- | --------------------------------------------------------------- |
+| remove_markers | Marker channels to remove from the background subtracted image. |
+
 ### Mesmer parameters
 
 The following Mesmer parameters can be set:

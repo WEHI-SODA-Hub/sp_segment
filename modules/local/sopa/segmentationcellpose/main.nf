@@ -16,6 +16,7 @@ process SOPA_SEGMENTATIONCELLPOSE {
 
     output:
     tuple val(meta), path("*.zarr/.sopa_cache/cellpose_boundaries/${index}.parquet"), emit: cellpose_parquet
+    path "versions.yml"                                                             , emit: versions
 
     script:
     def args = task.ext.args ?: ''

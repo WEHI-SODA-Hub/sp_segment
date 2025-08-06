@@ -35,6 +35,8 @@ workflow MESMER_SEGMENT {
         ch_mesmer,
         "whole-cell"
     )
+    ch_versions = ch_versions.mix(MESMERWC.out.versions.first())
+
 
     //
     // Run MESMERSEGMENT module as above, but this time for nuclear segmentation
@@ -43,6 +45,7 @@ workflow MESMER_SEGMENT {
         ch_mesmer,
         "nuclear"
     )
+    ch_versions = ch_versions.mix(MESMERNUC.out.versions.first())
 
     // Create channel for CELLMEASUREMENT input adding the segmentation masks
     ch_mesmer_segment
@@ -71,6 +74,8 @@ workflow MESMER_SEGMENT {
     CELLMEASUREMENT(
         ch_cellmeasurement
     )
+    ch_versions = ch_versions.mix(CELLMEASUREMENT.out.versions.first())
+
 
     emit:
     annotations      = CELLMEASUREMENT.out.annotations   // channel: [ val(meta), *.geojson ]

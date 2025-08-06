@@ -58,7 +58,6 @@ workflow SPATIALPROTEOMICS {
         }
     )
 
-
     //
     // Run the MESMER_SEGMENT_WBACKSUB subworkflow for samples that require
     // background subtraction and mesmer segmentation

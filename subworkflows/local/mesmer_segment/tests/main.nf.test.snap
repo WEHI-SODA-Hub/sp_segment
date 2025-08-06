@@ -7,7 +7,7 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,c3934da13fb76998822a80b9d4cd27d7"
+                        "test.geojson:md5,57cb8d6c52478d3242d4b6791397e65e"
                     ]
                 ],
                 "1": [
@@ -15,7 +15,7 @@
                         {
                             "id": "test"
                         },
-                        "test_whole-cell.tiff:md5,20ee420fad9347f4072d2c0a0c43033d"
+                        "test_whole-cell.tiff:md5,44ffdcf115bfcffbcba7a03276e77561"
                     ]
                 ],
                 "2": [
@@ -27,14 +27,16 @@
                     ]
                 ],
                 "3": [
-                    
+                    "versions.yml:md5,020f6b6c73631bfaf9a42689d3222190",
+                    "versions.yml:md5,298b46e76bb2bff02f635a89d94acc79",
+                    "versions.yml:md5,ec8fbc92050f538763cdc496a2986c88"
                 ],
                 "annotations": [
                     [
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,c3934da13fb76998822a80b9d4cd27d7"
+                        "test.geojson:md5,57cb8d6c52478d3242d4b6791397e65e"
                     ]
                 ],
                 "nuclear_tif": [
@@ -46,14 +48,16 @@
                     ]
                 ],
                 "versions": [
-                    
+                    "versions.yml:md5,020f6b6c73631bfaf9a42689d3222190",
+                    "versions.yml:md5,298b46e76bb2bff02f635a89d94acc79",
+                    "versions.yml:md5,ec8fbc92050f538763cdc496a2986c88"
                 ],
                 "whole_cell_tif": [
                     [
                         {
                             "id": "test"
                         },
-                        "test_whole-cell.tiff:md5,20ee420fad9347f4072d2c0a0c43033d"
+                        "test_whole-cell.tiff:md5,44ffdcf115bfcffbcba7a03276e77561"
                     ]
                 ]
             }
@@ -62,6 +66,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-07-23T12:50:45.224125907"
+        "timestamp": "2025-08-06T15:33:51.998566774"
     }
 }

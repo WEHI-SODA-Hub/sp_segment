@@ -7,7 +7,7 @@
                         {
                             "id": "test"
                         },
-                        "test.ome.tif:md5,e9c527697ba38005638bd1951357bfaf"
+                        "test.ome.tif:md5,3abe9ce0b63d595af413a440eb81a2db"
                     ]
                 ],
                 "1": [
@@ -19,14 +19,15 @@
                     ]
                 ],
                 "2": [
-                    
+                    "versions.yml:md5,1cecc3473595658d6fd78efac8045516",
+                    "versions.yml:md5,e302ce17f9fa003635e1f162564f4f99"
                 ],
                 "backsub_tif": [
                     [
                         {
                             "id": "test"
                         },
-                        "test.ome.tif:md5,e9c527697ba38005638bd1951357bfaf"
+                        "test.ome.tif:md5,3abe9ce0b63d595af413a440eb81a2db"
                     ]
                 ],
                 "markers": [
@@ -38,7 +39,8 @@
                     ]
                 ],
                 "versions": [
-                    
+                    "versions.yml:md5,1cecc3473595658d6fd78efac8045516",
+                    "versions.yml:md5,e302ce17f9fa003635e1f162564f4f99"
                 ]
             }
         ],
@@ -46,6 +48,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-07-29T15:12:08.477703201"
+        "timestamp": "2025-08-06T15:32:43.919766619"
     }
 }
