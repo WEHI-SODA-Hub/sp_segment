@@ -21,7 +21,7 @@ process MESMERSEGMENT {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def membrane_channel_args = membrane_channels.first() != [] ?
         membrane_channels.first().split(":").collect {
-            "--membrane-channel ${it}"
+            "--membrane-channel \"${it}\""
         }.join(' ') : ''
     """
     mesmer-segment \\

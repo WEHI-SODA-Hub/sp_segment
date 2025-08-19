@@ -40,7 +40,7 @@
                         {
                             "id": "test_whole_cell"
                         },
-                        "test_whole_cell_whole-cell.tiff:md5,20ee420fad9347f4072d2c0a0c43033d"
+                        "test_whole_cell_whole-cell.tiff:md5,44ffdcf115bfcffbcba7a03276e77561"
                     ]
                 ],
                 "1": [
@@ -51,7 +51,7 @@
                         {
                             "id": "test_whole_cell"
                         },
-                        "test_whole_cell_whole-cell.tiff:md5,20ee420fad9347f4072d2c0a0c43033d"
+                        "test_whole_cell_whole-cell.tiff:md5,44ffdcf115bfcffbcba7a03276e77561"
                     ]
                 ],
                 "versions": [
@@ -63,7 +63,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-07-17T13:49:51.121116069"
+        "timestamp": "2025-08-19T11:55:47.987353234"
     },
     "mesmersegment - stub": {
         "content": [
