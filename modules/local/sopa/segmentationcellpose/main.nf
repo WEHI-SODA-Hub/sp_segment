@@ -24,7 +24,7 @@ process SOPA_SEGMENTATIONCELLPOSE {
         membrane_channels.split(":").collect(
         { "--channels ${it}" }
     ).join(' ') : ''
-    def channels = "--channels ${nuclear_channel} ${membrane_channel_args}"
+    def channels = "${membrane_channel_args} --channels ${nuclear_channel}"
     """
     sopa segmentation cellpose \\
         ${args} \\

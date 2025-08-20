@@ -27,6 +27,9 @@
                         "0.parquet:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
+                "1": [
+                    "versions.yml:md5,136a272dcac58a3ea9a0506d60184a4b"
+                ],
                 "cellpose_parquet": [
                     [
                         {
@@ -34,6 +37,9 @@
                         },
                         "0.parquet:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
+                ],
+                "versions": [
+                    "versions.yml:md5,136a272dcac58a3ea9a0506d60184a4b"
                 ]
             }
         ],
@@ -41,7 +47,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-07-17T21:08:11.604878245"
+        "timestamp": "2025-08-20T10:38:28.322212382"
     },
     "sopa_segmentationcellpose - patched zarr - stub": {
         "content": [
