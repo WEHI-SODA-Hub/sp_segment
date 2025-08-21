@@ -114,28 +114,28 @@ You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-c
 
 The following Mesmer parameters can be set:
 
-| Parameter Name             | Description                                                                                                                             |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| mesmer_combine_method      | Method used to combine membrane channels (product or max).                                                                              |
-| mesmer_segmentation_level  | Segmentation level (legacy parameter).                                                                                                  |
-| mesmer_maxima_threshold    | Controls segmentation level directly in mesmer, (lower values = more cells, higher values = fewer cells).                               |
-| mesmer_interior_threshold  | Controls how conservative model is in distinguishing cell from background (lower values = larger cells, higher values = smaller cells). |
-| mesmer_maxima_smooth       | Controls what is considered a unique cell (lower values = more separate cells, higher values = fewer cells).                            |
-| mesmer_min_nuclei_area     | Minimum area of nuclei to keep in square pixels.                                                                                        |
-| mesmer_remove_border_cells | Remove cells that touch the image border.                                                                                               |
-| mesmer_pixel_expansion     | Manual pixel expansion after segmentation.                                                                                              |
-| mesmer_padding             | Number of pixels to crop the image by on each side before segmentation.                                                                 |
+| Parameter Name             | Description                                                                                                                                              |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| mesmer_combine_method      | Method used to combine membrane channels (product or max).                                                                                               |
+| mesmer_segmentation_level  | Segmentation level (legacy parameter).                                                                                                                   |
+| mesmer_maxima_threshold    | Controls segmentation level directly in mesmer, (lower values = more cells, higher values = fewer cells).                                                |
+| mesmer_interior_threshold  | Controls how conservative model is in distinguishing cell from background (higher values = more conservative interior therefore smaller nuclei & cells). |
+| mesmer_maxima_smooth       | Smooths signal peaks (higher values = less irregular shapes/nuclei).                                                                                     |
+| mesmer_min_nuclei_area     | Minimum area of nuclei to keep in square pixels.                                                                                                         |
+| mesmer_remove_border_cells | Remove cells that touch the image border.                                                                                                                |
+| mesmer_pixel_expansion     | Manual pixel expansion after segmentation.                                                                                                               |
+| mesmer_padding             | Number of pixels to crop the image by on each side before segmentation.                                                                                  |
 
 ### Cellpose parameters
 
-| Parameter Name              | Description                                          |
-| --------------------------- | ---------------------------------------------------- |
-| cellpose_diameter           | Diameter of cells in pixels for cellpose.            |
-| cellpose_min_area           | Minimum area of cells in square pixels for cellpose. |
-| cellpose_flow_threshold     | Flow threshold for cellpose.                         |
-| cellpose_cellprob_threshold | Cell probability threshold for cellpose.             |
-| cellpose_model_type         | Cellpose model type to use for segmentation.         |
-| cellpose_pretrained_model   | Path to a pre-trained Cellpose model.                |
+| Parameter Name              | Description                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------- |
+| cellpose_diameter           | Diameter of cells in pixels for cellpose.                                       |
+| cellpose_min_area           | Minimum area of cells in square pixels for cellpose.                            |
+| cellpose_flow_threshold     | Flow threshold for cellpose.                                                    |
+| cellpose_cellprob_threshold | Cell probability threshold for cellpose.                                        |
+| cellpose_model_type         | Cellpose model to use for segmentation (e.g., nuclei, cyto, cyto2, cyto3 etc.). |
+| cellpose_pretrained_model   | Path to a pre-trained Cellpose model.                                           |
 
 ### SOPA patching parameters
 
@@ -147,11 +147,11 @@ The following Mesmer parameters can be set:
 
 ### Cell measurement options
 
-| Parameter Name     | Description                                                                                |
-| ------------------ | ------------------------------------------------------------------------------------------ |
-| skip_measurements  | Do not calculate intensity and shape measurements for cell compartments (faster execution) |
-| pixel_size_microns | Pixel size in microns, use 0.28 for COMET.                                                 |
-| cell_expansion     | How many pixels to expand cytoplasm segmentation boundary by                               |
+| Parameter Name     | Description                                                                                  |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| skip_measurements  | Do not calculate intensity and shape measurements for cell compartments (faster execution)   |
+| pixel_size_microns | Pixel size in microns, use 0.28 for COMET and 0.390625 for MIBI                              |
+| cell_expansion     | How many pixels to expand cytoplasm segmentation boundary using QuPath's expansion algorithm |
 
 ### Updating the pipeline
 

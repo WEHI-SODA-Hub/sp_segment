@@ -103,7 +103,7 @@
                 },
                 "cellpose_model_type": {
                     "type": "string",
-                    "description": "Cellpose model type to use for segmentation.",
+                    "description": "Cellpose model to use for segmentation (e.g., nuclei, cyto, cyto2, cyto3 etc.).",
                     "fa_icon": "fas fa-cogs"
                 },
                 "cellpose_pretrained_model": {
@@ -141,12 +141,12 @@
                 },
                 "mesmer_interior_threshold": {
                     "type": "number",
-                    "description": "Controls how conservative model is in distinguishing cell from background (lower values = larger cells, higher values = smaller cells).",
+                    "description": "Controls how conservative model is in distinguishing cell from background (higher values = more conservative interior therefore smaller nuclei & cells).",
                     "fa_icon": "fas fa-tachometer-alt"
                 },
                 "mesmer_maxima_smooth": {
                     "type": "number",
-                    "description": "Controls what is considered a unique cell (lower values = more separate cells, higher values = fewer cells).",
+                    "description": "Smooths signal peaks (higher values = less irregular shapes/nuclei).",
                     "fa_icon": "fas fa-tachometer-alt",
                     "minimum": 0
                 },
@@ -194,11 +194,12 @@
                     "description": "Pixel size in microns.",
                     "minimum": 0.1,
                     "maximum": 10.0,
-                    "fa_icon": "fas fa-ruler-combined"
+                    "fa_icon": "fas fa-ruler-combined",
+                    "help_text": "For COMET use 0.28 and for MIBI use 0.390625."
                 },
                 "cell_expansion": {
                     "type": "integer",
-                    "description": "Number of pixels to expand the whole-cell boundary.",
+                    "description": "Number of pixels to expand the whole-cell boundary using QuPath's expansion algorithm.",
                     "fa_icon": "fas fa-expand-arrows-alt",
                     "minimum": 0
                 }
