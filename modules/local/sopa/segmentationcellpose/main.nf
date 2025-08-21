@@ -22,9 +22,9 @@ process SOPA_SEGMENTATIONCELLPOSE {
     def args = task.ext.args ?: ''
     def membrane_channel_args = membrane_channels && membrane_channels != "" ?
         membrane_channels.split(":").collect(
-        { "--channels ${it}" }
+        { "--channels \"${it}\"" }
     ).join(' ') : ''
-    def channels = "${membrane_channel_args} --channels ${nuclear_channel}"
+    def channels = "${membrane_channel_args} --channels \"${nuclear_channel}\""
     """
     sopa segmentation cellpose \\
         ${args} \\
