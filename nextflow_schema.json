@@ -197,9 +197,9 @@
                     "fa_icon": "fas fa-ruler-combined",
                     "help_text": "For COMET use 0.28 and for MIBI use 0.390625."
                 },
-                "cell_expansion": {
+                "estimate_cell_boundary_dist": {
                     "type": "integer",
-                    "description": "Number of pixels to expand the whole-cell boundary using QuPath's expansion algorithm.",
+                    "description": "Where no matching membrane ROI exists, expand the nucleus by this many pixels (default = 3.0).",
                     "fa_icon": "fas fa-expand-arrows-alt",
                     "minimum": 0
                 }

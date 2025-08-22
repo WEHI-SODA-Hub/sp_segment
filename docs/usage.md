@@ -147,11 +147,11 @@ The following Mesmer parameters can be set:
 
 ### Cell measurement options
 
-| Parameter Name     | Description                                                                                  |
-| ------------------ | -------------------------------------------------------------------------------------------- |
-| skip_measurements  | Do not calculate intensity and shape measurements for cell compartments (faster execution)   |
-| pixel_size_microns | Pixel size in microns, use 0.28 for COMET and 0.390625 for MIBI                              |
-| cell_expansion     | How many pixels to expand cytoplasm segmentation boundary using QuPath's expansion algorithm |
+| Parameter Name              | Description                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------ |
+| skip_measurements           | Do not calculate intensity and shape measurements for cell compartments (faster execution) |
+| pixel_size_microns          | Pixel size in microns, use 0.28 for COMET and 0.390625 for MIBI                            |
+| estimate_cell_boundary_dist | Where no matching membrane ROI exists, expand the nucleus by this many pixels              |
 
 ### Updating the pipeline
 
