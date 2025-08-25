@@ -7,7 +7,7 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,f2afd06186eec7b81488a7ad814c35df"
+                        "test.geojson:md5,5de1ada9b73bbda0cf91a09a32b79a22"
                     ]
                 ],
                 "1": [
@@ -23,7 +23,7 @@
                         {
                             "id": "test"
                         },
-                        "test_nuclear.tiff:md5,49dd1652948c2e2d4bb56b67d171e1a7"
+                        "test_nuclear.tiff:md5,07dc3d7f48a3ebf926fe82d6d68175af"
                     ]
                 ],
                 "3": [
@@ -36,7 +36,7 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,f2afd06186eec7b81488a7ad814c35df"
+                        "test.geojson:md5,5de1ada9b73bbda0cf91a09a32b79a22"
                     ]
                 ],
                 "nuclear_tif": [
@@ -44,7 +44,7 @@
                         {
                             "id": "test"
                         },
-                        "test_nuclear.tiff:md5,49dd1652948c2e2d4bb56b67d171e1a7"
+                        "test_nuclear.tiff:md5,07dc3d7f48a3ebf926fe82d6d68175af"
                     ]
                 ],
                 "versions": [
@@ -66,6 +66,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-08-07T09:42:56.497936653"
+        "timestamp": "2025-08-25T11:31:18.135939955"
     }
 }

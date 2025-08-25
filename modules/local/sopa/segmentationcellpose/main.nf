@@ -12,7 +12,7 @@ process SOPA_SEGMENTATIONCELLPOSE {
         : 'docker.io/quentinblampey/sopa:2.0.7-cellpose'}"
 
     input:
-    tuple val(meta), path(zarr), val(index), val(n_patches), val(nuclear_channel), val(membrane_channels)
+    tuple val(meta), path(zarr), val(index), val(n_patches), val(nuclear_channel), val(membrane_channel)
 
     output:
     tuple val(meta), path("*.zarr/.sopa_cache/cellpose_boundaries/${index}.parquet"), emit: cellpose_parquet
@@ -20,16 +20,13 @@ process SOPA_SEGMENTATIONCELLPOSE {
 
     script:
     def args = task.ext.args ?: ''
-    def membrane_channel_args = membrane_channels && membrane_channels != "" ?
-        membrane_channels.split(":").collect(
-        { "--channels \"${it}\"" }
-    ).join(' ') : ''
-    def channels = "${membrane_channel_args} --channels \"${nuclear_channel}\""
+    def membrane_channel_arg = membrane_channel ? "--channels \"${membrane_channel}\"" : ""
     """
     sopa segmentation cellpose \\
         ${args} \\
         --patch-index ${index} \\
-        ${channels} \\
+        ${membrane_channel_arg} \\
+        --channels "${nuclear_channel}" \\
         --diameter ${params.cellpose_diameter} \\
         --min-area ${params.cellpose_min_area} \\
         ${zarr}

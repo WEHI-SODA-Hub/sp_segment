@@ -1,3 +1,4 @@
+include { COMBINECHANNELS                                    } from '../../../modules/local/combinechannels/main.nf'
 include { SOPA_SEGMENT_COMPARTMENT as SOPA_SEGMENT_NUCLEAR   } from '../sopa_segment_compartment/main.nf'
 include { SOPA_SEGMENT_COMPARTMENT as SOPA_SEGMENT_WHOLECELL } from '../sopa_segment_compartment/main.nf'
 include { CELLMEASUREMENT                                    } from '../../../modules/local/cellmeasurement/main.nf'
@@ -12,10 +13,28 @@ workflow SOPA_SEGMENT {
     ch_versions = Channel.empty()
 
     //
+    // Combine membrane channels into a single channel
+    //
+    COMBINECHANNELS(
+        ch_sopa
+    )
+    ch_versions = ch_versions.mix(COMBINECHANNELS.out.versions.first())
+
+    // Replace tiff with combined_tiff
+    // If there are multiple membrane channels, rename to 'combined_membrane'
+    COMBINECHANNELS.out.combined_tiff
+        .join( ch_sopa, by: 0 )
+        .map { meta, combined_tiff, _tiff, nuclear_channel, membrane_channels ->
+            def membrane_name = membrane_channels.size() == 1 ?
+                membrane_channels[0] : 'combined_membrane'
+            [ meta, combined_tiff, nuclear_channel, [membrane_name] ]
+        }.set { ch_combined }
+
+    //
     // Run segmentation for nuclear compartment
     //
     SOPA_SEGMENT_NUCLEAR(
-        ch_sopa.map {
+        ch_combined.map {
             meta,
             tiff,
             nuclear_channel,
@@ -23,7 +42,7 @@ workflow SOPA_SEGMENT {
                 meta,
                 tiff,
                 nuclear_channel,
-                [""] // no membrane channels for nuclear segmentation
+                [''] // no membrane channels for nuclear segmentation
             ]
         },
         'nuclear'
@@ -34,7 +53,7 @@ workflow SOPA_SEGMENT {
     // Run segmentation for whole-cell compartment
     //
     SOPA_SEGMENT_WHOLECELL(
-        ch_sopa,
+        ch_combined,
         'whole-cell'
     )
     ch_versions = ch_versions.mix(SOPA_SEGMENT_WHOLECELL.out.versions.first())

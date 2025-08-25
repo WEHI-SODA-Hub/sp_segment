@@ -2,7 +2,11 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
 name: COMBINECHANNELS
 description: |
-  Combines multiple membrane channels into a single channel using specified method.
+  Outputs a 2-channel OME-TIFF with nuclear and membrane channels. Combines multiple
+  membrane channels into a single channel using specified method. The nuclear channel
+  is retained as-is, and the membrane channels are combined using the specified method
+  (product or maximum). If >1 membrane channel is provided, the channel name becomes
+  "combined_membrane", otherwise it retains the original membrane channel name.
 keywords:
   - cell segmentation
   - spatial biology
@@ -50,7 +54,7 @@ output:
             e.g. `[ id:'sample1' ]`
       - "${prefix}_combined_channels.ome.tif":
           type: file
-          description: OME-TIFF with nuclear and combined membrane channels
+          description: A 2-channel OME-TIFF with nuclear and combined membrane channels.
           pattern: "{prefix}_combined_channels.ome.tif"
           ontologies:
             - edam: "http://edamontology.org/format_3727"
