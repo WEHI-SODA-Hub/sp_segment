@@ -25,8 +25,8 @@ workflow SOPA_SEGMENT {
     COMBINECHANNELS.out.combined_tiff
         .join( ch_sopa, by: 0 )
         .map { meta, combined_tiff, _tiff, nuclear_channel, membrane_channels ->
-            def membrane_name = membrane_channels.size() == 1 ?
-                membrane_channels[0] : 'combined_membrane'
+            def membrane_name = membrane_channels.first().split(':').size() == 1 ?
+                membrane_channels.first() : 'combined_membrane'
             [ meta, combined_tiff, nuclear_channel, [membrane_name] ]
         }.set { ch_combined }
 
