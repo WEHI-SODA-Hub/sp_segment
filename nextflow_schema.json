@@ -51,6 +51,20 @@
                 }
             }
         },
+        "combine_channel_options": {
+            "title": "Combine options",
+            "type": "object",
+            "fa_icon": "fas fa-object-group",
+            "description": "Parameters used for combining membrane channels.",
+            "properties": {
+                "combine_method": {
+                    "type": "string",
+                    "description": "Method used to combine membrane channels (product or max).",
+                    "fa_icon": "fas fa-compress-arrows-alt",
+                    "enum": ["prod", "max"]
+                }
+            }
+        },
         "sopa_options": {
             "title": "SOPA options",
             "type": "object",
@@ -120,12 +134,6 @@
             "fa_icon": "fas fa-vial",
             "description": "Parameters used by the MesmerSegmentation tool.",
             "properties": {
-                "mesmer_combine_method": {
-                    "type": "string",
-                    "description": "Method used to combine membrane channels (product or max).",
-                    "fa_icon": "fas fa-compress-arrows-alt",
-                    "enum": ["prod", "max"]
-                },
                 "mesmer_segmentation_level": {
                     "type": "integer",
                     "description": "Segmentation level (legacy parameter).",
@@ -332,6 +340,9 @@
         },
         {
             "$ref": "#/$defs/background_subtract_options"
+        },
+        {
+            "$ref": "#/$defs/combine_channel_options"
         },
         {
             "$ref": "#/$defs/sopa_options"

@@ -110,13 +110,20 @@ You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-c
 | -------------- | --------------------------------------------------------------- |
 | remove_markers | Marker channels to remove from the background subtracted image. |
 
+### Combine channel parameters
+
+Works for both mesmer and sopa segmentation.
+
+| Parameter Name | Description                                                |
+| -------------- | ---------------------------------------------------------- |
+| combine_method | Method used to combine membrane channels (product or max). |
+
 ### Mesmer parameters
 
 The following Mesmer parameters can be set:
 
 | Parameter Name             | Description                                                                                                                                              |
 | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| mesmer_combine_method      | Method used to combine membrane channels (product or max).                                                                                               |
 | mesmer_segmentation_level  | Segmentation level (legacy parameter).                                                                                                                   |
 | mesmer_maxima_threshold    | Controls segmentation level directly in mesmer, (lower values = more cells, higher values = fewer cells).                                                |
 | mesmer_interior_threshold  | Controls how conservative model is in distinguishing cell from background (higher values = more conservative interior therefore smaller nuclei & cells). |

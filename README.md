@@ -120,7 +120,7 @@ values separated by `:` characters. If your channels have spaces in them, make
 sure that you surround your channel name with quotes. For example, CD45:"HLA I".
 
 You can also set the segmentation parameters for mesmer either via CLI
-(e.g., `--mesmer_combine_method prod` or in a config file pass to the workflow
+(e.g., `--combine_method prod` or in a config file pass to the workflow
 via `-c`. See [usage](docs/usage.md) for a full list.
 
 > [!WARNING]
@@ -141,7 +141,7 @@ sample2,false,true,/path/to/sample2.tiff,DAPI,CD45
 
 As with Mesmer, nuclear channels only support one entry; membrane channels may
 have multiple values separated by `:` characters. You can also set the following
-parameters, either via CLI (e.g., `--mesmer_combine_method prod` or in a config
+parameters, either via CLI (e.g., `--combine_method prod` or in a config
 file pass to the workflow via `-c`. See [usage](docs/usage.md) for a full list.
 
 Cellpose will run in a parallelised patched workflow using sopa. To control the
