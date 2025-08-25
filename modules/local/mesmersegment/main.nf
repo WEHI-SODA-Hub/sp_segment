@@ -1,6 +1,7 @@
 process MESMERSEGMENT {
     tag "$meta.id"
     label 'process_high'
+    secret 'DEEPCELL_ACCESS_TOKEN'
 
     conda "${moduleDir}/environment.yml"
     container 'ghcr.io/wehi-soda-hub/mibisegmentation:latest'

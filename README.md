@@ -106,6 +106,13 @@ nextflow run WEHI-SODA-Hub/spatialproteomics \
 
 ### Mesmer segmentation
 
+Before running Mesmer, ensure that you have a [deepcell access token](https://users.deepcell.org/login/)
+and that you have set it in your Nextflow secrets:
+
+```bash
+nextflow secrets set DEEPCELL_ACCESS_TOKEN $YOUR_TOKEN
+```
+
 If you want to run Mesmer as your segmentation algorithm, you can specify a
 config file like so:
 
