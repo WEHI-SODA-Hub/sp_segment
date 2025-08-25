@@ -1,0 +1,101 @@
+{
+    "combinechannels - tiff": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_combined_channels.ome.tif:md5,118224d2b43dc95e0b7a64c7ee3900d6"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,338938a53c7b3f9fb82462bfe80ec358"
+                ],
+                "combined_tiff": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_combined_channels.ome.tif:md5,118224d2b43dc95e0b7a64c7ee3900d6"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,338938a53c7b3f9fb82462bfe80ec358"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-08-25T10:21:33.911858874"
+    },
+    "mesmersegment - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_nuclear"
+                        },
+                        "test_nuclear_combined_channels.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,338938a53c7b3f9fb82462bfe80ec358"
+                ],
+                "combined_tiff": [
+                    [
+                        {
+                            "id": "test_nuclear"
+                        },
+                        "test_nuclear_combined_channels.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,338938a53c7b3f9fb82462bfe80ec358"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-08-25T09:47:08.357804486"
+    },
+    "combinechannels - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_combined_channels.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,338938a53c7b3f9fb82462bfe80ec358"
+                ],
+                "combined_tiff": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_combined_channels.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,338938a53c7b3f9fb82462bfe80ec358"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-08-25T10:22:02.177073708"
+    }
+}

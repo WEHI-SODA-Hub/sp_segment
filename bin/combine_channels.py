@@ -105,7 +105,8 @@ def combine_channels(array: DataArray, channels: List[str], combined_name: str,
     return concat([array, combined], dim="C")
 
 
-def update_ome_xml(original_xml, width, height, channels, channel_names):
+def update_ome_xml(original_xml: str, width: int, height: int,
+                   num_channels: int, channel_names: List[str]) -> str:
     """
     Update existing OME-XML metadata with new channel information.
     """
@@ -123,21 +124,21 @@ def update_ome_xml(original_xml, width, height, channels, channel_names):
             # Update dimensions
             pixels.set('SizeX', str(width))
             pixels.set('SizeY', str(height))
-            pixels.set('SizeC', str(channels))
+            pixels.set('SizeC', str(num_channels))
 
             # Update/set PlaneCount to match channel number
             tiff_data_elements = pixels.findall('ome:TiffData', namespace)
             if tiff_data_elements:
                 for tiff_data in tiff_data_elements:
-                    tiff_data.set('PlaneCount', str(channels))
+                    tiff_data.set('PlaneCount', str(num_channels))
             else:
                 tiff_data = ET.SubElement(pixels, 'TiffData')
-                tiff_data.set('PlaneCount', str(channels))
+                tiff_data.set('PlaneCount', str(num_channels))
 
             for channel in pixels.findall('ome:Channel', namespace):
                 pixels.remove(channel)
 
-            for c in range(channels):
+            for c in range(num_channels):
                 channel_id = f"Channel:{c}"
                 channel_attrs = {
                     'ID': channel_id,

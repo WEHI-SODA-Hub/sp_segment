@@ -1,0 +1,61 @@
+nextflow_process {
+
+    name "Test Process COMBINECHANNELS"
+    script "../main.nf"
+    process "COMBINECHANNELS"
+
+    tag "modules"
+    tag "modules_nfcore"
+    tag "combinechannels"
+
+    test("combinechannels - tiff") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test' ], // meta map
+                    file('${projectDir}/tests/data/comet/synthetic_bgsub.ome.tif'), // tiff
+                    ["DAPI"], // nuclear_channel
+                    ["CD45"] // membrane_channels
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("combinechannels - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test' ], // meta map
+                    file('${projectDir}/tests/data/comet/synthetic_bgsub.ome.tif'), // tiff
+                    ["DAPI"], // nuclear_channel
+                    ["CD45"] // membrane_channels
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}
