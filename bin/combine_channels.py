@@ -65,22 +65,24 @@ def tiff_to_xarray(tiffPath: Path) -> DataArray:
     """
     Takes a TIFF and converts it to an xarray with relevant axis,
     coordinate and metadata attached. Supports MIBI TIFF and OME-TIFF.
+    Uses memory mapping to avoid loading the entire image into memory.
     """
     channel_names: list[str] = []
     attrs: dict[str, float] = {}
-    #: List of channels, each of which are 2D
-    channels = []
 
     with TiffFile(tiffPath) as tiff:
         first_page = tiff.pages[0]
-
-        # OME-TIFF: channel info in first page only
         channel_names = extract_channel_names(first_page.description)
-        for page in tiff.pages:
-            channels.append(page.asarray())
 
-    return DataArray(data=channels, dims=["C", "Y", "X"],
-                     coords={"C": channel_names}, attrs=attrs)
+        if len(tiff.pages) > 1:
+            # Stack pages using memory mapping
+            arrays = [page.asarray() for page in tiff.pages]
+            data = np.stack(arrays, axis=0)
+        else:
+            data = tiff.asarray()
+
+        return DataArray(data=data, dims=["C", "Y", "X"],
+                         coords={"C": channel_names}, attrs=attrs)
 
 
 def combine_channels(array: DataArray, channels: List[str], combined_name: str,
@@ -93,16 +95,22 @@ def combine_channels(array: DataArray, channels: List[str], combined_name: str,
     if len(channels) == 1:
         return array
 
-    combined = array.sel(C=channels)
+    selected_data = array.sel(C=channels).values
 
     if combine_method == CombineMethod.MAX:
-        combined = combined.max(dim="C")
+        combined_data = np.max(selected_data, axis=0, keepdims=True)
     elif combine_method == CombineMethod.PROD:
-        combined = combined.prod(dim="C")
+        combined_data = np.prod(selected_data, axis=0, keepdims=True)
 
-    combined = combined.expand_dims("C").assign_coords(C=[combined_name])
+    # Create new array with combined channel
+    new_data = np.concatenate([array.values, combined_data], axis=0)
+    new_coords = list(array.coords["C"].values) + [combined_name]
 
-    return concat([array, combined], dim="C")
+    # Delete intermediate arrays to free memory
+    del selected_data, combined_data
+
+    return DataArray(data=new_data, dims=["C", "Y", "X"],
+                     coords={"C": new_coords}, attrs=array.attrs)
 
 
 def update_ome_xml(original_xml: str, width: int, height: int,
@@ -178,17 +186,21 @@ def main(
 ):
     full_array = tiff_to_xarray(tiff)
 
-    # Combine channels and prepare image array
-    combined_membrane_channel = "combined_membrane" \
-        if len(membrane_channel) > 1 else membrane_channel[0]
-    full_array = combine_channels(full_array, membrane_channel,
-                                  combined_membrane_channel,
-                                  CombineMethod(combine_method))
+    # Combine membrane channels if needed
+    if len(membrane_channel) > 1:
+        combined_membrane_channel = "combined_membrane"
+        full_array = combine_channels(full_array, membrane_channel,
+                                      combined_membrane_channel,
+                                      CombineMethod(combine_method))
+        final_channels = [nuclear_channel, combined_membrane_channel]
+    else:
+        final_channels = [nuclear_channel, membrane_channel[0]]
 
-    # Extract the nuclear and membrane channels
-    output_array = full_array.sel(
-        C=[nuclear_channel, combined_membrane_channel]
-    ).values.astype(np.uint16)
+    # Extract final channels and convert to output format
+    output_array = full_array.sel(C=final_channels).values.astype(np.uint16)
+
+    # Free the full_array from memory
+    del full_array
 
     with TiffFile(tiff) as tif:
         ome_metadata = tif.pages[0].description
@@ -196,7 +208,7 @@ def main(
     # Update OME-XML metadata
     c, height, width = output_array.shape
     updated_metadata = update_ome_xml(ome_metadata, width, height, c,
-                                      [nuclear_channel, combined_membrane_channel])
+                                      final_channels)
 
     imwrite(sys.stdout.buffer, output_array,
             photometric='minisblack',
