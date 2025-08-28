@@ -4,7 +4,7 @@ process MESMERSEGMENT {
     secret 'DEEPCELL_ACCESS_TOKEN'
 
     conda "${moduleDir}/environment.yml"
-    container 'ghcr.io/wehi-soda-hub/mibisegmentation:0.2.0'
+    container 'ghcr.io/wehi-soda-hub/mesmersegmentation:0.2.0'
 
     input:
     tuple val(meta), path(tiff), val(nuclear_channel), val(membrane_channels)
