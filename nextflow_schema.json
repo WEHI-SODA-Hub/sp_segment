@@ -59,7 +59,7 @@
             "properties": {
                 "combine_method": {
                     "type": "string",
-                    "description": "Method used to combine membrane channels (product or max).",
+                    "description": "Method used to combine membrane channels (product or max). Using product is not recommended for large numbers of channels with large images as this may use a lot of memory.",
                     "fa_icon": "fas fa-compress-arrows-alt",
                     "enum": ["prod", "max"]
                 }
