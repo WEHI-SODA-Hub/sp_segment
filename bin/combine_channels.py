@@ -20,7 +20,7 @@ from typing import Annotated, List
 import typer
 import numpy as np
 from tifffile import TiffFile, imwrite
-from xarray import DataArray, concat
+from xarray import DataArray
 
 
 class CombineMethod(str, Enum):
@@ -95,12 +95,22 @@ def combine_channels(array: DataArray, channels: List[str], combined_name: str,
     if len(channels) == 1:
         return array
 
-    selected_data = array.sel(C=channels).values
+    # Select the specified channels and convert to uint64 to avoid overflow
+    selected_data = array.sel(C=channels).values.astype(np.uint64)
 
     if combine_method == CombineMethod.MAX:
         combined_data = np.max(selected_data, axis=0, keepdims=True)
     elif combine_method == CombineMethod.PROD:
         combined_data = np.prod(selected_data, axis=0, keepdims=True)
+
+    # Convert back to uint16, scaling if necessary
+    max_val: int = np.iinfo(np.uint16).max
+    if np.max(combined_data) > max_val:
+        scale_factor: float = (np.iinfo(np.uint16).max - 1) / max_val
+        combined_data = np.clip(combined_data * scale_factor, 0,
+                                np.iinfo(np.uint16).max).astype(np.uint16)
+    else:
+        combined_data = combined_data.astype(np.uint16)
 
     # Create new array with combined channel
     new_data = np.concatenate([array.values, combined_data], axis=0)

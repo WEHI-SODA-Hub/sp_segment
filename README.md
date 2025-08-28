@@ -166,6 +166,11 @@ You can run the pipeline with different profiles for different size images:
 - `medium`: for images <300GB
 - `large`: for images <600GB
 
+> [!WARNING]
+> If you are combining many membrane channels, using `prod` as the combine method
+> may lead to large memory usage. In these cases, it is recommended to use `max`
+> instead.
+
 ## Credits
 
 WEHI-SODA-Hub/spatialproteomics was originally written by the WEHI SODA-Hub.
