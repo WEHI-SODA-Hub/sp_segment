@@ -95,12 +95,14 @@ def combine_channels(array: DataArray, channels: List[str], combined_name: str,
     if len(channels) == 1:
         return array
 
-    # Select the specified channels and convert to uint64 to avoid overflow
-    selected_data = array.sel(C=channels).values.astype(np.uint64)
+    # Select the specified channels
+    selected_data = array.sel(C=channels).values
 
     if combine_method == CombineMethod.MAX:
         combined_data = np.max(selected_data, axis=0, keepdims=True)
     elif combine_method == CombineMethod.PROD:
+        # Convert to uint64 to avoid possible overflow
+        selected_data = selected_data.astype(np.uint64)
         combined_data = np.prod(selected_data, axis=0, keepdims=True)
 
     # Convert back to uint16, scaling if necessary
