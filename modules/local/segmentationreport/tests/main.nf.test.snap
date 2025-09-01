@@ -1,0 +1,150 @@
+{
+    "segmentationreport - basic functionality": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.html:md5,978a4490880fb404e965aea8838d8f37",
+                        [
+                            [
+                                "channel_intensities-1.png:md5,6a0c625d84e7e87344c68e83bd508505",
+                                "compartment_measurements-1.png:md5,67e32361a18ca731b2b69e77c3ef3133",
+                                "unnamed-chunk-1-1.png:md5,1bc975856040cdf40996f4a9ecee2af7"
+                            ],
+                            [
+                                [
+                                    "bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css:md5,bb462d781dde1847d9e3ccf7736099dd",
+                                    "bootstrap-icons.css:md5,2318f137d201fbf51601fa0faba6bef7",
+                                    "bootstrap-icons.woff:md5,1a51dfbe5467607389d603c02a77cd10",
+                                    "bootstrap.min.js:md5,e2b09c06f0e714b6144a6788a28e3950"
+                                ],
+                                [
+                                    "clipboard.min.js:md5,15f52a1ee547f2bdd46e56747332ca2d"
+                                ],
+                                [
+                                    "anchor.min.js:md5,91bcf6cd1fd88fec3f109811e5fc3546",
+                                    "popper.min.js:md5,3a4a291ccf3f1ea0f82b641542fd3827",
+                                    "quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css:md5,c8ad9e5dbd60b7b70b38521ab19b7da4",
+                                    "quarto.js:md5,6f4245742deb3cc92337dbe2701ccfe1",
+                                    [
+                                        "tabsets.js:md5,e8d6a8862b33ccc461f8fd532e05b365"
+                                    ],
+                                    "tippy.css:md5,ebd6f8ce46a677e1a4f5f8a8317109a9",
+                                    "tippy.umd.min.js:md5,d828775275749701b48bd9d958814111"
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                "1": [
+                    
+                ],
+                "2": [
+                    "versions.yml:md5,a36295eacb48d679e04b9d2c71e4f0eb"
+                ],
+                "rds": [
+                    
+                ],
+                "report": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.html:md5,978a4490880fb404e965aea8838d8f37",
+                        [
+                            [
+                                "channel_intensities-1.png:md5,6a0c625d84e7e87344c68e83bd508505",
+                                "compartment_measurements-1.png:md5,67e32361a18ca731b2b69e77c3ef3133",
+                                "unnamed-chunk-1-1.png:md5,1bc975856040cdf40996f4a9ecee2af7"
+                            ],
+                            [
+                                [
+                                    "bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css:md5,bb462d781dde1847d9e3ccf7736099dd",
+                                    "bootstrap-icons.css:md5,2318f137d201fbf51601fa0faba6bef7",
+                                    "bootstrap-icons.woff:md5,1a51dfbe5467607389d603c02a77cd10",
+                                    "bootstrap.min.js:md5,e2b09c06f0e714b6144a6788a28e3950"
+                                ],
+                                [
+                                    "clipboard.min.js:md5,15f52a1ee547f2bdd46e56747332ca2d"
+                                ],
+                                [
+                                    "anchor.min.js:md5,91bcf6cd1fd88fec3f109811e5fc3546",
+                                    "popper.min.js:md5,3a4a291ccf3f1ea0f82b641542fd3827",
+                                    "quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css:md5,c8ad9e5dbd60b7b70b38521ab19b7da4",
+                                    "quarto.js:md5,6f4245742deb3cc92337dbe2701ccfe1",
+                                    [
+                                        "tabsets.js:md5,e8d6a8862b33ccc461f8fd532e05b365"
+                                    ],
+                                    "tippy.css:md5,ebd6f8ce46a677e1a4f5f8a8317109a9",
+                                    "tippy.umd.min.js:md5,d828775275749701b48bd9d958814111"
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,a36295eacb48d679e04b9d2c71e4f0eb"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-09-01T13:49:50.280243443"
+    },
+    "segmentationreport - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "stub_test"
+                        },
+                        "stub_test.html:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "foo.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "stub_test"
+                        },
+                        "stub_test.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    "versions.yml:md5,a36295eacb48d679e04b9d2c71e4f0eb"
+                ],
+                "rds": [
+                    [
+                        {
+                            "id": "stub_test"
+                        },
+                        "stub_test.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "report": [
+                    [
+                        {
+                            "id": "stub_test"
+                        },
+                        "stub_test.html:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "foo.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,a36295eacb48d679e04b9d2c71e4f0eb"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-09-01T13:12:50.675902625"
+    }
+}

@@ -1,0 +1,61 @@
+nextflow_process {
+
+    name "Test Process SEGMENTATIONREPORT"
+    script "../main.nf"
+    process "SEGMENTATIONREPORT"
+
+    tag "modules"
+    tag "modules_nfcore"
+    tag "segmentationreport"
+
+    test("segmentationreport - basic functionality") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test' ], // meta map
+                    file('/vast/scratch/users/cmero.ma/results/spatialproteomics_test/cellmeasurement/test.geojson'),
+                    true,
+                    false
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("segmentationreport - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'stub_test' ], // meta map
+                    file('/vast/scratch/users/cmero.ma/results/spatialproteomics_test/cellmeasurement/test.geojson'),
+                    true,
+                    false
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}
