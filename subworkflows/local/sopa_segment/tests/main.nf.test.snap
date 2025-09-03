@@ -7,12 +7,50 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,167dc00eadfcd8b974f967e12a28f6d2"
+                        "test.geojson:md5,1eee227340e5cd6cd4e2e56db4d41cb0"
                     ]
                 ],
                 "1": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.html:md5,28456338617ffa9f272a2714ad46ffe4",
+                        [
+                            [
+                                "channel_intensities-1.png:md5,c5e04962352bb6fe4a429bdb036f27af",
+                                "compartment_measurements-1.png:md5,aabccd432557f52ee557bae6cccb5788",
+                                "unnamed-chunk-1-1.png:md5,5415f55b7b4a6529926aa955c1842ddf"
+                            ],
+                            [
+                                [
+                                    "bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css:md5,bb462d781dde1847d9e3ccf7736099dd",
+                                    "bootstrap-icons.css:md5,2318f137d201fbf51601fa0faba6bef7",
+                                    "bootstrap-icons.woff:md5,1a51dfbe5467607389d603c02a77cd10",
+                                    "bootstrap.min.js:md5,e2b09c06f0e714b6144a6788a28e3950"
+                                ],
+                                [
+                                    "clipboard.min.js:md5,15f52a1ee547f2bdd46e56747332ca2d"
+                                ],
+                                [
+                                    "anchor.min.js:md5,91bcf6cd1fd88fec3f109811e5fc3546",
+                                    "popper.min.js:md5,3a4a291ccf3f1ea0f82b641542fd3827",
+                                    "quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css:md5,c8ad9e5dbd60b7b70b38521ab19b7da4",
+                                    "quarto.js:md5,6f4245742deb3cc92337dbe2701ccfe1",
+                                    [
+                                        "tabsets.js:md5,e8d6a8862b33ccc461f8fd532e05b365"
+                                    ],
+                                    "tippy.css:md5,ebd6f8ce46a677e1a4f5f8a8317109a9",
+                                    "tippy.umd.min.js:md5,d828775275749701b48bd9d958814111"
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                "2": [
                     "versions.yml:md5,4365d84aefd2e681fc09e75b49725961",
                     "versions.yml:md5,7bef09a7858e9f47bf9108e779ddc6a1",
+                    "versions.yml:md5,b415dcdfef3ac4967a7682e2e03400d1",
                     "versions.yml:md5,dd7c9a4feb0c5710a638318159023030",
                     "versions.yml:md5,faeace3d7ca5ba5d9d9ebf3a48c43c24"
                 ],
@@ -21,12 +59,50 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,167dc00eadfcd8b974f967e12a28f6d2"
+                        "test.geojson:md5,1eee227340e5cd6cd4e2e56db4d41cb0"
+                    ]
+                ],
+                "report": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test.html:md5,28456338617ffa9f272a2714ad46ffe4",
+                        [
+                            [
+                                "channel_intensities-1.png:md5,c5e04962352bb6fe4a429bdb036f27af",
+                                "compartment_measurements-1.png:md5,aabccd432557f52ee557bae6cccb5788",
+                                "unnamed-chunk-1-1.png:md5,5415f55b7b4a6529926aa955c1842ddf"
+                            ],
+                            [
+                                [
+                                    "bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css:md5,bb462d781dde1847d9e3ccf7736099dd",
+                                    "bootstrap-icons.css:md5,2318f137d201fbf51601fa0faba6bef7",
+                                    "bootstrap-icons.woff:md5,1a51dfbe5467607389d603c02a77cd10",
+                                    "bootstrap.min.js:md5,e2b09c06f0e714b6144a6788a28e3950"
+                                ],
+                                [
+                                    "clipboard.min.js:md5,15f52a1ee547f2bdd46e56747332ca2d"
+                                ],
+                                [
+                                    "anchor.min.js:md5,91bcf6cd1fd88fec3f109811e5fc3546",
+                                    "popper.min.js:md5,3a4a291ccf3f1ea0f82b641542fd3827",
+                                    "quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css:md5,c8ad9e5dbd60b7b70b38521ab19b7da4",
+                                    "quarto.js:md5,6f4245742deb3cc92337dbe2701ccfe1",
+                                    [
+                                        "tabsets.js:md5,e8d6a8862b33ccc461f8fd532e05b365"
+                                    ],
+                                    "tippy.css:md5,ebd6f8ce46a677e1a4f5f8a8317109a9",
+                                    "tippy.umd.min.js:md5,d828775275749701b48bd9d958814111"
+                                ]
+                            ]
+                        ]
                     ]
                 ],
                 "versions": [
                     "versions.yml:md5,4365d84aefd2e681fc09e75b49725961",
                     "versions.yml:md5,7bef09a7858e9f47bf9108e779ddc6a1",
+                    "versions.yml:md5,b415dcdfef3ac4967a7682e2e03400d1",
                     "versions.yml:md5,dd7c9a4feb0c5710a638318159023030",
                     "versions.yml:md5,faeace3d7ca5ba5d9d9ebf3a48c43c24"
                 ]
@@ -36,6 +112,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-08-25T13:27:49.360016637"
+        "timestamp": "2025-09-03T16:15:40.040881132"
     }
 }

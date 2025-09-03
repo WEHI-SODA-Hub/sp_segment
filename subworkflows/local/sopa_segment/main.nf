@@ -2,6 +2,7 @@ include { COMBINECHANNELS                                    } from '../../../mo
 include { SOPA_SEGMENT_COMPARTMENT as SOPA_SEGMENT_NUCLEAR   } from '../sopa_segment_compartment/main.nf'
 include { SOPA_SEGMENT_COMPARTMENT as SOPA_SEGMENT_WHOLECELL } from '../sopa_segment_compartment/main.nf'
 include { CELLMEASUREMENT                                    } from '../../../modules/local/cellmeasurement/main.nf'
+include { SEGMENTATIONREPORT                                 } from '../../../modules/local/segmentationreport/main.nf'
 
 workflow SOPA_SEGMENT {
 
@@ -86,8 +87,38 @@ workflow SOPA_SEGMENT {
     )
     ch_versions = ch_versions.mix(CELLMEASUREMENT.out.versions.first())
 
+    // Optional SEGMENTATIONREPORT module
+    ch_report = Channel.empty()
+    if (params.generate_report) {
+        ch_sopa
+            .join(CELLMEASUREMENT.out.annotations)
+            .map {
+                sample,
+                _tiff,
+                _nuclear_channel,
+                _membrane_channels,
+                annotations -> [
+                    sample,
+                    annotations,
+                    false, // run_mesmer
+                    true   // run_cellpose
+                ]
+            }.set { ch_segmentationreport }
+
+        //
+        // Run SEGMENTATIONREPORT module to generate a report of the segmentation results
+        //
+        SEGMENTATIONREPORT(
+            ch_segmentationreport
+        )
+        ch_versions = ch_versions.mix(SEGMENTATIONREPORT.out.versions.first())
+
+        ch_report = SEGMENTATIONREPORT.out.report  // channel: [ val(meta), *.html, */*_files/* ]
+    }
+
     emit:
     annotations = CELLMEASUREMENT.out.annotations   // channel: [ val(meta), *.geojson ]
+    report      = ch_report                         // channel: [ val(meta), *.html, */*_files/* ] OPTIONAL
 
     versions = ch_versions                          // channel: [ versions.yml ]
 }
