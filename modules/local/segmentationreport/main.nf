@@ -3,10 +3,15 @@ process SEGMENTATIONREPORT {
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
-    container 'ghcr.io/wehi-soda-hub/spatialvis:0.1.0'
+    container 'ghcr.io/wehi-soda-hub/spatialvis:0.1.1'
 
     input:
-    tuple val(meta), path(annotations), val(run_mesmer), val(run_cellpose)
+    tuple val(meta),
+          path(annotations),
+          val(run_mesmer),
+          val(run_cellpose),
+          val(nuclear_channel),
+          val(membrane_channels)
 
     output:
     tuple val(meta), path("*/*.html"), path("*/*_files/*"), emit: report
@@ -22,7 +27,8 @@ process SEGMENTATIONREPORT {
     """
     Rscript -e "spatialVis::copy_report_template(
         template_name = 'segmentation_report_template.qmd',
-        output_dir = '.'
+        output_dir = '.',
+        overwrite = TRUE
     )"
     quarto render segmentation_report_template.qmd \\
         --to html \\
@@ -30,7 +36,25 @@ process SEGMENTATIONREPORT {
         --output ${prefix}.html \\
         ${args} \\
         -P sample_name:${meta.id} \\
-        -P geojson_file:${annotations}
+        -P geojson_file:${annotations} \\
+        -P nuclear_channel:${nuclear_channel} \\
+        -P membrane_channels:"${membrane_channels}" \\
+        -P run_cellpose:${run_cellpose} \\
+        -P cellpose_diameter:${params.cellpose_diameter} \\
+        -P cellpose_min_area:${params.cellpose_min_area} \\
+        -P cellpose_flow_threshold:${params.cellpose_flow_threshold} \\
+        -P cellpose_cellprob_threshold:${params.cellpose_cellprob_threshold} \\
+        -P cellpose_model_type:${params.cellpose_model_type} \\
+        -P cellpose_pretrained_model:${params.cellpose_pretrained_model} \\
+        -P run_mesmer:${run_mesmer} \\
+        -P mesmer_segmentation_level:${params.mesmer_segmentation_level} \\
+        -P mesmer_maxima_threshold:${params.mesmer_maxima_threshold} \\
+        -P mesmer_interior_threshold:${params.mesmer_interior_threshold} \\
+        -P mesmer_maxima_smooth:${params.mesmer_maxima_smooth} \\
+        -P mesmer_min_nuclei_area:${params.mesmer_min_nuclei_area} \\
+        -P mesmer_remove_border_cells:${params.mesmer_remove_border_cells} \\
+        -P mesmer_pixel_expansion:${params.mesmer_pixel_expansion} \\
+        -P mesmer_padding:${params.mesmer_padding}
 
     mkdir -p ${prefix}
     mv ${prefix}.html ${prefix}

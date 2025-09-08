@@ -88,13 +88,15 @@ workflow MESMER_SEGMENT {
                 run_mesmer,
                 run_cellpose,
                 _tiff,
-                _nuclear_channel,
-                _membrane_channels,
+                nuclear_channel,
+                membrane_channels,
                 annotations -> [
                     sample,
                     annotations,
                     run_mesmer,
-                    run_cellpose
+                    run_cellpose,
+                    nuclear_channel.first(),
+                    membrane_channels.first()
                 ]
             }.set { ch_segmentationreport }
 

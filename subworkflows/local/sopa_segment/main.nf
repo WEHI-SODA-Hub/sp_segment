@@ -95,13 +95,15 @@ workflow SOPA_SEGMENT {
             .map {
                 sample,
                 _tiff,
-                _nuclear_channel,
-                _membrane_channels,
+                nuclear_channel,
+                membrane_channels,
                 annotations -> [
                     sample,
                     annotations,
                     false, // run_mesmer
-                    true   // run_cellpose
+                    true,  // run_cellpose
+                    nuclear_channel.first(),
+                    membrane_channels.first()
                 ]
             }.set { ch_segmentationreport }
 
