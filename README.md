@@ -72,6 +72,8 @@ The pipeline uses the following tools:
   QuPath API to calculate compartment measurements and intensities.
 - [sopa](https://github.com/gustaveroussy/sopa) -- we use the sopa CLI tool to
   patchify images and perform cellpose segmentation.
+- [spatialVis](https://github.com/WEHI-SODA-Hub/spatialVis) -- R package for spatial
+  analyses, used to generate plots for the segmentation report.
 
 Please see the [docs for more detailed information on pipeline usage and output](docs/README.md)
 

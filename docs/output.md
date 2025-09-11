@@ -50,6 +50,10 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
   segmentations, optionally containing measurements and intensity values per
   cell, compatible with QuPath.
 
+#### Segmentation report
+- `segmentationreport/sample/sample.html` -- html file for visualising report.
+- `segmentationreport/sample/sample_report_template_files` -- files necessary to display report.
+
 #### Data provenance
 
 - `pipeline_info/`

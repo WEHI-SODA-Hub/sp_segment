@@ -160,6 +160,12 @@ The following Mesmer parameters can be set:
 | pixel_size_microns          | Pixel size in microns, use 0.28 for COMET and 0.390625 for MIBI                            |
 | estimate_cell_boundary_dist | Where no matching membrane ROI exists, expand the nucleus by this many pixels              |
 
+### Report parameters
+
+| Parameter Name            | Description                                                        |
+| ------------------------- | ------------------------------------------------------------------ |
+| generate_report           | Generate segmentation report for QC                                |
+
 ### Updating the pipeline
 
 When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
