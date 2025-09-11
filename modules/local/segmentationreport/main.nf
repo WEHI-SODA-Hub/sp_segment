@@ -7,11 +7,11 @@ process SEGMENTATIONREPORT {
 
     input:
     tuple val(meta),
-          path(annotations),
-          val(run_mesmer),
-          val(run_cellpose),
-          val(nuclear_channel),
-          val(membrane_channels)
+        path(annotations),
+        val(run_mesmer),
+        val(run_cellpose),
+        val(nuclear_channel),
+        val(membrane_channels)
 
     output:
     tuple val(meta), path("*/*.html"), path("*/*_files/*"), emit: report
