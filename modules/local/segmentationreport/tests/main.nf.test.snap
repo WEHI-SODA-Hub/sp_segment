@@ -1,5 +1,5 @@
 {
-    "mesmer_segment - tiff": {
+    "segmentationreport - basic functionality": {
         "content": [
             {
                 "0": [
@@ -7,37 +7,12 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,fdab105fb77f396dad00a5827b7f18ec"
-                    ]
-                ],
-                "1": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        "test_whole-cell.tiff:md5,44ffdcf115bfcffbcba7a03276e77561"
-                    ]
-                ],
-                "2": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        "test_nuclear.tiff:md5,07dc3d7f48a3ebf926fe82d6d68175af"
-                    ]
-                ],
-                "3": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        "test.html:md5,72750bd0117f0d98c7efb5c5795ae3d1",
+                        "test.html:md5,978a4490880fb404e965aea8838d8f37",
                         [
                             [
-                                "channel_intensities-1.png:md5,c50783d23b885635ea4dd374ce0868e3",
-                                "compartment_measurements-1.png:md5,539e4832c55f79c63ab2fe15e4faed61",
-                                "unnamed-chunk-1-1.png:md5,a012e1a520748fe83303d0e567a61eb4",
-                                "unnamed-chunk-2-1.png:md5,6c6dd80e916497b698001de35a8d12b7"
+                                "channel_intensities-1.png:md5,6a0c625d84e7e87344c68e83bd508505",
+                                "compartment_measurements-1.png:md5,67e32361a18ca731b2b69e77c3ef3133",
+                                "unnamed-chunk-1-1.png:md5,1bc975856040cdf40996f4a9ecee2af7"
                             ],
                             [
                                 [
@@ -64,40 +39,26 @@
                         ]
                     ]
                 ],
-                "4": [
-                    "versions.yml:md5,020f6b6c73631bfaf9a42689d3222190",
-                    "versions.yml:md5,298b46e76bb2bff02f635a89d94acc79",
-                    "versions.yml:md5,e41d97cd1e8534823a90cecf53db55f3",
-                    "versions.yml:md5,ec8fbc92050f538763cdc496a2986c88"
+                "1": [
+                    
                 ],
-                "annotations": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        "test.geojson:md5,fdab105fb77f396dad00a5827b7f18ec"
-                    ]
+                "2": [
+                    "versions.yml:md5,a36295eacb48d679e04b9d2c71e4f0eb"
                 ],
-                "nuclear_tif": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        "test_nuclear.tiff:md5,07dc3d7f48a3ebf926fe82d6d68175af"
-                    ]
+                "rds": [
+                    
                 ],
                 "report": [
                     [
                         {
                             "id": "test"
                         },
-                        "test.html:md5,72750bd0117f0d98c7efb5c5795ae3d1",
+                        "test.html:md5,978a4490880fb404e965aea8838d8f37",
                         [
                             [
-                                "channel_intensities-1.png:md5,c50783d23b885635ea4dd374ce0868e3",
-                                "compartment_measurements-1.png:md5,539e4832c55f79c63ab2fe15e4faed61",
-                                "unnamed-chunk-1-1.png:md5,a012e1a520748fe83303d0e567a61eb4",
-                                "unnamed-chunk-2-1.png:md5,6c6dd80e916497b698001de35a8d12b7"
+                                "channel_intensities-1.png:md5,6a0c625d84e7e87344c68e83bd508505",
+                                "compartment_measurements-1.png:md5,67e32361a18ca731b2b69e77c3ef3133",
+                                "unnamed-chunk-1-1.png:md5,1bc975856040cdf40996f4a9ecee2af7"
                             ],
                             [
                                 [
@@ -125,18 +86,7 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,020f6b6c73631bfaf9a42689d3222190",
-                    "versions.yml:md5,298b46e76bb2bff02f635a89d94acc79",
-                    "versions.yml:md5,e41d97cd1e8534823a90cecf53db55f3",
-                    "versions.yml:md5,ec8fbc92050f538763cdc496a2986c88"
-                ],
-                "whole_cell_tif": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        "test_whole-cell.tiff:md5,44ffdcf115bfcffbcba7a03276e77561"
-                    ]
+                    "versions.yml:md5,a36295eacb48d679e04b9d2c71e4f0eb"
                 ]
             }
         ],
@@ -144,6 +94,57 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-09-12T10:02:14.019054565"
+        "timestamp": "2025-09-01T13:49:50.280243443"
+    },
+    "segmentationreport - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "stub_test"
+                        },
+                        "stub_test.html:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "foo.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "stub_test"
+                        },
+                        "stub_test.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    "versions.yml:md5,a36295eacb48d679e04b9d2c71e4f0eb"
+                ],
+                "rds": [
+                    [
+                        {
+                            "id": "stub_test"
+                        },
+                        "stub_test.rds:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "report": [
+                    [
+                        {
+                            "id": "stub_test"
+                        },
+                        "stub_test.html:md5,d41d8cd98f00b204e9800998ecf8427e",
+                        "foo.txt:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,a36295eacb48d679e04b9d2c71e4f0eb"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-09-01T13:12:50.675902625"
     }
 }

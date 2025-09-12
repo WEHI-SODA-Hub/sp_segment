@@ -1,6 +1,7 @@
 include { MESMERSEGMENT as MESMERWC  } from '../../../modules/local/mesmersegment/main.nf'
 include { MESMERSEGMENT as MESMERNUC } from '../../../modules/local/mesmersegment/main.nf'
 include { CELLMEASUREMENT            } from '../../../modules/local/cellmeasurement/main.nf'
+include { SEGMENTATIONREPORT         } from '../../../modules/local/segmentationreport/main.nf'
 
 workflow MESMER_SEGMENT {
 
@@ -76,11 +77,45 @@ workflow MESMER_SEGMENT {
     )
     ch_versions = ch_versions.mix(CELLMEASUREMENT.out.versions.first())
 
+    // Optional SEGMENTATIONREPORT module
+    ch_report = Channel.empty()
+    if (params.generate_report) {
+        ch_mesmer_segment
+            .join(CELLMEASUREMENT.out.annotations)
+            .map {
+                sample,
+                _run_backsub,
+                run_mesmer,
+                run_cellpose,
+                _tiff,
+                nuclear_channel,
+                membrane_channels,
+                annotations -> [
+                    sample,
+                    annotations,
+                    run_mesmer,
+                    run_cellpose,
+                    nuclear_channel.first(),
+                    membrane_channels.first()
+                ]
+            }.set { ch_segmentationreport }
+
+        //
+        // Run SEGMENTATIONREPORT module to generate a report of the segmentation results
+        //
+        SEGMENTATIONREPORT(
+            ch_segmentationreport
+        )
+        ch_versions = ch_versions.mix(SEGMENTATIONREPORT.out.versions.first())
+
+        ch_report = SEGMENTATIONREPORT.out.report
+    }
 
     emit:
     annotations      = CELLMEASUREMENT.out.annotations   // channel: [ val(meta), *.geojson ]
     whole_cell_tif   = MESMERWC.out.segmentation_mask    // channel: [ val(meta), *.tiff ]
     nuclear_tif      = MESMERNUC.out.segmentation_mask   // channel: [ val(meta), *.tiff ]
+    report           = ch_report                         // channel: [ val(meta), *.html, */*_files/* ] OPTIONAL
 
     versions         = ch_versions                       // channel: [ versions.yml ]
 }

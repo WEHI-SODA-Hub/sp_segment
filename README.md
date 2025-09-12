@@ -26,6 +26,39 @@ are run separately, and then consolidated into whole cells with nuclei with full
 shape and intensity measurements per compartment. The output GeoJSON files can
 be viewed in QuPath.
 
+<details>
+  <summary>Click to view Mermaid diagram</summary>
+  ```mermaid
+  flowchart TD
+  A("COMET TIFF") --> B["Extract markers"]
+  B --> C["Background
+          subtraction"]
+  C --> D{"Segmentation
+              method"} & O["Backsub TIFF"]
+      N("COMET/MIBI TIFF") --> D
+      D -- Cellpose (COMET only) --> E["sopa convert"]
+      E  --> F["sopa patchify"]
+      F --> G["cellpose
+              (nuclear)"]
+      F --> H["cellpose
+              (whole-cell)"]
+      G --> I["sopa resolve"]
+      H --> I
+      I --> J["parquet to tiff"]
+      J --> K["Cell measurement"]
+      D -- Mesmer (COMET/MIBI) --> L["mesmer
+                                     (nuclear)"]
+      D -- Mesmer (COMET/MIBI) --> M["mesmer
+                                     (whole-cell)"]
+      L --> K
+      M --> K
+      K --> P("GeoJSON")
+      K --> Q["segmentation
+              report"]
+      Q --> R("html file"]
+  ```
+</details>
+
 ![spatialproteomics workflow](assets/spatialproteomics_workflow.png)
 
 The pipeline uses the following tools:
@@ -39,6 +72,8 @@ The pipeline uses the following tools:
   QuPath API to calculate compartment measurements and intensities.
 - [sopa](https://github.com/gustaveroussy/sopa) -- we use the sopa CLI tool to
   patchify images and perform cellpose segmentation.
+- [spatialVis](https://github.com/WEHI-SODA-Hub/spatialVis) -- R package for spatial
+  analyses, used to generate plots for the segmentation report.
 
 Please see the [docs for more detailed information on pipeline usage and output](docs/README.md)
 

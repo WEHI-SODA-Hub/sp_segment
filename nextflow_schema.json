@@ -213,6 +213,22 @@
                 }
             }
         },
+        "report_options": {
+            "title": "Report options",
+            "type": "object",
+            "fa_icon": "fas fa-image",
+            "description": "Parameters used for segmentation report generation.",
+            "help_text": "These parameters controls parameters used by the segmentationreport step of the pipeline.",
+            "properties": {
+                "generate_report": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Generate segmentation report.",
+                    "fa_icon": "fas fa-stopwatch",
+                    "help_text": "Set this to `true` to generate a segmentation report. Skipping this step can save on processing time."
+                }
+            }
+        },
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -355,6 +371,9 @@
         },
         {
             "$ref": "#/$defs/measurement_options"
+        },
+        {
+            "$ref": "#/$defs/report_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"
