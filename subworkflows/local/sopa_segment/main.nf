@@ -115,12 +115,12 @@ workflow SOPA_SEGMENT {
         )
         ch_versions = ch_versions.mix(SEGMENTATIONREPORT.out.versions.first())
 
-        ch_report = SEGMENTATIONREPORT.out.report  // channel: [ val(meta), *.html, */*_files/* ]
+        ch_report = SEGMENTATIONREPORT.out.report  // channel: [ val(meta), *.html ]
     }
 
     emit:
     annotations = CELLMEASUREMENT.out.annotations   // channel: [ val(meta), *.geojson ]
-    report      = ch_report                         // channel: [ val(meta), *.html, */*_files/* ] OPTIONAL
+    report      = ch_report                         // channel: [ val(meta), *.html ] OPTIONAL
 
     versions = ch_versions                          // channel: [ versions.yml ]
 }

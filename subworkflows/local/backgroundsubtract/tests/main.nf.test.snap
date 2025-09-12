@@ -7,7 +7,7 @@
                         {
                             "id": "test"
                         },
-                        "test.ome.tif:md5,b3849c21f908bca958ebc9ffcf81a6b9"
+                        "test.ome.tif:md5,ac136839926329817ee30642dff7e043"
                     ]
                 ],
                 "1": [
@@ -27,7 +27,7 @@
                         {
                             "id": "test"
                         },
-                        "test.ome.tif:md5,b3849c21f908bca958ebc9ffcf81a6b9"
+                        "test.ome.tif:md5,ac136839926329817ee30642dff7e043"
                     ]
                 ],
                 "markers": [
@@ -48,6 +48,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-09-12T10:00:35.92040009"
+        "timestamp": "2025-09-12T13:55:08.763603155"
     }
 }

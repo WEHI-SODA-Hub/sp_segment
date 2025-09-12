@@ -115,7 +115,7 @@ workflow MESMER_SEGMENT {
     annotations      = CELLMEASUREMENT.out.annotations   // channel: [ val(meta), *.geojson ]
     whole_cell_tif   = MESMERWC.out.segmentation_mask    // channel: [ val(meta), *.tiff ]
     nuclear_tif      = MESMERNUC.out.segmentation_mask   // channel: [ val(meta), *.tiff ]
-    report           = ch_report                         // channel: [ val(meta), *.html, */*_files/* ] OPTIONAL
+    report           = ch_report                         // channel: [ val(meta), *.html ] OPTIONAL
 
     versions         = ch_versions                       // channel: [ versions.yml ]
 }

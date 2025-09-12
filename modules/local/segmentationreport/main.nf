@@ -3,7 +3,7 @@ process SEGMENTATIONREPORT {
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
-    container 'ghcr.io/wehi-soda-hub/spatialvis:0.1.4'
+    container 'ghcr.io/wehi-soda-hub/spatialvis:0.1.5'
 
     input:
     tuple val(meta),
@@ -14,7 +14,7 @@ process SEGMENTATIONREPORT {
         val(membrane_channels)
 
     output:
-    tuple val(meta), path("*/*.html"), path("*/*_files/*"), emit: report
+    tuple val(meta), path("*/*.html"), emit: report
     tuple val(meta), path("*/*.rds"), emit: rds, optional: true
     path "versions.yml"           , emit: versions
 
@@ -61,7 +61,6 @@ process SEGMENTATIONREPORT {
     if [[ -f ${prefix}.rds ]]; then
         mv ${prefix}.rds ${prefix}
     fi
-    cp -r segmentation_report_template_files ${prefix}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -73,10 +72,9 @@ process SEGMENTATIONREPORT {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    mkdir -p ${prefix}/segmentation_report_template_files
+    mkdir -p ${prefix}
     touch ${prefix}/${prefix}.html
     touch ${prefix}/${prefix}.rds
-    touch ${prefix}/segmentation_report_template_files/foo.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

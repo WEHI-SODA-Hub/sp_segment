@@ -225,7 +225,7 @@
                     "default": true,
                     "description": "Generate segmentation report.",
                     "fa_icon": "fas fa-stopwatch",
-                    "help_text": "Set this to `true` to generate a segmentation report. Skipping this step can save on processing time."
+                    "help_text": "Set this to `true` to generate a segmentation report. It is recommended that skip_measurements is set to `false` for the most comprehensive report. Skipping this step can save on processing time."
                 }
             }
         },
