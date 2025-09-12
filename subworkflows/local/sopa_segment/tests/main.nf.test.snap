@@ -7,7 +7,7 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,1eee227340e5cd6cd4e2e56db4d41cb0"
+                        "test.geojson:md5,5a504221b2ed3a212773b4c4c4a817bf"
                     ]
                 ],
                 "1": [
@@ -15,12 +15,13 @@
                         {
                             "id": "test"
                         },
-                        "test.html:md5,28456338617ffa9f272a2714ad46ffe4",
+                        "test.html:md5,e4b9e621cc108e3565ee75f22e939182",
                         [
                             [
-                                "channel_intensities-1.png:md5,c5e04962352bb6fe4a429bdb036f27af",
-                                "compartment_measurements-1.png:md5,aabccd432557f52ee557bae6cccb5788",
-                                "unnamed-chunk-1-1.png:md5,5415f55b7b4a6529926aa955c1842ddf"
+                                "channel_intensities-1.png:md5,22fcfce431635b963fd9a96ccaf242b5",
+                                "compartment_measurements-1.png:md5,94933882f0143e3ffb0c5b88779223e2",
+                                "unnamed-chunk-1-1.png:md5,4106464d068b1f85755ae9ea9d8f48e2",
+                                "unnamed-chunk-2-1.png:md5,822ee2edc18e1f7345b9d474851c9e6e"
                             ],
                             [
                                 [
@@ -59,7 +60,7 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,1eee227340e5cd6cd4e2e56db4d41cb0"
+                        "test.geojson:md5,5a504221b2ed3a212773b4c4c4a817bf"
                     ]
                 ],
                 "report": [
@@ -67,12 +68,13 @@
                         {
                             "id": "test"
                         },
-                        "test.html:md5,28456338617ffa9f272a2714ad46ffe4",
+                        "test.html:md5,e4b9e621cc108e3565ee75f22e939182",
                         [
                             [
-                                "channel_intensities-1.png:md5,c5e04962352bb6fe4a429bdb036f27af",
-                                "compartment_measurements-1.png:md5,aabccd432557f52ee557bae6cccb5788",
-                                "unnamed-chunk-1-1.png:md5,5415f55b7b4a6529926aa955c1842ddf"
+                                "channel_intensities-1.png:md5,22fcfce431635b963fd9a96ccaf242b5",
+                                "compartment_measurements-1.png:md5,94933882f0143e3ffb0c5b88779223e2",
+                                "unnamed-chunk-1-1.png:md5,4106464d068b1f85755ae9ea9d8f48e2",
+                                "unnamed-chunk-2-1.png:md5,822ee2edc18e1f7345b9d474851c9e6e"
                             ],
                             [
                                 [
@@ -112,6 +114,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-09-03T16:15:40.040881132"
+        "timestamp": "2025-09-12T10:07:04.687289877"
     }
 }

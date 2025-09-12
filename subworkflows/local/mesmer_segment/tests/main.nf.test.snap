@@ -7,7 +7,7 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,b50e5ee696353e1ce8e7c64542ddcdfb"
+                        "test.geojson:md5,fdab105fb77f396dad00a5827b7f18ec"
                     ]
                 ],
                 "1": [
@@ -31,12 +31,13 @@
                         {
                             "id": "test"
                         },
-                        "test.html:md5,3ffbb37641227c0291fa47749cf9570b",
+                        "test.html:md5,72750bd0117f0d98c7efb5c5795ae3d1",
                         [
                             [
-                                "channel_intensities-1.png:md5,b884bf99e04bddcc362849a5a240631f",
-                                "compartment_measurements-1.png:md5,0614b9e9285a09a10b3c80df9b8f4733",
-                                "unnamed-chunk-1-1.png:md5,5625fdcd08779d91722725303532f2ac"
+                                "channel_intensities-1.png:md5,c50783d23b885635ea4dd374ce0868e3",
+                                "compartment_measurements-1.png:md5,539e4832c55f79c63ab2fe15e4faed61",
+                                "unnamed-chunk-1-1.png:md5,a012e1a520748fe83303d0e567a61eb4",
+                                "unnamed-chunk-2-1.png:md5,6c6dd80e916497b698001de35a8d12b7"
                             ],
                             [
                                 [
@@ -74,7 +75,7 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,b50e5ee696353e1ce8e7c64542ddcdfb"
+                        "test.geojson:md5,fdab105fb77f396dad00a5827b7f18ec"
                     ]
                 ],
                 "nuclear_tif": [
@@ -90,12 +91,13 @@
                         {
                             "id": "test"
                         },
-                        "test.html:md5,3ffbb37641227c0291fa47749cf9570b",
+                        "test.html:md5,72750bd0117f0d98c7efb5c5795ae3d1",
                         [
                             [
-                                "channel_intensities-1.png:md5,b884bf99e04bddcc362849a5a240631f",
-                                "compartment_measurements-1.png:md5,0614b9e9285a09a10b3c80df9b8f4733",
-                                "unnamed-chunk-1-1.png:md5,5625fdcd08779d91722725303532f2ac"
+                                "channel_intensities-1.png:md5,c50783d23b885635ea4dd374ce0868e3",
+                                "compartment_measurements-1.png:md5,539e4832c55f79c63ab2fe15e4faed61",
+                                "unnamed-chunk-1-1.png:md5,a012e1a520748fe83303d0e567a61eb4",
+                                "unnamed-chunk-2-1.png:md5,6c6dd80e916497b698001de35a8d12b7"
                             ],
                             [
                                 [
@@ -142,6 +144,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-09-03T16:11:57.267893613"
+        "timestamp": "2025-09-12T10:02:14.019054565"
     }
 }
