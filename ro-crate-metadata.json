@@ -105,24 +105,13 @@
         },
         {
             "@id": "main.nf",
-            "@type": [
-                "File",
-                "SoftwareSourceCode",
-                "ComputationalWorkflow"
-            ],
+            "@type": ["File", "SoftwareSourceCode", "ComputationalWorkflow"],
             "dateCreated": "",
             "dateModified": "2025-08-06T12:29:12Z",
             "dct:conformsTo": "https://bioschemas.org/profiles/ComputationalWorkflow/1.0-RELEASE/",
-            "keywords": [
-                "nf-core",
-                "nextflow"
-            ],
-            "license": [
-                "MIT"
-            ],
-            "name": [
-                "WEHI-SODA-Hub/spatialproteomics"
-            ],
+            "keywords": ["nf-core", "nextflow"],
+            "license": ["MIT"],
+            "name": ["WEHI-SODA-Hub/spatialproteomics"],
             "programmingLanguage": {
                 "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow"
             },
@@ -133,9 +122,7 @@
                 "https://github.com/WEHI-SODA-Hub/spatialproteomics",
                 "https://nf-co.re/WEHI-SODA-Hub/spatialproteomics/dev/"
             ],
-            "version": [
-                "1.0.0dev"
-            ]
+            "version": ["1.0.0dev"]
         },
         {
             "@id": "https://w3id.org/workflowhub/workflow-ro-crate#nextflow",

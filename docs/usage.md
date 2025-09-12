@@ -162,9 +162,9 @@ The following Mesmer parameters can be set:
 
 ### Report parameters
 
-| Parameter Name            | Description                                                        |
-| ------------------------- | ------------------------------------------------------------------ |
-| generate_report           | Generate segmentation report for QC                                |
+| Parameter Name  | Description                         |
+| --------------- | ----------------------------------- |
+| generate_report | Generate segmentation report for QC |
 
 ### Updating the pipeline
 
