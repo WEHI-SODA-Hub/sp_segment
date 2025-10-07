@@ -197,6 +197,13 @@
                     "fa_icon": "fas fa-stopwatch",
                     "help_text": "Set this to `true` to skip the cell measurement step of the pipeline. Nuclei and whole-cells will still be merged but compartment metrics will not be calculated (this can save processing time)."
                 },
+                "percentiles": {
+                    "type": "string",
+                    "description": "Comma-separated list of percentiles to calculate for each marker (e.g., 80,90,95,99).",
+                    "fa_icon": "fas fa-percentage",
+                    "pattern": "^(100|[1-9]?[0-9])(,(100|[1-9]?[0-9]))*$",
+                    "help_text": "A comma-separated list of percentiles to calculate for each marker. Each value must be between 0 and 100. Skip measurements must be set to `false` to use this parameter."
+                },
                 "pixel_size_microns": {
                     "type": "number",
                     "description": "Pixel size in microns.",

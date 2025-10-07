@@ -154,11 +154,12 @@ The following Mesmer parameters can be set:
 
 ### Cell measurement options
 
-| Parameter Name              | Description                                                                                |
-| --------------------------- | ------------------------------------------------------------------------------------------ |
-| skip_measurements           | Do not calculate intensity and shape measurements for cell compartments (faster execution) |
-| pixel_size_microns          | Pixel size in microns, use 0.28 for COMET and 0.390625 for MIBI                            |
-| estimate_cell_boundary_dist | Where no matching membrane ROI exists, expand the nucleus by this many pixels              |
+| Parameter Name              | Description                                                                                                                   |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| skip_measurements           | Do not calculate intensity and shape measurements for cell compartments (faster execution)                                    |
+| percentiles                 | Comma-separated list of percentiles to calculate per channel. Skip measurements must be set to `false` to use this parameter. |
+| pixel_size_microns          | Pixel size in microns, use 0.28 for COMET and 0.390625 for MIBI                                                               |
+| estimate_cell_boundary_dist | Where no matching membrane ROI exists, expand the nucleus by this many pixels                                                 |
 
 ### Report parameters
 
