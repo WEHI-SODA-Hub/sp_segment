@@ -96,7 +96,8 @@ workflow MESMER_SEGMENT {
                     run_mesmer,
                     run_cellpose,
                     nuclear_channel.first(),
-                    membrane_channels.first()
+                    membrane_channels.first(),
+                    '' // background image for report, not supported by mesmer workflow yet
                 ]
             }.set { ch_segmentationreport }
 

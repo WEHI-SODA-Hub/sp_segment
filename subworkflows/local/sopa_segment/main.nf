@@ -90,11 +90,11 @@ workflow SOPA_SEGMENT {
     // Optional SEGMENTATIONREPORT module
     ch_report = Channel.empty()
     if (params.generate_report) {
-        ch_sopa
+        ch_combined
             .join(CELLMEASUREMENT.out.annotations)
             .map {
                 sample,
-                _tiff,
+                combined_tiff,
                 nuclear_channel,
                 membrane_channels,
                 annotations -> [
@@ -103,7 +103,8 @@ workflow SOPA_SEGMENT {
                     false, // run_mesmer
                     true,  // run_cellpose
                     nuclear_channel.first(),
-                    membrane_channels.first()
+                    membrane_channels.first(),
+                    combined_tiff
                 ]
             }.set { ch_segmentationreport }
 

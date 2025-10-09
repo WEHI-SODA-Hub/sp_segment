@@ -15,9 +15,39 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id:'test' ], // meta map
-                    file('/vast/scratch/users/cmero.ma/results/spatialproteomics_test/cellmeasurement/test.geojson'),
+                    file('${projectDir}/tests/data/mesmer/test_data_segmentation.geojson'),
                     true,
-                    false
+                    false,
+                    'Nuclear',
+                    'Membrane',
+                    ''
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("segmentationreport - add background image") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test' ], // meta map
+                    file('${projectDir}/tests/data/mesmer/test_data_segmentation.geojson'),
+                    true,
+                    false,
+                    'Nuclear',
+                    'Membrane',
+                    file('${projectDir}/tests/data/mesmer/test_data.tiff'),
                 ]
                 """
             }
@@ -41,9 +71,12 @@ nextflow_process {
                 """
                 input[0] = [
                     [ id:'stub_test' ], // meta map
-                    file('/vast/scratch/users/cmero.ma/results/spatialproteomics_test/cellmeasurement/test.geojson'),
+                    file('${projectDir}/tests/data/mesmer/test_segmentation.geojson'),
                     true,
-                    false
+                    false,
+                    'Nuclear',
+                    'Membrane',
+                    ''
                 ]
                 """
             }

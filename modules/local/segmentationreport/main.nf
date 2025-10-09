@@ -3,7 +3,7 @@ process SEGMENTATIONREPORT {
     label 'process_high'
 
     conda "${moduleDir}/environment.yml"
-    container 'ghcr.io/wehi-soda-hub/spatialvis:0.1.5'
+    container 'ghcr.io/wehi-soda-hub/spatialvis:0.1.6'
 
     input:
     tuple val(meta),
@@ -11,7 +11,8 @@ process SEGMENTATIONREPORT {
         val(run_mesmer),
         val(run_cellpose),
         val(nuclear_channel),
-        val(membrane_channels)
+        val(membrane_channels),
+        val(image_file)
 
     output:
     tuple val(meta), path("*/*.html"), emit: report
@@ -39,6 +40,7 @@ process SEGMENTATIONREPORT {
         -P geojson_file:${annotations} \\
         -P nuclear_channel:${nuclear_channel} \\
         -P membrane_channels:"${membrane_channels}" \\
+        -P image_file:"${image_file}" \\
         -P run_cellpose:${run_cellpose} \\
         -P cellpose_diameter:${params.cellpose_diameter} \\
         -P cellpose_min_area:${params.cellpose_min_area} \\
