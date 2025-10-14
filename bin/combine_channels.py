@@ -10,6 +10,7 @@ License     : MIT
 Maintainer  : Marek Cmero (@mcmero)
 Portability : POSIX
 '''
+import json
 import re
 import sys
 import xml.etree.ElementTree as ET
@@ -46,7 +47,7 @@ def get_pixels_tag(xml_str: str) -> ET.Element:
     return pixels_tag
 
 
-def extract_channel_names(xml_str) -> List[str]:
+def ome_extract_channel_names(xml_str) -> List[str]:
     """
     Extracts all channel 'Name' attributes from OME-XML in the order they
     appear. Returns a list of channel names by index.
@@ -61,6 +62,19 @@ def extract_channel_names(xml_str) -> List[str]:
     return channel_names
 
 
+def json_extract_channel_names(pages) -> List[str]:
+    """
+    Extracts channel names from MIBI TIFF pages where each page has a JSON
+    description containing channel metadata.
+    """
+    channel_names: List[str] = []
+    for page in pages:
+        desc = json.loads(page.description)
+        channel_names.append(desc["channel.target"])
+
+    return channel_names
+
+
 def tiff_to_xarray(tiffPath: Path) -> DataArray:
     """
     Takes a TIFF and converts it to an xarray with relevant axis,
@@ -72,7 +86,11 @@ def tiff_to_xarray(tiffPath: Path) -> DataArray:
 
     with TiffFile(tiffPath) as tiff:
         first_page = tiff.pages[0]
-        channel_names = extract_channel_names(first_page.description)
+        try:
+            json.loads(first_page.description)
+            channel_names = json_extract_channel_names(tiff.pages)
+        except (json.JSONDecodeError, TypeError):
+            channel_names = ome_extract_channel_names(first_page.description)
 
         if len(tiff.pages) > 1:
             # Stack pages using memory mapping
@@ -219,13 +237,19 @@ def main(
 
     # Update OME-XML metadata
     c, height, width = output_array.shape
-    updated_metadata = update_ome_xml(ome_metadata, width, height, c,
-                                      final_channels)
+    try:
+        updated_metadata = update_ome_xml(ome_metadata, width, height, c,
+                                          final_channels)
+        updated_metadata = updated_metadata.encode('utf-8')
+    except ValueError as e:
+        typer.echo(f"Warning: {e} Proceeding without updated OME-XML metadata.",
+                   err=True)
+        updated_metadata = ""
 
     imwrite(sys.stdout.buffer, output_array,
             photometric='minisblack',
             metadata={'axes': 'CYX'},
-            description=updated_metadata.encode('utf-8'))
+            description=updated_metadata)
 
 
 if __name__ == "__main__":

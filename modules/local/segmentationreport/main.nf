@@ -12,12 +12,12 @@ process SEGMENTATIONREPORT {
         val(run_cellpose),
         val(nuclear_channel),
         val(membrane_channels),
-        val(image_file)
+        path(image_file)
 
     output:
-    tuple val(meta), path("*/*.html"), emit: report
-    tuple val(meta), path("*/*.rds"), emit: rds, optional: true
-    path "versions.yml"           , emit: versions
+    tuple val(meta), path("*/*.html")       , emit: report
+    tuple val(meta), path("*/*.rds")        , emit: rds, optional: true
+    path "versions.yml"                     , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -60,6 +60,7 @@ process SEGMENTATIONREPORT {
 
     mkdir -p ${prefix}
     mv ${prefix}.html ${prefix}
+    mv segmentation_report_template.qmd ${prefix}/${prefix}.qmd
     if [[ -f ${prefix}.rds ]]; then
         mv ${prefix}.rds ${prefix}
     fi

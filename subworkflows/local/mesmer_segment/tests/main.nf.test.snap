@@ -7,7 +7,7 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,ae27db794f4b6338cf66ba2921212d43"
+                        "test.geojson:md5,d51a705ac687c4a656ebcc8d724c6052"
                     ]
                 ],
                 "1": [
@@ -31,12 +31,13 @@
                         {
                             "id": "test"
                         },
-                        "test.html:md5,9aa10fb530eb4ce8bf4bb10511408c92"
+                        "test.html:md5,9231941bd758effaa075f90d7aaff27b"
                     ]
                 ],
                 "4": [
                     "versions.yml:md5,020f6b6c73631bfaf9a42689d3222190",
                     "versions.yml:md5,298b46e76bb2bff02f635a89d94acc79",
+                    "versions.yml:md5,60bf93b7b4ea7fdb952a7ac0d03e5c84",
                     "versions.yml:md5,e41d97cd1e8534823a90cecf53db55f3",
                     "versions.yml:md5,ec8fbc92050f538763cdc496a2986c88"
                 ],
@@ -45,7 +46,7 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson:md5,ae27db794f4b6338cf66ba2921212d43"
+                        "test.geojson:md5,d51a705ac687c4a656ebcc8d724c6052"
                     ]
                 ],
                 "nuclear_tif": [
@@ -61,12 +62,13 @@
                         {
                             "id": "test"
                         },
-                        "test.html:md5,9aa10fb530eb4ce8bf4bb10511408c92"
+                        "test.html:md5,9231941bd758effaa075f90d7aaff27b"
                     ]
                 ],
                 "versions": [
                     "versions.yml:md5,020f6b6c73631bfaf9a42689d3222190",
                     "versions.yml:md5,298b46e76bb2bff02f635a89d94acc79",
+                    "versions.yml:md5,60bf93b7b4ea7fdb952a7ac0d03e5c84",
                     "versions.yml:md5,e41d97cd1e8534823a90cecf53db55f3",
                     "versions.yml:md5,ec8fbc92050f538763cdc496a2986c88"
                 ],
@@ -84,6 +86,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-10-10T09:56:50.665685025"
+        "timestamp": "2025-10-13T20:52:09.173887234"
     }
 }

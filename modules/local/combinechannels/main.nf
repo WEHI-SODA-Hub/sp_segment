@@ -9,7 +9,7 @@ process COMBINECHANNELS {
     tuple val(meta), path(tiff), val(nuclear_channel), val(membrane_channels)
 
     output:
-    tuple val(meta), path("${prefix}_combined_channels.ome.tif"), emit: combined_tiff
+    tuple val(meta), path("${prefix}_combined_channels.tiff"), emit: combined_tiff
     path "versions.yml", emit: versions
 
     when:
@@ -27,7 +27,7 @@ process COMBINECHANNELS {
         $args \\
         --nuclear-channel "${nuclear_channel.first()}" \\
         ${membrane_channel_args} \\
-        $tiff > ${prefix}_combined_channels.ome.tif
+        $tiff > ${prefix}_combined_channels.tiff
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -38,7 +38,7 @@ process COMBINECHANNELS {
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}_combined_channels.ome.tif
+    touch ${prefix}_combined_channels.tiff
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

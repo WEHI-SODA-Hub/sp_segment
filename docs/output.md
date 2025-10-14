@@ -29,7 +29,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 - `extractmarkers/sample.csv` -- marker names, background per channel and
   exposure time
-- `backsub/sample.ome.tif` -- bakground subtracted tiff image.
+- `backsub/sample.tiff` -- bakground subtracted tiff image.
 
 #### Cellpose segmentation
 

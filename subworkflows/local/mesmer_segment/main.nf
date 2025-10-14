@@ -1,6 +1,7 @@
 include { MESMERSEGMENT as MESMERWC  } from '../../../modules/local/mesmersegment/main.nf'
 include { MESMERSEGMENT as MESMERNUC } from '../../../modules/local/mesmersegment/main.nf'
 include { CELLMEASUREMENT            } from '../../../modules/local/cellmeasurement/main.nf'
+include { COMBINECHANNELS            } from '../../../modules/local/combinechannels/main.nf'
 include { SEGMENTATIONREPORT         } from '../../../modules/local/segmentationreport/main.nf'
 
 workflow MESMER_SEGMENT {
@@ -80,8 +81,18 @@ workflow MESMER_SEGMENT {
     // Optional SEGMENTATIONREPORT module
     ch_report = Channel.empty()
     if (params.generate_report) {
+
+        //
+        // Combine channels for report background image
+        //
+        COMBINECHANNELS(
+            ch_mesmer
+        )
+        ch_versions = ch_versions.mix(COMBINECHANNELS.out.versions.first())
+
         ch_mesmer_segment
             .join(CELLMEASUREMENT.out.annotations)
+            .join(COMBINECHANNELS.out.combined_tiff, by: 0)
             .map {
                 sample,
                 _run_backsub,
@@ -90,14 +101,15 @@ workflow MESMER_SEGMENT {
                 _tiff,
                 nuclear_channel,
                 membrane_channels,
-                annotations -> [
+                annotations,
+                combined_tiff -> [
                     sample,
                     annotations,
                     run_mesmer,
                     run_cellpose,
                     nuclear_channel.first(),
                     membrane_channels.first(),
-                    '' // background image for report, not supported by mesmer workflow yet
+                    combined_tiff
                 ]
             }.set { ch_segmentationreport }
 

@@ -73,7 +73,7 @@
                         {
                             "id": "test"
                         },
-                        "test_combined_channels.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "test_combined_channels.tiff:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "1": [
@@ -84,7 +84,7 @@
                         {
                             "id": "test"
                         },
-                        "test_combined_channels.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "test_combined_channels.tiff:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "versions": [
@@ -96,6 +96,72 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2025-08-25T10:22:02.177073708"
+        "timestamp": "2025-10-13T21:03:47.343413979"
+    },
+    "combinechannels - OME-XML tiff": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_combined_channels.tiff:md5,118224d2b43dc95e0b7a64c7ee3900d6"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,338938a53c7b3f9fb82462bfe80ec358"
+                ],
+                "combined_tiff": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_combined_channels.tiff:md5,118224d2b43dc95e0b7a64c7ee3900d6"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,338938a53c7b3f9fb82462bfe80ec358"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-10-13T21:02:54.215459178"
+    },
+    "combinechannels - non-OME tiff": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_combined_channels.tiff:md5,5eb9d84a3be5f4cc1910a0ea85f81b44"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,338938a53c7b3f9fb82462bfe80ec358"
+                ],
+                "combined_tiff": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_combined_channels.tiff:md5,5eb9d84a3be5f4cc1910a0ea85f81b44"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,338938a53c7b3f9fb82462bfe80ec358"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2025-10-13T21:03:20.737768611"
     }
 }
