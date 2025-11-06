@@ -148,9 +148,6 @@ def update_ome_xml(original_xml: str, width: int, height: int,
     """
     Update existing OME-XML metadata with new channel information.
     """
-    if original_xml is None or not original_xml.startswith('<?xml'):
-        raise ValueError("Invalid OME-XML metadata provided.")
-
     try:
         original_xml = re.sub(r'<\?xml[^>]+\?>', '<?xml version="1.0"?>', original_xml)
         root = ET.fromstring(original_xml)
