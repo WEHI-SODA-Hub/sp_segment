@@ -5,7 +5,7 @@
    width="2228.0029"
    height="520.87549"
    version="1.1"
-   sodipodi:docname="wehi-soda-hub-spatialproteomics_logo_light.svg"
+   sodipodi:docname="wehi-soda-hub-sp_segment_logo_dark.svg"
    inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -20,13 +20,13 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="0.29757591"
-     inkscape:cx="974.54125"
-     inkscape:cy="347.81041"
-     inkscape:window-width="1184"
-     inkscape:window-height="1186"
-     inkscape:window-x="312"
+     inkscape:cx="846.84274"
+     inkscape:cy="312.5253"
+     inkscape:window-width="2560"
+     inkscape:window-height="1387"
+     inkscape:window-x="0"
      inkscape:window-y="25"
-     inkscape:window-maximized="0"
+     inkscape:window-maximized="1"
      inkscape:current-layer="layer3" /><defs
      id="defs6"><linearGradient
        id="f"
@@ -92,9 +92,7 @@
          class="st0 st1 st2"
          font-size="209.87"
          font-weight="bold"
-         style="font-weight:700;font-size:209.867px;font-family:'Maven Pro';fill:#24af63"><tspan
-           id="tspan73"
-           style="fill:#050505">WEHI-SODA-Hub/</tspan></tspan></text><text
+         style="font-weight:700;font-size:209.867px;font-family:'Maven Pro';fill:#f9f9f9">WEHI-SODA-Hub/</tspan></text><text
        id="text59"
        x="-260.04999"
        y="457.04501"
@@ -106,4 +104,4 @@
          class="st1 st2"
          font-size="209.87"
          font-weight="bold"
-         style="font-weight:700;font-size:209.867px;font-family:'Maven Pro';fill:#050505">spatialproteomics</tspan></text></g></svg>
+         style="font-weight:700;font-size:209.867px;font-family:'Maven Pro';fill:#f9f9f9">sp_segment</tspan></text></g></svg>

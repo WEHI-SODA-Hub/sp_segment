@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/WEHI-SODA-Hub/spatialproteomics/master/nextflow_schema.json",
-    "title": "WEHI-SODA-Hub/spatialproteomics pipeline parameters",
+    "$id": "https://raw.githubusercontent.com/WEHI-SODA-Hub/sp_segment/master/nextflow_schema.json",
+    "title": "WEHI-SODA-Hub/sp_segment pipeline parameters",
     "description": "Cell segmentation and downstream analysis pipeline for the COMET and MIBI spatial platforms",
     "type": "object",
     "$defs": {
@@ -20,7 +20,7 @@
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.(csv|y(a)?ml)$",
                     "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://nf-co.re/spatialproteomics/usage#samplesheet-input).",
+                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://github.com/WEHI-SODA-Hub/sp_segment/blob/main/docs/usage.md).",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "outdir": {

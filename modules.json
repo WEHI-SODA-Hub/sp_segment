@@ -1,6 +1,6 @@
 {
-    "name": "WEHI-SODA-Hub/spatialproteomics",
-    "homePage": "https://github.com/WEHI-SODA-Hub/spatialproteomics",
+    "name": "WEHI-SODA-Hub/sp_segment",
+    "homePage": "https://github.com/WEHI-SODA-Hub/sp_segment",
     "repos": {
         "https://github.com/nf-core/modules.git": {
             "modules": {

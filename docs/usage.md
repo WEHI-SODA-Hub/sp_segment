@@ -1,4 +1,4 @@
-# WEHI-SODA-Hub/spatialproteomics: Usage
+# WEHI-SODA-Hub/sp_segment: Usage
 
 ## Introduction
 
@@ -64,7 +64,7 @@ An [example samplesheet](../assets/samplesheet.csv) has been provided with the p
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run WEHI-SODA-Hub/spatialproteomics \
+nextflow run WEHI-SODA-Hub/sp_segment \
    -profile <docker/singularity/.../institute> \
    --input samplesheet.csv \
    --outdir <OUTDIR>
@@ -92,7 +92,7 @@ Do not use `-c <file>` to specify parameters as this will result in errors. Cust
 The above pipeline run specified with a params file in yaml format:
 
 ```bash
-nextflow run WEHI-SODA-Hub/spatialproteomics -profile docker -params-file params.yaml
+nextflow run WEHI-SODA-Hub/sp_segment -profile docker -params-file params.yaml
 ```
 
 with:
@@ -172,14 +172,14 @@ The following Mesmer parameters can be set:
 When you run the above command, Nextflow automatically pulls the pipeline code from GitHub and stores it as a cached version. When running the pipeline after this, it will always use the cached version if available - even if the pipeline has been updated since. To make sure that you're running the latest version of the pipeline, make sure that you regularly update the cached version of the pipeline:
 
 ```bash
-nextflow pull WEHI-SODA-Hub/spatialproteomics
+nextflow pull WEHI-SODA-Hub/sp_segment
 ```
 
 ### Reproducibility
 
 It is a good idea to specify a pipeline version when running the pipeline on your data. This ensures that a specific version of the pipeline code and software are used when you run your pipeline. If you keep using the same tag, you'll be running the same version of the pipeline, even if there have been changes to the code since.
 
-First, go to the [WEHI-SODA-Hub/spatialproteomics releases page](https://github.com/WEHI-SODA-Hub/spatialproteomics/releases) and find the latest pipeline version - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`. Of course, you can switch to another version by changing the number after the `-r` flag.
+First, go to the [WEHI-SODA-Hub/sp_segment releases page](https://github.com/WEHI-SODA-Hub/sp_segment/releases) and find the latest pipeline version - numeric only (eg. `1.3.1`). Then specify this when running the pipeline with `-r` (one hyphen) - eg. `-r 1.3.1`. Of course, you can switch to another version by changing the number after the `-r` flag.
 
 This version number will be logged in reports when you run the pipeline, so that you'll know what you used when you look back in the future.
 
