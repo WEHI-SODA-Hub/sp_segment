@@ -118,10 +118,7 @@
             "sdPublisher": {
                 "@id": "https://nf-co.re/"
             },
-            "url": [
-                "https://github.com/WEHI-SODA-Hub/sp_segment",
-                "https://nf-co.re/WEHI-SODA-Hub/sp_segment/dev/"
-            ],
+            "url": ["https://github.com/WEHI-SODA-Hub/sp_segment", "https://nf-co.re/WEHI-SODA-Hub/sp_segment/dev/"],
             "version": ["1.0.0dev"]
         },
         {

@@ -17,9 +17,9 @@ lint:
     - .github/actions/get-shards/action.yml
     - .github/actions/nf-test/action.yml
     - .github/actions/
-    - assets/nf-core-spatialproteomics_logo_light.png
-    - docs/images/nf-core-spatialproteomics_logo_light.png
-    - docs/images/nf-core-spatialproteomics_logo_dark.png
+    - assets/nf-core-sp_segment_logo_light.png
+    - docs/images/nf-core-sp_segment_logo_light.png
+    - docs/images/nf-core-sp_segment_logo_dark.png
     - tests/default.nf.test
   files_unchanged:
     - .github/CONTRIBUTING.md
