@@ -12,7 +12,7 @@ include { MESMER_SEGMENT          } from '../subworkflows/local/mesmer_segment'
 include { SOPA_SEGMENT            } from '../subworkflows/local/sopa_segment'
 include { SOPA_SEGMENT_WBACKSUB   } from '../subworkflows/local/sopa_segment_wbacksub'
 include { softwareVersionsToYAML  } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { methodsDescriptionText  } from '../subworkflows/local/utils_nfcore_spatialproteomics_pipeline'
+include { methodsDescriptionText  } from '../subworkflows/local/utils_nfcore_sp_segment_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -20,7 +20,7 @@ include { methodsDescriptionText  } from '../subworkflows/local/utils_nfcore_spa
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-workflow SPATIALPROTEOMICS {
+workflow SP_SEGMENT {
 
     take:
     ch_samplesheet // channel: samplesheet read in from --input

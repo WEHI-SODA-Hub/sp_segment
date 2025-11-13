@@ -1,12 +1,12 @@
 <h1>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/images/wehi-soda-hub-spatialproteomics_logo_dark.png">
-    <img alt="WEHI-SODA-Hub/spatialproteomics" src="docs/images/wehi-soda-hub-spatialproteomics_logo_light.png">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/wehi-soda-hub-sp_segment_logo_dark.png">
+    <img alt="WEHI-SODA-Hub/sp_segment" src="docs/images/wehi-soda-hub-sp_segment_logo_light.png">
   </picture>
 </h1>
 
-[![GitHub Actions CI Status](https://github.com/WEHI-SODA-Hub/spatialproteomics/actions/workflows/ci.yml/badge.svg)](https://github.com/WEHI-SODA-Hub/spatialproteomics/actions/workflows/ci.yml)
-[![GitHub Actions Linting Status](https://github.com/WEHI-SODA-Hub/spatialproteomics/actions/workflows/linting.yml/badge.svg)](https://github.com/WEHI-SODA-Hub/spatialproteomics/actions/workflows/linting.yml)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![GitHub Actions CI Status](https://github.com/WEHI-SODA-Hub/sp_segment/actions/workflows/ci.yml/badge.svg)](https://github.com/WEHI-SODA-Hub/sp_segment/actions/workflows/ci.yml)
+[![GitHub Actions Linting Status](https://github.com/WEHI-SODA-Hub/sp_segment/actions/workflows/linting.yml/badge.svg)](https://github.com/WEHI-SODA-Hub/sp_segment/actions/workflows/linting.yml)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
 [![Nextflow](https://img.shields.io/badge/version-%E2%89%A524.04.2-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
@@ -14,11 +14,11 @@
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
-[![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/WEHI-SODA-Hub/spatialproteomics)
+[![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/WEHI-SODA-Hub/sp_segment)
 
 ## Introduction
 
-**WEHI-SODA-Hub/spatialproteomics** is a pipeline for running cell segmentation
+**WEHI-SODA-Hub/sp_segment** is a pipeline for running cell segmentation
 on COMET and MIBI data. For COMET, background subtraction can be performed
 followed by patched cellpose segmentation, or non-patched mesmer segmentation.
 For MIBI, mesmer segmentation can be run. Whole-cell and nuclear segmentations
@@ -61,7 +61,7 @@ be viewed in QuPath.
 ```
 </details>
 
-![spatialproteomics workflow](assets/spatialproteomics_workflow.png)
+![sp_segment workflow](assets/sp_segment_workflow.png)
 
 The pipeline uses the following tools:
 
@@ -132,7 +132,7 @@ pipeline will run a background subtraction only.
 Now, you can run the pipeline using:
 
 ```bash
-nextflow run WEHI-SODA-Hub/spatialproteomics \
+nextflow run WEHI-SODA-Hub/sp_segment \
    -profile <docker/singularity/.../institute> \
    --input samplesheet.csv \
    --outdir <OUTDIR>
@@ -210,7 +210,7 @@ You can run the pipeline with different profiles for different size images:
 
 ## Credits
 
-WEHI-SODA-Hub/spatialproteomics was originally written by the WEHI SODA-Hub.
+WEHI-SODA-Hub/sp_segment was originally written by the WEHI SODA-Hub.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 
@@ -224,7 +224,7 @@ If you would like to contribute to this pipeline, please see the [contributing g
 ## Citations
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use WEHI-SODA-Hub/spatialproteomics for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+<!-- If you use WEHI-SODA-Hub/sp_segment for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
 
 <!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
 

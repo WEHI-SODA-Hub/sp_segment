@@ -1,11 +1,10 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    WEHI-SODA-Hub/spatialproteomics
+    WEHI-SODA-Hub/sp_segment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/WEHI-SODA-Hub/spatialproteomics
-    Website: https://nf-co.re/spatialproteomics
-    Slack  : https://nfcore.slack.com/channels/spatialproteomics
+    Github : https://github.com/WEHI-SODA-Hub/sp_segment
+    Website: https://wehi-soda-hub.github.io/
 ----------------------------------------------------------------------------------------
 */
 
@@ -15,9 +14,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { SPATIALPROTEOMICS  } from './workflows/spatialproteomics'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_spatialproteomics_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_spatialproteomics_pipeline'
+include { SP_SEGMENT  } from './workflows/sp_segment'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_sp_segment_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_sp_segment_pipeline'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -27,7 +26,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_spat
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow WEHISODAHUB_spatialproteomics {
+workflow WEHISODAHUB_SP_SEGMENT {
 
     take:
     samplesheet // channel: samplesheet read in from --input
@@ -37,7 +36,7 @@ workflow WEHISODAHUB_spatialproteomics {
     //
     // WORKFLOW: Run pipeline
     //
-    SPATIALPROTEOMICS (
+    SP_SEGMENT (
         samplesheet
     )
 }
@@ -65,7 +64,7 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    WEHISODAHUB_spatialproteomics (
+    WEHISODAHUB_SP_SEGMENT (
         PIPELINE_INITIALISATION.out.samplesheet
     )
     //

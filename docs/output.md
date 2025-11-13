@@ -1,4 +1,4 @@
-# WEHI-SODA-Hub/spatialproteomics: Output
+# WEHI-SODA-Hub/sp_segment: Output
 
 ## Introduction
 
