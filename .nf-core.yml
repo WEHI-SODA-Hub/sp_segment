@@ -13,7 +13,10 @@ lint:
     - .github/workflows/nf-test.yml
     - .github/workflows/awstest.yml
     - .github/workflows/awsfulltest.yml
+    - .github/workflows/download_pipeline.yml
     - .github/workflows/fix-linting.yml
+    - .github/workflows/release-announcements.yml
+    - .github/workflows/template_version_comment.yml
     - .github/actions/get-shards/action.yml
     - .github/actions/nf-test/action.yml
     - .github/actions/
