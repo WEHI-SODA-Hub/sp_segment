@@ -26,7 +26,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_sp_s
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow WEHISODAHUB_sp_segment {
+workflow WEHISODAHUB_SP_SEGMENT {
 
     take:
     samplesheet // channel: samplesheet read in from --input
