@@ -1,7 +1,7 @@
 <h1>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/images/wehi-soda-hub-sp_segment_logo_dark.png">
-    <img alt="WEHI-SODA-Hub/sp_segment" src="docs/images/wehi-soda-hub-sp_segment_logo_light.png">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/wehi-soda-hub-sp_segment_logo_dark.png">
+    <img alt="WEHI-SODA-Hub/sp_segment" src="assets/wehi-soda-hub-sp_segment_logo_light.png">
   </picture>
 </h1>
 
