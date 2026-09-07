@@ -44,15 +44,23 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 AVITI produces tile-level viewer outputs plus stitched per-well outputs:
 
-- `avitisegmentation/sample/CellSegmentation/WellA1/<tile>_Cell.tif` -- per-tile whole-cell mask published in the Cytocanvas layout.
-- `avitisegmentation/sample/CellSegmentation/WellA1/<tile>_Nuclear.tif` -- per-tile nuclear mask published in the Cytocanvas layout.
+- `avitisegmentation/sample/CellSegmentation/WellA1/<tile>_Cell.tif` -- per-tile whole-cell mask (uint16, instance-labeled) published in the Cytocanvas layout.
+- `avitisegmentation/sample/CellSegmentation/WellA1/<tile>_Nuclear.tif` -- per-tile nuclear mask (uint8, binary 0/1 presence) published in the Cytocanvas layout, matching Elembio's own `cells2stats`/Cytocanvas convention.
 - `avitistitched/sample/WellA1/sample__WellA1_cell_stitched.tif` -- stitched whole-cell mask for one well.
-- `avitistitched/sample/WellA1/sample__WellA1_nuclear_stitched.tif` -- stitched nuclear mask for one well.
+- `avitistitched/sample/WellA1/sample__WellA1_nuclear_stitched.tif` -- stitched **instance-labeled** nuclear mask for one well (not the binary Nuclear.tif convention above -- see note below).
 - `avitistitched/sample/WellA1/sample__WellA1_image_stitched.tif` -- stitched multi-channel image for downstream cellmeasurement/KRONOS.
 
 The tile names preserve the source AVITI tile basename, and the stitched
 outputs are the ones passed into the existing `CELLMEASUREMENT`,
 `SEGMENTATIONREPORT`, and `KRONOS2EMBEDDINGS` wiring.
+
+Nuclear.tif's binary presence-mask convention (required by Elembio's
+`cells2stats`/Cytocanvas) can't carry per-nucleus instance IDs, but
+`CELLMEASUREMENT` needs them to match nuclei to whole cells by centroid. To
+support both, nuclear segmentation also writes an internal, unpublished
+`<tile>_Nuclear_label.tif` (uint16, instance-labeled) alongside the published
+binary `Nuclear.tif`; it is this label mask -- not the binary one -- that
+gets stitched into `sample__WellA1_nuclear_stitched.tif` above.
 
 #### Mesmer segmentation
 

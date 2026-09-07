@@ -660,12 +660,13 @@ containers/environments and never share a task.
 
 #### AVITI parameters
 
-| Parameter Name             | Description                                                                              |
-| -------------------------- | ---------------------------------------------------------------------------------------- |
-| `aviti_input`              | Path to the AVITI samplesheet (columns: `sample`, `run_dir`[, `wells`]).                 |
-| `aviti_cellpaint_batch`    | Imaging batch prefix holding the segmentation channels, e.g. `CP01` (default).           |
-| `aviti_channel_mode`       | `auto` (default), `2ch`, or `3ch`.                                                       |
-| `aviti_nuclear_model_path` | Path to the custom Cellpose 3.x nuclear model. **Required** when `--aviti_input` is set. |
+| Parameter Name             | Description                                                                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `aviti_input`              | Path to the AVITI samplesheet (columns: `sample`, `run_dir`[, `wells`]).                                                                 |
+| `aviti_cellpaint_batch`    | Imaging batch prefix holding the segmentation channels, e.g. `CP01` (default).                                                           |
+| `aviti_channel_mode`       | `auto` (default), `2ch`, or `3ch`.                                                                                                       |
+| `aviti_nuclear_model_path` | Path to the custom Cellpose 3.x nuclear model. **Required** when `--aviti_input` is set.                                                 |
+| `aviti_tile_gap_microns`   | Visual gap (microns) inserted between adjacent tiles when stitching a well; viewer clarity only, not the true stage gap. Default `32.0`. |
 
 AVITI whole-cell segmentation uses the global Cellpose parameters listed
 earlier in this page (`cellpose_pretrained_model`, `cellpose_diameter`,
@@ -685,6 +686,11 @@ Per-tile masks are published in the AVITI Cytocanvas viewer's expected layout
 stitched masks/image are published separately so the existing
 `CELLMEASUREMENT`/`SEGMENTATIONREPORT`/`KRONOS2EMBEDDINGS` steps can run on
 them unmodified. See [output docs](output.md) for the full layout.
+
+Per Elembio's own convention, `<tile>_Nuclear.tif` is a binary 0/1 presence
+mask, unlike `<tile>_Cell.tif` which is instance-labeled -- so nuclear
+segmentation also writes an internal, unpublished `<tile>_Nuclear_label.tif`
+(instance-labeled) for stitching/`CELLMEASUREMENT` to consume instead.
 
 ### KRONOS2 embeddings
 
