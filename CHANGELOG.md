@@ -3,9 +3,47 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## v0.5.0 - 2026-09-07
 
 ### Changed
+
+- **:warning: Label masks are now always rasterised as uint32 (was uint16).**
+  `parquet_to_tiff.py` hardcoded `dtype=np.uint16` when rasterising segmentation
+  geometries, and `rasterio.features.rasterize` does not raise on overflow — it
+  silently saturates at the dtype maximum and drops every geometry past it. The
+  failure was invisible on the crops used in testing and only surfaced on
+  whole-slide images: a 370 mm² section (~370k cells at 0.4964 µm/px) truncated
+  to exactly 65,535 labels, with the discarded cells collapsing onto low label
+  IDs — leaving single labels whose parts scatter across the whole slide, whose
+  bounding boxes span the image, and whose geometries are correspondingly
+  expensive downstream. **Any mask with more than 65,535 cells produced by an
+  earlier version is affected and should be regenerated;** masks under 65,535
+  cells are unchanged and stay byte-identical. `cellsam_segment.py` gained the
+  same fail-fast guard for implausible (>uint32) cell counts.
+
+- **Intermediate label masks are compressed; the final smoothed mask is not.**
+  Widening the label dtype doubles these masks — on a 36583x40986 slide the
+  `PARQUETTOTIFF` output went from 3.0 GB to 6.0 GB, and `SMOOTHMASKS` then
+  reads that and writes another copy, all onto shared scratch. Label masks are
+  long runs of a repeated ID, so deflate more than cancels the widening: a
+  dense whole-slide mask goes from 2.87 GB to 31 MB, and the compressed write
+  is faster than the uncompressed one even on local disk. CellSAM's
+  intermediate mask is now compressed the same way (it previously was not,
+  unlike the Cellpose path). The smoothed mask stays uncompressed — it is the
+  viewer-facing output and some viewers choke on compressed-strip TIFFs.
+
+- `neighbors` (nearest neighbours for neighbourhood feature aggregation) now
+  defaults to `0` (disabled), was `5`.
+
+- Resource profiles are split into the public `small`/`medium`/`large` set,
+  unchanged, and new WEHI (Milton) node-matched heavy-compute profiles —
+  `wehi_small`, `wehi_med`, `wehi_large` — sized to a target node's full core
+  and memory count for dense samples where segmentation load is driven more by
+  cell count than raw image size. See [README.md](README.md#dealing-with-large-images).
+
+- `cellmeasurement-py` bumped to 0.2.2, carrying a STRtree broad-phase pass for
+  the GeoJSON export overlap step (paired with the mask dtype/compression
+  changes above), and to 0.2.1, fixing channel detection on OPAL OME-TIFFs.
 
 - **Cellpose preprocessing now matches Cellpose's own contract: sopa's gaussian
   filter and CLAHE are both disabled.** Cellpose normalises by rescaling to the 1st
@@ -188,6 +226,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   already merged into the GeoJSON, which is now the only embedding artefact.
 
 ### Added
+
+- **Resumable polygon extraction in `CELLMEASUREMENT`.** On whole-slide images
+  with millions of cells, polygon extraction is the longest phase. Setting the
+  new `geometry_checkpoint_dir` parameter writes each completed batch of cells
+  to disk (batch size controlled by `geometry_batch_size`, default `2000`), so
+  a task killed by wall-time or OOM resumes from the last completed batch
+  instead of starting over. The directory must be outside the Nextflow work
+  directory — a retry runs in a fresh work directory, so a checkpoint written
+  there would be discarded. Checkpoints are namespaced per sample and mask, and
+  ignored if the run's settings (tolerance, batch size, mask dimensions, cell
+  count) differ from the ones that produced them; they are not deleted
+  automatically. See [docs/usage.md](docs/usage.md) for details.
 
 - **`kronos_exclude_markers`, which withholds channels from KRONOS2 so they
   contribute nothing to the embedding.** A COMET panel's `Autofluorescence`
