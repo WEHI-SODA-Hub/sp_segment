@@ -45,6 +45,14 @@ output:
       type: file
       description: Nuclear segmentation mask for this tile, named after the source tile
       pattern: "*_Nuclear.tif"
+  - nuclear_label_mask:
+      type: file
+      description: |
+        Instance-labeled (uint16) nuclear mask for this tile, pre-binarize.
+        Internal-only intermediate for AVITISTITCHWELL/CELLMEASUREMENT
+        (which need per-nucleus instance IDs), not part of the Elembio
+        viewer/cells2stats contract and not published.
+      pattern: "*_Nuclear_label.tif"
   - versions:
       type: file
       description: File containing software versions

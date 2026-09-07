@@ -16,7 +16,7 @@ Portability : POSIX
 '''
 import sys
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Optional
 
 import numpy as np
 import tifffile
@@ -68,6 +68,13 @@ def main(
         help="Path to the custom Cellpose 3.x nuclear model "
              "(e.g. 20250212_cellpose_nuc_8diam)."
     )],
+    output_label: Annotated[Optional[Path], typer.Option(
+        help="Optional path to also write the pre-binarize, instance-labeled "
+             "(uint16) nuclear mask. Not part of Elembio's Nuclear.tif "
+             "viewer/cells2stats contract -- this is an internal artifact "
+             "for stitching + CELLMEASUREMENT, which need per-nucleus "
+             "instance IDs rather than a 0/1 presence mask."
+    )] = None,
     diameter: Annotated[float, typer.Option(
         help="Expected nuclear diameter in pixels. Matches the model's own "
              "training diameter unless you have a reason to override it."
@@ -107,6 +114,13 @@ def main(
 
     masks = remove_small_cells(masks, min_area)
     n_nuclei = len(np.unique(masks)) - 1
+
+    if output_label is not None:
+        # imagej=True matches Elembio's own onboard segmentation TIFFs; see
+        # the module-level MASK_COMPRESSION comment.
+        tifffile.imwrite(
+            output_label, masks.astype(np.uint16), imagej=True, compression=MASK_COMPRESSION,
+        )
 
     # Per Elembio's own notebook, Nuclear.tif is a uint8 *binary* mask (0 =
     # no nucleus, 1 = nucleus present), unlike Cell.tif which is uint16

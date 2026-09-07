@@ -660,12 +660,12 @@ containers/environments and never share a task.
 
 #### AVITI parameters
 
-| Parameter Name           | Description                                                                                                                                                        |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `aviti_input`            | Path to the AVITI samplesheet (columns: `sample`, `run_dir`[, `wells`]).                                                                                           |
-| `aviti_cellpaint_batch`  | Imaging batch prefix holding the segmentation channels, e.g. `CP01` (default).                                                                                     |
-| `aviti_channel_mode`     | `auto` (default), `2ch`, or `3ch`.                                                                                                                                 |
-| `aviti_nuclear_model_path` | Path to the custom Cellpose 3.x nuclear model. **Required** when `--aviti_input` is set.                                                                           |
+| Parameter Name             | Description                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------- |
+| `aviti_input`              | Path to the AVITI samplesheet (columns: `sample`, `run_dir`[, `wells`]).                 |
+| `aviti_cellpaint_batch`    | Imaging batch prefix holding the segmentation channels, e.g. `CP01` (default).           |
+| `aviti_channel_mode`       | `auto` (default), `2ch`, or `3ch`.                                                       |
+| `aviti_nuclear_model_path` | Path to the custom Cellpose 3.x nuclear model. **Required** when `--aviti_input` is set. |
 
 AVITI whole-cell segmentation uses the global Cellpose parameters listed
 earlier in this page (`cellpose_pretrained_model`, `cellpose_diameter`,

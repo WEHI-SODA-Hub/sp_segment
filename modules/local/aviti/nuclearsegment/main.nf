@@ -14,8 +14,13 @@ process AVITINUCLEARSEGMENT {
     output:
     // Named after the source tile, not meta.id: this is exactly the AVITI
     // viewer filename (`<tile>_Nuclear.tif`) expected under `Well<well>/`.
-    tuple val(meta), path("${meta.tile}_Nuclear.tif"), emit: nuclear_mask
-    path "versions.yml"                              , emit: versions
+    tuple val(meta), path("${meta.tile}_Nuclear.tif")      , emit: nuclear_mask
+    // Instance-labeled (uint16) counterpart, pre-binarize -- not part of the
+    // Elembio viewer/cells2stats contract, purely an internal artifact for
+    // AVITISTITCHWELL + CELLMEASUREMENT, which need per-nucleus instance IDs
+    // rather than a 0/1 presence mask.
+    tuple val(meta), path("${meta.tile}_Nuclear_label.tif"), emit: nuclear_label_mask
+    path "versions.yml"                                     , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -26,6 +31,7 @@ process AVITINUCLEARSEGMENT {
     aviti_nuclear_segment.py \\
         ${nucleus_tif} \\
         --output ${meta.tile}_Nuclear.tif \\
+        --output-label ${meta.tile}_Nuclear_label.tif \\
         --model-path ${model_path} \\
         ${args}
 
@@ -39,6 +45,7 @@ process AVITINUCLEARSEGMENT {
     stub:
     """
     touch ${meta.tile}_Nuclear.tif
+    touch ${meta.tile}_Nuclear_label.tif
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

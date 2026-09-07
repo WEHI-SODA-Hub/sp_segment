@@ -51,3 +51,20 @@ def test_remove_small_cells_then_binarize_preserves_presence_after_filtering():
     filtered = remove_small_cells(mask, min_area=2)  # drops labels 2 and 3
     out = binarize(filtered)
     np.testing.assert_array_equal(out, np.array([[1, 1, 0, 0]], dtype=np.uint8))
+
+
+def test_label_mask_retains_instance_ids_that_binary_mask_collapses():
+    # This is the pair of artifacts AVITINUCLEARSEGMENT writes from one
+    # filtering pass: --output-label keeps remove_small_cells' output as-is
+    # (instance IDs intact, for stitching/CELLMEASUREMENT), while --output
+    # binarizes it (Elembio's Nuclear.tif viewer/cells2stats contract).
+    mask = np.array([[0, 1, 1, 2, 2]], dtype=np.int32)
+    filtered = remove_small_cells(mask, min_area=1)
+
+    label_mask = filtered.astype(np.uint16)
+    binary_mask = binarize(filtered)
+
+    # The label mask distinguishes nucleus 1 from nucleus 2...
+    assert set(np.unique(label_mask)) == {0, 1, 2}
+    # ...while the binary mask does not.
+    assert set(np.unique(binary_mask)) == {0, 1}

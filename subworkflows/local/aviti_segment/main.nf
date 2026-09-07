@@ -98,9 +98,12 @@ workflow AVITI_SEGMENT {
     // all three.
     //
     AVITIWHOLECELLSEGMENT.out.cell_mask
-        .join(AVITINUCLEARSEGMENT.out.nuclear_mask, by: 0)
+        // Stitch the instance-labeled nuclear mask, not the binary
+        // Nuclear.tif -- CELLMEASUREMENT needs per-nucleus instance IDs to
+        // match nuclei against whole cells by centroid.
+        .join(AVITINUCLEARSEGMENT.out.nuclear_label_mask, by: 0)
         .join(AVITIMERGETILECHANNELS.out.image, by: 0)
-        .map { meta_tile, cell_mask, nuclear_mask, image ->
+        .map { meta_tile, cell_mask, nuclear_label_mask, image ->
             def well_meta = [
                 id           : "${meta_tile.sample}__Well${meta_tile.well}",
                 sample       : meta_tile.sample,
@@ -112,10 +115,10 @@ workflow AVITI_SEGMENT {
                 x_mm        : meta_tile.x_mm,
                 y_mm        : meta_tile.y_mm,
                 cell_mask   : cell_mask.name,
-                nuclear_mask: nuclear_mask.name,
+                nuclear_mask: nuclear_label_mask.name,
                 image_tif   : image.name,
             ]
-            [ well_meta, row, cell_mask, nuclear_mask, image ]
+            [ well_meta, row, cell_mask, nuclear_label_mask, image ]
         }
         // Collects each well's tile rows and matching files into parallel
         // lists -- exactly the shape AVITISTITCHWELL expects.
@@ -191,7 +194,7 @@ workflow AVITI_SEGMENT {
     }
 
     emit:
-    nuclear_segmentation_mask   = AVITISTITCHWELL.out.nuclear_mask // channel: [ val(meta), *.tif ]
+    nuclear_segmentation_mask   = AVITISTITCHWELL.out.nuclear_mask // channel: [ val(meta), *.tif ] -- stitched instance-labeled nuclear mask
     wholecell_segmentation_mask = AVITISTITCHWELL.out.cell_mask    // channel: [ val(meta), *.tif ]
     annotations                 = ch_annotations                    // channel: [ val(meta), *.geojson ]
     kronos_input                = ch_kronos_input                   // channel: [ val(meta), tiff, whole_cell_mask ]
