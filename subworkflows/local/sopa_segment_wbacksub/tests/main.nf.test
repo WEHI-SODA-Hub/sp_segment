@@ -31,6 +31,16 @@ nextflow_workflow {
                     "DAPI", // nuclear channel
                     "CD45"  // membrane channels
                 ])
+
+                // An empty directory is a valid input: the module links its
+                // contents into a task-local cache, so tasks fall back to
+                // downloading the weights themselves. Set --cellpose_models_dir
+                // to a pre-staged copy to make this test much faster.
+                modelsDir = params.cellpose_models_dir
+                    ? file(params.cellpose_models_dir, checkIfExists: true)
+                    : file("cellpose_models", type: 'dir')
+                modelsDir.mkdirs()
+                input[1] = modelsDir
                 """
             }
         }
@@ -38,7 +48,17 @@ nextflow_workflow {
         then {
             assertAll(
                 { assert workflow.success},
-                { assert snapshot(workflow.out).match()}
+                // Snapshot the NAMED emits only, minus kronos_input.
+                //
+                // workflow.out carries every channel twice -- once positionally ("0",
+                // "1", ...) and once by name -- so filtering by name alone still leaves
+                // the positional copy. kronos_input re-exports the input image, which on
+                // the backsub paths is a generated OME-TIFF stamped with a fresh UUID per
+                // run (Creator="backsub"), making its md5 unreproducible. It is plumbing
+                // for the top-level KRONOS2 call and is covered there.
+                { assert snapshot(workflow.out.findAll { entry ->
+                    !entry.key.toString().isNumber() && entry.key != 'kronos_input'
+                }).match()}
             )
         }
     }

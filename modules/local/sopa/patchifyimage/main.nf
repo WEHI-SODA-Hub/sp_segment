@@ -8,8 +8,8 @@ process SOPA_PATCHIFYIMAGE {
 
     conda "${moduleDir}/environment.yml"
     container "${workflow.containerEngine == 'apptainer' && !task.ext.singularity_pull_docker_container
-        ? 'docker://quentinblampey/sopa:2.1.11'
-        : 'docker.io/quentinblampey/sopa:2.1.11'}"
+        ? 'docker://quentinblampey/sopa:2.2.6'
+        : 'docker.io/quentinblampey/sopa:2.2.6'}"
 
     input:
     tuple val(meta), path(zarr)
@@ -39,7 +39,10 @@ process SOPA_PATCHIFYIMAGE {
     mkdir -p ${prefix}.zarr/.sopa_cache
     mkdir -p ${prefix}.zarr/shapes
 
-    touch ${prefix}.zarr/.sopa_cache/patches_file_image
+    # Must be a parseable patch count, not an empty file: the caller reads this
+    # with .text.trim().toInteger() to size the per-patch fan-out, so `touch`
+    # made every stub run of the cellpose path die with `For input string: ""`.
+    echo 1 > ${prefix}.zarr/.sopa_cache/patches_file_image
     touch ${prefix}.zarr/shapes/image_patches
 
     cat <<-END_VERSIONS > versions.yml

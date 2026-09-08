@@ -1,0 +1,33 @@
+nextflow_process {
+
+    name "Test Process CELLPOSEMODEL"
+    script "../main.nf"
+    process "CELLPOSEMODEL"
+
+    tag "modules"
+    tag "modules_local"
+    tag "cellposemodel"
+
+    // Stub only: the real process downloads multiple GB from cellpose.org, and
+    // the weights are unpinned upstream so their md5 is not snapshottable.
+
+    test("cellposemodel - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = 'cpsam_v2'
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+    }
+}

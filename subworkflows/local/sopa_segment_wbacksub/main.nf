@@ -5,6 +5,7 @@ workflow SOPA_SEGMENT_WBACKSUB {
 
     take:
     ch_sopa_wbacksub
+    ch_cellpose_models // channel: value, path to the staged Cellpose weights directory
 
     main:
 
@@ -39,14 +40,14 @@ workflow SOPA_SEGMENT_WBACKSUB {
         }.set { ch_sopa }
 
     SOPA_SEGMENT(
-        ch_sopa
+        ch_sopa,
+        ch_cellpose_models
     )
     ch_versions = ch_versions.mix(SOPA_SEGMENT.out.versions.first())
 
     emit:
     annotations          = SOPA_SEGMENT.out.annotations          // channel: [ val(meta), *.geojson ]
-    kronos_embeddings    = SOPA_SEGMENT.out.kronos_embeddings    // channel: [ val(meta), *.csv ] OPTIONAL
-    kronos_marker_report = SOPA_SEGMENT.out.kronos_marker_report // channel: [ val(meta), *.txt ] OPTIONAL
+    kronos_input         = SOPA_SEGMENT.out.kronos_input         // channel: [ val(meta), tiff, whole_cell_mask ]
 
     versions = ch_versions                     // channel: [ versions.yml ]
 }

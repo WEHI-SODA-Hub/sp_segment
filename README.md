@@ -77,7 +77,7 @@ flowchart TD
 
   style smooth stroke:#bbb,stroke-dasharray: 5 5
   measure --> geojson["GeoJSON"]
-  measure --> embeddings["KRONOS
+  measure --> embeddings["KRONOS2
                          embeddings"]
   embeddings --> merged_geojson["GeoJSON + embeddings"]
   embeddings --> csv["Embeddings CSV"]
@@ -101,7 +101,7 @@ The pipeline uses the following tools:
 - [cellmeasurement-py](https://github.com/WEHI-SODA-Hub/cellmeasurement-py) -- a
   Python app that matches whole-cell segmentations with nuclei and calculates
   compartment measurements and intensities.
-- [KRONOS](https://github.com/mahmoodlab/KRONOS) -- a foundation model for
+- [KRONOS2](https://huggingface.co/MahmoodLab/KRONOS2) -- a foundation model for
   multiplex spatial proteomics that extracts rich embeddings for each cell.
 - [sopa](https://github.com/gustaveroussy/sopa) -- we use the sopa CLI tool to
   patchify images and perform cellpose segmentation.
@@ -225,20 +225,29 @@ parameters.
 If you want to skip measurements (this may take some time for large images), you
 can use set the parameter `enable_measurements` to `false`.
 
-### KRONOS embeddings
+### KRONOS2 embeddings
 
-KRONOS is a foundation model for multiplex spatial proteomics that extracts
-rich embeddings for each cell. These embeddings capture cellular phenotype and
-microenvironment context, enabling downstream analysis like clustering and
-spatial analysis.
+KRONOS2 is a marker-aware foundation model for multiplex spatial proteomics. It
+produces a 768-dimensional embedding for each cell, capturing phenotype in a
+form suited to downstream clustering and spatial analysis.
 
-Enable KRONOS with `--enable_kronos true` and provide the required model and
-marker metadata inputs. Detailed KRONOS parameters and marker-mapping guidance
-are documented in [docs/usage.md](docs/usage.md#kronos-embeddings), and KRONOS
-outputs are documented in [docs/output.md](docs/output.md#kronos-embeddings).
+Enable it with `--enable_kronos true --kronos_model_path /path/to/KRONOS2`. The
+weights are gated on Hugging Face and must be downloaded as a full snapshot; no
+marker metadata file is needed, since KRONOS2 carries its own vocabulary and
+applies the marker-aware normalisation internally.
 
-For background on the model itself, see the
-[KRONOS GitHub repository](https://github.com/mahmoodlab/KRONOS).
+One caveat worth knowing before you run it: KRONOS2 matches marker names
+exactly (separator-insensitive, no alias or fuzzy step), so naming variants such
+as `Cytokeritin` or `Collagen 4` do not resolve and would otherwise be
+normalised with default statistics. The pipeline fails loudly on unmatched
+markers; `--kronos_marker_mapping` is how you resolve them.
+
+Parameters and marker-mapping guidance are in
+[docs/usage.md](docs/usage.md#kronos2-embeddings); outputs are in
+[docs/output.md](docs/output.md#kronos2-embeddings).
+
+For background on the model, see
+[MahmoodLab/KRONOS2](https://huggingface.co/MahmoodLab/KRONOS2).
 
 ### CellSAM segmentation
 
@@ -256,11 +265,21 @@ are documented in [docs/output.md](docs/output.md#cellsam-segmentation).
 
 ## Dealing with large images
 
-You can run the pipeline with different profiles for different size images:
+The pipeline ships SLURM profiles sized for different workloads. The default
+profiles use conservative memory requests:
 
 - `small`: for images <150GB
 - `medium`: for images <300GB
 - `large`: for images <600GB
+
+Segmentation load is driven more by cell count than by raw image size. For very
+dense samples (millions of cells, e.g. large tumour regions) the conservative
+requests may not be enough. WEHI users on Milton can instead use the
+node-matched heavy-compute profiles, which size each task to a target node:
+
+- `wehi_small`: sml nodes (28 cores, 113GB)
+- `wehi_med`: med/il nodes (28/48 cores, 491GB)
+- `wehi_large`: lrg nodes (64 cores, 1498GB)
 
 > [!WARNING]
 > If you are combining many membrane channels, using `prod` as the combine method

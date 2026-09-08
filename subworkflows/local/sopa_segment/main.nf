@@ -4,13 +4,13 @@ include { SOPA_SEGMENT_COMPARTMENT as SOPA_SEGMENT_WHOLECELL } from '../sopa_seg
 include { CELLMEASUREMENT                                    } from '../../../modules/local/cellmeasurement/main.nf'
 include { SMOOTHMASKS as SMOOTHMASKS_NUC                     } from '../../../modules/local/smoothmasks/main.nf'
 include { SMOOTHMASKS as SMOOTHMASKS_WC                      } from '../../../modules/local/smoothmasks/main.nf'
-include { KRONOSEMBEDDINGS                                    } from '../../../modules/local/kronosembeddings/main.nf'
 include { SEGMENTATIONREPORT                                 } from '../../../modules/local/segmentationreport/main.nf'
 
 workflow SOPA_SEGMENT {
 
     take:
     ch_sopa // channel: [ (meta, tiff, nuclear_channel, membrane_channels) ]
+    ch_cellpose_models // channel: value, path to the staged Cellpose weights directory
 
     main:
 
@@ -50,7 +50,8 @@ workflow SOPA_SEGMENT {
                     '' // no membrane channels for nuclear segmentation
                 ]
             },
-            'nuclear'
+            'nuclear',
+            ch_cellpose_models
         )
         ch_versions = ch_versions.mix(SOPA_SEGMENT_NUCLEAR.out.versions.first())
     }
@@ -60,7 +61,8 @@ workflow SOPA_SEGMENT {
     //
     SOPA_SEGMENT_WHOLECELL(
         ch_combined,
-        'whole-cell'
+        'whole-cell',
+        ch_cellpose_models
     )
     ch_versions = ch_versions.mix(SOPA_SEGMENT_WHOLECELL.out.versions.first())
 
@@ -147,38 +149,26 @@ workflow SOPA_SEGMENT {
     ch_annotations = CELLMEASUREMENT.out.annotations
 
     //
-    // Optional KRONOS embedding extraction
+    // Assemble the KRONOS input channel: original tiff + whole-cell mask.
     //
-    ch_kronos_embeddings = channel.empty()
-    ch_kronos_marker_report = channel.empty()
-    if (params.enable_kronos) {
-
-        // Create channel for KRONOS input: original tiff + whole-cell mask + geojson
-        ch_sopa
-            .join(SOPA_SEGMENT_WHOLECELL.out.tiff)
-            .map {
+    // KRONOS itself is invoked once at the top level (workflows/sp_segment.nf)
+    // rather than per segmenter, so that a cohort-wide pass sees every sample
+    // regardless of which segmenter produced its mask. This subworkflow only
+    // publishes the inputs.
+    //
+    ch_sopa
+        .join(SOPA_SEGMENT_WHOLECELL.out.tiff)
+        .map {
+            meta,
+            tiff,
+            _nuclear_channel,
+            _membrane_channels,
+            whole_cell_mask -> [
                 meta,
                 tiff,
-                _nuclear_channel,
-                _membrane_channels,
-                whole_cell_mask -> [
-                    meta,
-                    tiff,
-                    whole_cell_mask
-                ]
-            }.set { ch_kronos_input }
-
-        KRONOSEMBEDDINGS(
-            ch_kronos_input,
-            file(params.kronos_model_path),
-            file(params.kronos_marker_metadata),
-            CELLMEASUREMENT.out.annotations
-        )
-        ch_versions = ch_versions.mix(KRONOSEMBEDDINGS.out.versions.first())
-        ch_kronos_embeddings = KRONOSEMBEDDINGS.out.embeddings
-        ch_kronos_marker_report = KRONOSEMBEDDINGS.out.marker_report
-        ch_annotations = KRONOSEMBEDDINGS.out.merged_geojson
-    }
+                whole_cell_mask
+            ]
+        }.set { ch_kronos_input }
 
     // Optional SEGMENTATIONREPORT module
     ch_report = channel.empty()
@@ -215,8 +205,7 @@ workflow SOPA_SEGMENT {
 
     emit:
     annotations          = ch_annotations                    // channel: [ val(meta), *.geojson ]
-    kronos_embeddings    = ch_kronos_embeddings              // channel: [ val(meta), *.csv ] OPTIONAL
-    kronos_marker_report = ch_kronos_marker_report           // channel: [ val(meta), *.txt ] OPTIONAL
+    kronos_input         = ch_kronos_input                   // channel: [ val(meta), tiff, whole_cell_mask ]
     report               = ch_report                         // channel: [ val(meta), *.html ] OPTIONAL
 
     versions = ch_versions                                   // channel: [ versions.yml ]

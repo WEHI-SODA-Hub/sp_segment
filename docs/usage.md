@@ -151,14 +151,386 @@ The following Mesmer parameters can be set:
 
 ### Cellpose parameters
 
-| Parameter Name              | Description                                                                     |
-| --------------------------- | ------------------------------------------------------------------------------- |
-| cellpose_diameter           | Diameter of cells in pixels for cellpose.                                       |
-| cellpose_min_area           | Minimum area of cells in square pixels for cellpose.                            |
-| cellpose_flow_threshold     | Flow threshold for cellpose.                                                    |
-| cellpose_cellprob_threshold | Cell probability threshold for cellpose.                                        |
-| cellpose_model_type         | Cellpose model to use for segmentation (e.g., nuclei, cyto, cyto2, cyto3 etc.). |
-| cellpose_pretrained_model   | Path to a pre-trained Cellpose model.                                           |
+| Parameter Name              | Default  | Description                                                                                      |
+| --------------------------- | -------- | ------------------------------------------------------------------------------------------------ |
+| cellpose_diameter           | 30       | Diameters of your cells in px. Rescales the image so they land at the 30 px Cellpose trained on. |
+| cellpose_min_area           | 200      | Discard cells below this many px². **Higher = fewer cells**; 0 keeps every mask.                 |
+| cellpose_flow_threshold     | 0.4      | Max flow error for a mask to survive. **Higher = more cells** (some ill-shaped); 0 disables.     |
+| cellpose_cellprob_threshold | 0.0      | Cell-probability cutoff. **Lower = more and larger cells**; higher = fewer and smaller.          |
+| cellpose_pretrained_model   | cpsam_v2 | Model to segment with: a built-in name or a path to a custom model.                              |
+| cellpose_models_dir         | null     | Directory of pre-staged Cellpose weights; skips the download entirely.                           |
+
+#### Tuning the thresholds
+
+The two thresholds do different jobs, and only one of them changes your
+measurements:
+
+- **`cellpose_flow_threshold` rejects on shape.** Nothing stops the network
+  predicting flows that correspond to no real shape, and where it is uncertain
+  it sometimes does. So Cellpose recomputes the flow gradients each finished
+  mask implies, takes the mean squared error against the flows the network
+  predicted, and drops masks whose error exceeds the threshold. Raise it
+  (0.6, 0.8) when cells you can plainly see are being missed; lower it
+  (0.2, 0.3) when you are getting ragged blobs. Setting `0` switches the check
+  off and keeps everything — Cellpose guards the step with
+  `if flow_threshold > 0`. Not used for 3D data.
+
+- **`cellpose_cellprob_threshold` moves the boundaries.** It is the cutoff on
+  the third network output, cell probability, and the pixels above it are the
+  ones fed into the dynamics step that forms ROIs — so it decides not only
+  which cells exist but where each one ends. Lower it (−1, −2) to pick up faint
+  cells and grow the ones you have; raise it (1, 2) to stop segmenting dim
+  background and shrink them. Because cell areas move, so does every per-cell
+  intensity measured over those masks — treat a change here as a change to your
+  results, not just to your cell count.
+
+  It is **not a 0–1 probability**: the values are inputs to a sigmoid centred at
+  zero, so they run from about **−6 to +6** and 0 is the midpoint rather than
+  the floor. Both directions are meaningful and the useful range is wide.
+
+`cellpose_diameter` tells Cellpose the scale of your data. Cellpose resizes the
+image by `rescale = 30 / diameter` before the network sees it — 30 being the
+cell diameter the model targets — and resizes the masks back afterwards, so a
+cell you declare as 60 px is presented to the network at 30. The default of 30
+asserts your cells are already at that scale, which is why it happens to
+resample nothing; that is the consequence, not the meaning.
+
+Cellpose-SAM tolerates diameters from 7.5 to 120 px (mean 30), so unlike earlier
+Cellpose versions this is optional for typical data and getting it somewhat
+wrong is not fatal. It still matters if your cells sit outside that range, and
+Cellpose's own documented use is downsampling very large cells: `90` shrinks the
+image 3× and speeds the run up, at the cost of resolving small objects. It
+filters nothing — use `cellpose_min_area` for that.
+
+Note `cellpose_min_area` is in **pixels², not microns²**, so it does not track
+`pixel_size_microns`. At COMET's 0.28 µm/px the default 200 px² is 15.7 µm²,
+about a 4.5 µm disc; on a different pixel size the same number means a
+different biological size. See [Minimum cell area](#minimum-cell-area) — the
+same floor applies on the CellSAM path.
+
+Intensity preprocessing has its own parameter group, **Cellpose preprocessing
+options** — see [Preprocessing](#preprocessing-the-pipeline-matches-cellposes-own-contract)
+below.
+
+#### Most of these do not need adjusting on the SAM and DINO models
+
+Every model this pipeline offers — `cpsam_v2`, `cpsam`, `cpdino`, `cpdino-vitb` —
+is a Cellpose 4 transformer model, and the defaults below are already the values
+its authors use at test time. **The expected workflow is to change nothing and
+pick a model.** Tuning inherited from Cellpose 2/3 habits mostly does not apply.
+
+| Parameter                      | Needs tuning?                         | Why                                                                                                                                                                                                        |
+| ------------------------------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cellpose_diameter`            | **No** — leave at 30                  | Cellpose-SAM trained on scales 0.25×–4× around a 30 px mean diameter, so it is scale-robust over ~7–120 px. 30 means `rescale = 1.0`, no resize.                                                           |
+| `cellpose_flow_threshold`      | **No** — 0.4 is the published default | The paper's test-time value. Raise only if you see fragmented or spurious masks.                                                                                                                           |
+| `cellpose_cellprob_threshold`  | **No** — 0.0 is the published default | The paper's test-time value. Lower to find more and larger masks, raise for fewer.                                                                                                                         |
+| `cellpose_gaussian_sigma`      | **No** — 0                            | sopa's addition; Cellpose applies no smoothing by default.                                                                                                                                                 |
+| `cellpose_clip_limit`          | **No** — 0                            | sopa's CLAHE, off. See the preprocessing section.                                                                                                                                                          |
+| `cellpose_clahe_kernel_size`   | **No** — inert while CLAHE is off     | —                                                                                                                                                                                                          |
+| `cellpose_tile_norm_blocksize` | **No** — 0 is Cellpose's own default  | Only worth touching for a specific normalisation experiment.                                                                                                                                               |
+| `cellpose_model_type`          | **Removed** — setting it is an error  | Cellpose 4 ignores `--model-type` entirely.                                                                                                                                                                |
+| `cellpose_pretrained_model`    | **Yes** — this is the real choice     | Which model runs. See [Choosing a model](#choosing-a-model).                                                                                                                                               |
+| `cellpose_min_area`            | **Maybe**                             | A pipeline-side size filter in px², not a model parameter. Set it for your cell type.                                                                                                                      |
+| `patch_width_pixel`            | **Only for memory/throughput**        | Cellpose tiles internally at 256 px regardless, so this controls task size and parallelism. With sopa's preprocessing disabled it has much less effect on results — see the reproducibility numbers below. |
+
+There is also **no automatic diameter estimation** in Cellpose 4: the paper states
+plainly that "there was no diameter estimation and resizing performed like in
+previous versions of Cellpose". If you know the QuPath Cellpose extension, note
+that its `.diameter(0.0)` "automatic computation" belongs to Cellpose 2/3, which
+shipped a `SizeModel`. That class no longer exists, and on Cellpose 4 a diameter
+of `0` silently means "do not rescale" rather than "estimate it" — so carrying the
+habit across produces a plausible but unintended run. Leave it at 30.
+
+`cellpose_model_type` has been **removed**. Cellpose 4 ignores `--model-type`
+(it logs `model_type argument is not used in v4.0.1+`), and sopa only reads it
+on the cellpose<4 code path, so the old `cyto3` default was silently discarded
+on every run — results attributed to `cyto3` were actually `cpsam`. Setting it
+now raises an error rather than being ignored again. Use
+`cellpose_pretrained_model`.
+
+#### Choosing a model
+
+| Model         | Notes                                                                              |
+| ------------- | ---------------------------------------------------------------------------------- |
+| `cpsam_v2`    | **Default.** The current Cellpose-SAM model.                                       |
+| `cpsam`       | The previous Cellpose-SAM model. Use for continuity with pre-cellpose-4.2 results. |
+| `cpdino`      | DINOv3 backbone (ViT-L, ~303M parameters), added in cellpose 4.2.                  |
+| `cpdino-vitb` | Smaller ViT-B DINOv3 variant.                                                      |
+
+Anything that is not one of those names is treated as a path to your own
+trained model, and is passed to cellpose untouched.
+
+How far apart are they? Measured on the synthetic COMET test image (119 cells),
+against the pre-upgrade pipeline:
+
+| Run                              | cells | foreground IoU | cells at IoU >= 0.90 |
+| -------------------------------- | ----- | -------------- | -------------------- |
+| `cpsam` on the upgraded pipeline | 119   | 0.9987         | 119/119 (100%)       |
+| `cpsam_v2`                       | 119   | 0.9552         | 112/119 (94%)        |
+| `cpdino`                         | 123   | 0.9251         | 106/119 (89%)        |
+
+The first row is the useful one: upgrading cellpose, sopa and the device while
+holding the model fixed is effectively a no-op, so any difference you see comes
+from the model you choose, not from the upgrade. Note this is a small synthetic
+image — enough to show the models differ, not enough to say which is better for
+your tissue.
+
+The DINO models need Meta's `dinov3` package. The pinned container carries it,
+and only its architecture code is used, so Meta's gated backbone weights are not
+required. See `CITATIONS.md` for the licence terms, which apply if you
+redistribute the container or publish results using those models.
+
+#### Preprocessing: the pipeline matches Cellpose's own contract
+
+Cellpose normalises each image it is given by rescaling to the 1st and 99th
+percentiles, and does nothing else — its `sharpen_radius` and `smooth_radius`
+both default to `0`, and it contains no CLAHE code at all.
+
+That is not an inference from the code alone — it is the documented training
+recipe. The Cellpose-SAM paper states that "during training, all images were
+normalized such that 0 was set to the first percentile of the image intensity and
+1 was the 99th percentile", and that at test time "there was no diameter
+estimation and resizing performed like in previous versions of Cellpose".
+
+Sopa adds two preprocessing stages of its own on top of that, applied to every
+patch before Cellpose sees it: a `scipy` gaussian filter (`gaussian_sigma=1`)
+and CLAHE (`skimage.exposure.equalize_adapthist`, `clip_limit=0.2`). **This
+pipeline disables both**, so Cellpose receives exactly what its released weights
+were trained on:
+
+| Stage                                    | Whose    | Default here   |
+| ---------------------------------------- | -------- | -------------- |
+| `gaussian_filter(sigma)`                 | sopa     | **off** (`0`)  |
+| `equalize_adapthist(clip_limit, kernel)` | sopa     | **off** (`0`)  |
+| percentile (1, 99) rescale               | Cellpose | on (unchanged) |
+
+These four parameters form the **Cellpose preprocessing options** group:
+
+| Parameter Name               | Default | Description                                                                            |
+| ---------------------------- | ------- | -------------------------------------------------------------------------------------- |
+| cellpose_gaussian_sigma      | `0`     | sopa's gaussian smoothing sigma. `0` disables it; `null` restores sopa's `1`.          |
+| cellpose_clip_limit          | `0`     | sopa's CLAHE clip limit. `0` disables CLAHE; `null` restores sopa's `0.2`.             |
+| cellpose_clahe_kernel_size   | `null`  | CLAHE kernel in pixels. `null` means `patch.shape // 8`. No effect while CLAHE is off. |
+| cellpose_tile_norm_blocksize | `0`     | Cellpose tile-local normalisation block. `0` is Cellpose's whole-patch default.        |
+
+To restore sopa's behaviour, set `--cellpose_clip_limit 0.2` and
+`--cellpose_gaussian_sigma 1`.
+
+##### Why CLAHE is off
+
+Segmentation always runs on patches, and all of this normalisation is computed
+**from the patch**. A cell's input therefore depends on what else landed in its
+patch. Patch overlap does not help: it resolves cells straddling a boundary, not
+cells normalised differently.
+
+CLAHE was by far the largest contributor, for a specific reason: left at
+skimage's default, the CLAHE kernel is `patch.shape // 8`, so the
+contrast-enhancement length scale moves with `--patch_width_pixel`. At COMET's
+0.28 µm/px that is 52 µm at `patch_width_pixel=1500`, 105 µm at 3000 and 210 µm
+at 6000 — roughly 6 to 25 nuclear diameters for identical tissue, decided
+entirely by a patching knob.
+
+Cellpose-SAM's training augmentations are relevant to why this particular stage
+matters and the rest do not. Training jittered each channel's brightness (pixel
+mean, σ = 0.2) and rescaled its contrast (standard deviation), and degraded 50%
+of each batch with Poisson noise, gaussian blur, downsampling and anisotropic
+blur. So the model is explicitly robust to **global** intensity and contrast
+shifts, and to blurring — which is why sopa's gaussian is harmless, and why
+patch-to-patch differences in a single percentile rescale are tolerable. CLAHE is
+different in kind: it is a **spatially varying** local remapping, which is not in
+that augmentation set at any scale.
+
+Measured on a real 34-channel COMET image (DAPI, 32934×18076) by holding a
+1024² region fixed and varying only the patch layout, then recording how much
+the values Cellpose receives for those same physical pixels changed. Mean
+per-pixel spread, worst of two axes (patch size varied at fixed origin; patch
+origin shifted at fixed size). A gaussian-only control measured exactly 0.0000,
+which is what makes the rest meaningful:
+
+| Nuclei/mm² | DAPI+ | sopa preprocessing | Cellpose contract |
+| ---------- | ----- | ------------------ | ----------------- |
+| 2,250      | 10.1% | 0.1211             | **0.0265**        |
+| 2,932      | 14.6% | 0.0651             | **0.0052**        |
+| 4,647      | 24.2% | 0.0817             | **0.0075**        |
+| 12,006     | 66.2% | 0.0758             | **0.0553**        |
+
+Sparse tissue was the worst case, which matters because a whole-slide run covers
+every density.
+
+##### What that costs you in cells
+
+The above measures the network's input. The consequence is measurable in the
+output. Holding a 1024² region fixed and segmenting it as part of a 1500 px
+versus a 3000 px patch, then matching cells across the two layouts by IoU —
+i.e. **how many of your cells survive changing `patch_width_pixel` and nothing
+else**:
+
+| Model                | sopa: IoU ≥ 0.90 | Cellpose: IoU ≥ 0.90 | sopa mean IoU | Cellpose mean IoU |
+| -------------------- | ---------------- | -------------------- | ------------- | ----------------- |
+| `cpsam_v2` (default) | 103/267 (38.6%)  | **267/326 (81.9%)**  | 0.869         | 0.928             |
+| `cpsam`              | 155/359 (43.2%)  | **271/323 (83.9%)**  | 0.860         | 0.929             |
+| `cpdino`             | 74/201 (36.8%)   | **317/366 (86.6%)**  | 0.855         | 0.936             |
+
+Under sopa's preprocessing fewer than half of all cell boundaries survive a
+patch-size change, and it is worst for `cpsam_v2`, the default. All three models
+land at 82–87% once Cellpose's contract is used, with mean IoU rising from ~0.86
+to ~0.93. Three architectures, same direction, similar magnitude.
+
+##### What else changes
+
+Disabling sopa's preprocessing is **not** result-neutral. On dense patches:
+
+| Model      | Cell count       | Median cell area |
+| ---------- | ---------------- | ---------------- |
+| `cpsam_v2` | **+8% to +35%**  | −23% to −43%     |
+| `cpsam`    | **−3% to −10%**  | −25% to −37%     |
+| `cpdino`   | **+28% to +54%** | −25% to −42%     |
+
+The direction of the count change is model-dependent — CLAHE suppresses
+detections in the newer models and inflates them in `cpsam` — but **median cell
+area falls 23–43% for every model**. Since per-cell marker intensities are
+computed over these masks, downstream measurements shift accordingly, and results
+produced before and after this change should not be pooled in one analysis.
+
+Cells now come out smaller — measured equivalent diameters of ~24–27 px against
+the configured 30 — but `cellpose_diameter` almost certainly does **not** need
+changing for that. Cellpose-SAM was trained with images resized by a scale factor
+log-distributed between 0.25× and 4× relative to a 30 px mean cell diameter, so a
+1.2× scale discrepancy sits well inside the range it was trained to handle. The
+default of 30 gives `rescale = 1.0`, i.e. no resizing, which is what the paper's
+test-time protocol used.
+
+A secondary effect, worth knowing but **not** a reason on its own: CLAHE
+bypasses Cellpose's empty-patch guard. Cellpose zeroes a patch whose 1–99
+percentile range falls below `1e-3`, so an off-tissue patch reaches the network
+as zeros. `equalize_adapthist` expands an all-zero patch to the full range
+(mean 0.928, std 0.258), so that check never fires. On the image above, 13 of 84
+patches at `patch_width_pixel=3000` are entirely zero — unremarkable for exported
+ROIs with off-tissue padding.
+
+In practice this appears to be harmless: run on such a patch, `cpsam` returned
+**0 masks either way**, so the amplified field does not manufacture cells. Treat
+it as wasted work and a lost safety net rather than a correctness problem.
+
+##### Visual check on real tissue
+
+These defaults were run through the pipeline on a COMET brain-panel ROI
+(1683×2349 at 0.28 µm/px, DAPI plus four markers combined by `max`) with
+`cpsam_v2`, `cpdino` and cellSAM, and the resulting GeoJSONs were inspected in
+QuPath. All three loaded cleanly and looked closely comparable:
+
+| Method              | Cells | Median area        | Median equiv. diameter |
+| ------------------- | ----- | ------------------ | ---------------------- |
+| cellpose `cpsam_v2` | 1,742 | 864 px² (68 µm²)   | 33.2 px (9.3 µm)       |
+| cellpose `cpdino`   | 1,751 | 916 px² (72 µm²)   | 34.2 px (9.6 µm)       |
+| cellSAM             | 1,648 | 1,129 px² (89 µm²) | 37.9 px (10.6 µm)      |
+
+Three architecturally unrelated models landing within 6% on cell count is decent
+mutual corroboration. They differ on cell _size_: cellSAM draws noticeably larger,
+more generous boundaries around membrane signal — visible by eye in QuPath and
+matching the ~30% larger median area. `cpsam_v2` and `cpdino` are close to
+indistinguishable from one another.
+
+This is a plausibility check, not an accuracy measurement — there were no
+annotations to score against, so it establishes that the defaults produce sensible
+segmentation on real tissue, not that any one model is the most correct.
+
+> **All of this measures reproducibility, not accuracy.** It shows that the same
+> tissue yields the same cells regardless of how it happened to be patched. It
+> does **not** show the cells are more correct — a config could be perfectly
+> self-consistent and still segment badly, and nothing here was compared against
+> annotations. Sopa presumably added CLAHE because dim IF channels benefit from
+> it, and that trade is unevaluated. If your panel has weak markers, compare both
+> settings before trusting either.
+>
+> **Judging accuracy needs visual inspection**, against annotations or by eye in
+> QuPath, and no amount of normalisation measurement can substitute for it. The
+> defaults have been eyeballed on real tissue across three models (see the visual
+> check above) and produce sensible boundaries, but that is a plausibility check
+> rather than a scored comparison. Treat them as the reproducible starting point
+> and confirm the boundaries look right on your own panel. Both stages are one flag
+> each to restore, so the comparison is cheap to run.
+>
+> Measured on nuclear (DAPI) segmentation on one image. The whole-cell compartment
+> combines membrane markers, which are dimmer and sparser — precisely where CLAHE
+> would be earning its keep — and was not tested.
+>
+> Worth knowing for context: cellSAM also CLAHEs every block and works well —
+> but its released model was _trained_ with CLAHE applied, and it pins the kernel
+> at a fixed 128 px instead of deriving it from the block size. Cellpose's
+> weights were not trained that way. CLAHE is not inherently harmful; applying it
+> to a model that never saw it is the problem.
+
+##### Tile-local normalisation
+
+`--cellpose_tile_norm_blocksize` makes Cellpose's percentile statistics local to
+blocks within the patch rather than global to it. It defaults to `0`, Cellpose's
+own default, meaning whole-patch percentiles.
+
+If you enable it, keep the block much larger than a cell. At 0.28 µm/px with
+`--cellpose_diameter 30`, 512 px is 143 µm or ~17 nuclear diameters; 128 px is
+36 µm or ~4, small enough that a block in sparse tissue may contain no nuclei at
+all. At 128 the minimum per-block 1–99 range fell to 5.0 against 1670 for the
+whole patch, and since Cellpose only guards a flat block below `1e-3` it rescued
+none of them — noise was stretched to full range and patch dependence got 3–24×
+_worse_. Note also that enabling it while CLAHE is on regresses: the two stages
+stack rather than cancel.
+
+Neither option removes patch-locality entirely, because the block grid is still
+laid out relative to the patch. Cellpose's `lowhigh` would — it applies fixed
+absolute bounds with no patch statistics at all — but that is probably not an
+improvement here. Cellpose-SAM was trained by normalising **each image** to its
+own 1st/99th percentiles and then taking 256×256 crops, so per-patch percentile
+normalisation is the closer analogue of the training setup; fixed cohort-wide
+bounds would move further from it, not closer. Leave `lowhigh` alone unless you
+have a specific reason.
+
+#### GPU
+
+Cellpose segmentation runs on the GPU. Sopa warns that cellpose >=4 "can be slow
+without a GPU", and `SOPA_SEGMENTATIONCELLPOSE` carries the `process_gpu` label
+so one is requested. On a machine without a GPU, override that label — the
+models still run on CPU, just slowly.
+
+#### Cellpose model weights
+
+The pipeline fetches the Cellpose weights **once per run** and stages them as an
+input to every segmentation task. Previously each patch task downloaded the
+~1.2 GB `cpsam` checkpoint itself — roughly 18 identical requests for a single
+sample — which caused HTTP 429 rate limiting and truncated downloads. The staged
+copy is also reused by `-resume`.
+
+On a cluster, or anywhere compute nodes have no outbound network, point the
+pipeline at a shared copy instead.
+
+> **Do not put the cache under `/opt`.** Nextflow bind-mounts the host
+> directory containing a staged input, so `--cellpose_models_dir /opt/...`
+> mounts the host's `/opt` over the container's, hiding `/opt/conda` where the
+> Cellpose image is installed. Every task then fails with
+> `sopa: command not found`. The pipeline rejects this at startup rather than
+> letting you discover it that way.
+
+```bash
+nextflow run WEHI-SODA-Hub/sp_segment --cellpose_models_dir /shared/cellpose_models ...
+```
+
+That directory is the Cellpose model cache. Populate it once on a login node,
+naming the model you intend to run:
+
+```bash
+CELLPOSE_LOCAL_MODELS_PATH=/shared/cellpose_models \
+  python -c "from cellpose import models; models.CellposeModel(gpu=False, pretrained_model='cpsam_v2')"
+```
+
+Note that this pins _where_ the weights come from, not _which_ weights: the
+container is pinned but cellpose.org serves whatever is current, so results are
+only reproducible over time against a fixed `--cellpose_models_dir`.
+
+`cellpose_pretrained_model` and `cellpose_models_dir` are both checked before
+the pipeline starts any work — the former only as a path when it is not a
+built-in model name. Cellpose silently falls back to
+its built-in weights when given a `--pretrained-model` path that does not exist,
+so a typo previously produced a complete and plausible but wrong run.
 
 ### CellSAM segmentation
 
@@ -186,14 +558,44 @@ If no token is provided, CellSAM uses the bundled default model.
 | `cellsam_gauge_cell_size`          | Automatically estimate cell size from the image before segmentation (default: `false`).                    |
 | `cellsam_low_contrast_enhancement` | Apply contrast enhancement before segmentation for low-contrast images (default: `false`).                 |
 | `cellsam_model_path`               | Path to a custom CellSAM model checkpoint. If `null` the built-in default model is used (default: `null`). |
-| `cellsam_min_area`                 | Minimum cell area in square pixels; smaller objects are discarded (default: `0`).                          |
+| `cellsam_min_area`                 | Minimum cell area in square pixels; smaller objects are discarded (default: `200`, matching Cellpose).     |
 
-### KRONOS embeddings
+#### Minimum cell area
 
-KRONOS is an optional embedding step that runs after cell measurement and
-writes per-cell embeddings plus a merged GeoJSON with KRONOS features.
+`cellsam_min_area` and `cellpose_min_area` share a default of `200`, so a run is
+not filtered differently just because of which segmenter produced it. Both are
+in **pixels², not microns²** — at COMET's 0.28 µm/px that is 15.7 µm², roughly a
+4.5 µm disc — and both keep cells whose area is greater than or equal to the
+threshold. Set either to `0` to keep every mask.
 
-To enable KRONOS:
+They measure that area slightly differently, so they are close but not exactly
+interchangeable:
+
+|                     | Measures                                       | Applied                                      |
+| ------------------- | ---------------------------------------------- | -------------------------------------------- |
+| `cellsam_min_area`  | the label's pixel count                        | once, after the whole-slide tiles are merged |
+| `cellpose_min_area` | the vectorised polygon's area, after smoothing | per patch, during segmentation               |
+
+Comparing the two on round and ragged cells, the polygon comes out at 0.93–1.00×
+the pixel count (median 0.99), so `200` cuts at an equivalent ~202 px on the
+Cellpose side. The per-patch timing is safe because `patch_overlap_pixel` means
+a cell truncated at one patch edge appears whole in its neighbour, and the
+full-size copy is the one that survives to be resolved.
+
+Mesmer's `mesmer_min_nuclei_area` is deliberately **not** aligned with these: it
+filters nuclei rather than whole cells, and is applied inside the Mesmer
+container rather than by this pipeline.
+
+### KRONOS2 embeddings
+
+KRONOS2 is an optional step that runs after cell measurement and writes a
+768-dimensional embedding for every cell back into the cellmeasurement GeoJSON.
+
+Cells are taken from the CELLMEASUREMENT GeoJSON polygons, so embedding row _i_
+always corresponds to cell feature _i_ -- the join is exact by construction
+rather than by spatial matching.
+
+To enable KRONOS2:
 
 ```bash
 nextflow run WEHI-SODA-Hub/sp_segment \
@@ -201,27 +603,117 @@ nextflow run WEHI-SODA-Hub/sp_segment \
    --input samplesheet.csv \
    --outdir <OUTDIR> \
    --enable_kronos true \
-   --kronos_model_path /path/to/kronos_model_dir \
-   --kronos_marker_metadata /path/to/marker_metadata.csv
+   --kronos_model_path /path/to/KRONOS2
 ```
 
-Channel names are matched case-insensitively to KRONOS marker metadata. Use
-`kronos_marker_mapping` when image channel names need explicit remapping.
+#### Obtaining the model
 
-#### KRONOS embedding parameters
+The weights are gated on Hugging Face. Request access, then download the
+**full** snapshot -- the loader adds the directory to `sys.path` and imports the
+bundled `dinov2` package, so a hand-picked subset of files will not work:
 
-| Parameter Name              | Description                                                                                                                     |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `enable_kronos`             | Enable the KRONOS embedding step entirely (default: `false`).                                                                   |
-| `kronos_model_path`         | **Required** path to the directory containing the pre-trained KRONOS `.pt` checkpoint.                                          |
-| `kronos_marker_metadata`    | **Required** path to a CSV file mapping marker channel names to KRONOS input slots.                                             |
-| `kronos_config_path`        | Path to a KRONOS YAML config file overriding default model settings (default: `null`).                                          |
-| `kronos_patch_size`         | Size in pixels of the square patch extracted around each cell for embedding (default: `64`).                                    |
-| `kronos_batch_size`         | Number of patches processed per inference batch (default: `32`).                                                                |
-| `kronos_num_workers`        | Number of PyTorch DataLoader worker processes (default: `4`).                                                                   |
-| `kronos_max_value`          | Maximum pixel intensity used for per-channel normalisation (default: `65535`).                                                  |
-| `kronos_marker_mapping`     | JSON string or path mapping pipeline channel names to KRONOS marker names. Uses identity mapping when `null` (default: `null`). |
-| `kronos_distance_threshold` | Maximum distance in pixels between a cell centroid and its matched nucleus; larger gaps are left unmatched (default: `5.0`).    |
+```bash
+hf auth login
+hf download MahmoodLab/KRONOS2 --local-dir /path/to/KRONOS2 --exclude "demo_image/*"
+```
+
+**Do not stage the weights under a path the container also uses**, such as
+`/opt`. Nextflow bind-mounts an input's parent directory into the container to
+make it visible, so a host `/opt` shadows the container's own `/opt/conda` and
+its Python disappears. The failure is reported as:
+
+```
+/usr/bin/env: 'python3': No such file or directory
+```
+
+from an image that demonstrably has `python3`, which points nowhere near the
+cause. Somewhere like `/data/KRONOS2` or a project directory is safe. This
+applies to any process input, not just KRONOS2 -- `/opt` is simply the common
+case, because conda-based images live there.
+
+No marker metadata file is needed: KRONOS2 carries its own 288-marker vocabulary
+and applies the marker-aware z-score internally.
+
+#### Marker names must match exactly
+
+KRONOS2 matches marker names on a **separator-insensitive key with no alias or
+fuzzy step** (`CD-8`, `CD_8` and `CD8` all match; `Cytokeritin` does not match
+`CYTOKERATIN`). An unmatched marker is not dropped -- it is normalised with
+_default_ statistics, which silently degrades that channel.
+
+The run therefore **fails by default** when any marker is unmatched, listing the
+offending names. Most are naming variants rather than new biology, so the fix is
+usually a mapping file:
+
+```json
+{
+  "Collagen 4": "COLLAGENiv",
+  "Cytokeritin": "CYTOKERATIN",
+  "VISA": "VISTA"
+}
+```
+
+Pass it with `--kronos_marker_mapping /path/to/marker_mapping.json`. Mapping is
+applied only to the names handed to the model; stored channel names and the
+GeoJSON are untouched. See
+[examples/kronos_marker_mapping.json](examples/kronos_marker_mapping.json).
+
+The nuclear stain is a special case: it is passed as `preferred_dapi`, which is
+KRONOS2's **only** alias mechanism. The samplesheet's `nuclear_channel` is used
+automatically, so a slide stained with `DRAQ5` or `Hoechst2` still receives DAPI
+statistics.
+
+#### Channels that are not markers
+
+Some channels carry no biology at all -- autofluorescence, a blank, an empty
+cycle. No mapping can resolve those, and `kronos_allow_novel_defaults` is the
+wrong instrument because it still _feeds_ the channel to the model, normalised
+with default statistics. Withhold it instead:
+
+```bash
+--kronos_exclude_markers 'Autofluorescence'
+```
+
+**This affects the embedding step and nothing else.** The channel is simply never
+read by KRONOS2, so it contributes nothing to the embedding -- but it stays in
+the image, remains available to segmentation and every other process, and keeps
+whatever intensity measurements CELLMEASUREMENT wrote for it in the GeoJSON.
+Nothing is deleted from your data. Contrast `remove_markers`, which really does
+strip channels out of the background-subtracted image.
+
+Names are comma separated, case sensitive, and matched against the image's own
+channel names **before** any mapping is applied -- so name `Autofluorescence`,
+not whatever you might have mapped it to. A name matching no channel fails the
+run and lists the channels that are present, and the nuclear channel cannot be
+withheld because it is the model's `preferred_dapi`. Every withheld channel is
+recorded in `_marker_report.txt`.
+
+Two things to watch:
+
+- KRONOS2 attends across the whole channel set, so excluding one channel changes
+  the embedding of every _other_ channel too. Keep the exclusion list constant
+  across a cohort; embeddings computed from different channel sets are not
+  comparable.
+- On the background-subtraction paths KRONOS2 receives the **post-backsub**
+  image, so `remove_markers` has already been applied to it. The two options
+  therefore operate on different channel lists, and naming the same channel in
+  both makes the KRONOS2 run fail with "no such channel".
+
+#### KRONOS2 embedding parameters
+
+| Parameter Name                | Description                                                                                                                                                                             |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `enable_kronos`               | Enable the KRONOS2 embedding step (default: `false`).                                                                                                                                   |
+| `kronos_model_path`           | **Required** path to a full KRONOS2 snapshot directory (or a Hugging Face repo id).                                                                                                     |
+| `kronos_patch_size`           | Side length in pixels of the square patch centred on each cell (default: `64`).                                                                                                         |
+| `kronos_batch_size`           | Patches per inference batch (default: `16`). KRONOS2 runs fp32 and cuBLAS picks batch-dependent kernels, so changing this shifts embeddings slightly; `16` reproduces published values. |
+| `kronos_num_workers`          | PyTorch DataLoader worker processes (default: `4`).                                                                                                                                     |
+| `kronos_max_value`            | Override the intensity divisor. Unset (default) derives it from the image dtype -- `uint8`=255, `uint16`=65535, float=400 -- matching KRONOS2's own scaling factor.                     |
+| `kronos_marker_mapping`       | JSON file or inline JSON mapping channel names onto KRONOS2 vocabulary names (default: `null`).                                                                                         |
+| `kronos_exclude_markers`      | Comma-separated channels not shown to KRONOS2, so they contribute nothing to the embedding, e.g. `Autofluorescence` (default: `null`). The image and all other outputs are untouched.   |
+| `kronos_nuclear_marker`       | Override the nuclear stain used as `preferred_dapi`. Defaults to the samplesheet's `nuclear_channel`.                                                                                   |
+| `kronos_isolate_cell`         | Zero pixels outside the target cell so each embedding describes that cell rather than its surrounding neighbourhood (default: `true`).                                                  |
+| `kronos_allow_novel_defaults` | Proceed when markers fall outside the vocabulary, accepting default normalisation stats (default: `false`).                                                                             |
 
 ### SOPA patching parameters
 
@@ -251,17 +743,94 @@ Channel names are matched case-insensitively to KRONOS marker metadata. Use
 | downsample_factor           | Integer downsample factor applied to image and masks before measurement, `1` = disabled (default: `1.0`).                      |
 | tile_size                   | Tile size in pixels for measurement image reads (default: `2048`). Aim for 2-4x more tiles than the thread count.              |
 | tile_overlap                | Tile overlap in pixels for measurement image reads (default: `200`). Set at least as large as the largest cell diameter.       |
-| neighbors                   | Number of nearest neighbours for neighbourhood feature aggregation, `0` = disabled (default: `5`).                             |
+| neighbors                   | Number of nearest neighbours for neighbourhood feature aggregation, `0` = disabled (default: `0`).                             |
 | erosion_steps               | Measure intensity in 5 equal-area erosion bins from the cell/nucleus boundary inward (default: `true`).                        |
 | expansion_steps             | Measure intensity in 5 equal-area expansion bins within 20 µm outward from the cell boundary (default: `true`).                |
 | environment_expansion       | Measure a pericellular 20 µm environment zone around each cell (default: `true`).                                              |
 | gzip_geojson                | Gzip-compress the output GeoJSON (produces `.geojson.gz`). Recommended for large whole-slide images (default: `true`).         |
+| geometry_checkpoint_dir     | Directory for resumable polygon-extraction checkpoints. Unset = disabled. See below.                                           |
+| geometry_batch_size         | Cells per polygon-extraction batch, and the checkpoint granularity (default: `2000`).                                          |
+
+#### Resuming polygon extraction after a killed job
+
+On whole-slide images with millions of cells, polygon extraction is the longest
+phase of `CELLMEASUREMENT`. Setting `geometry_checkpoint_dir` makes it write each
+completed batch of cells to disk, so a task killed by wall-time or OOM resumes
+from the last completed batch rather than starting over:
+
+```bash
+nextflow run . -profile medium --geometry_checkpoint_dir /vast/scratch/$USER/sp_segment_checkpoints
+```
+
+The directory **must be outside the Nextflow work directory**. A retry runs in a
+freshly allocated work directory, so a checkpoint written there is discarded and
+the retry restarts from zero. Checkpoints are namespaced per sample and per mask,
+and are ignored if the run's settings (tolerance, batch size, mask dimensions,
+cell count) differ from the ones that produced them. They are not deleted
+automatically — remove the directory once a run has completed successfully.
 
 ### Report parameters
 
 | Parameter Name  | Description                         |
 | --------------- | ----------------------------------- |
 | generate_report | Generate segmentation report for QC |
+
+## Caches on a cluster
+
+This pipeline downloads a lot of data that is neither input nor output:
+container images (tens of GB across the Cellpose, Mesmer, CellSAM and KRONOS2
+images), the ~1.2 GB Cellpose checkpoint, and the ~1.7 GB CellSAM/DeepCell
+weights. All of it defaults to your home directory, which on a cluster is
+usually the one filesystem with a quota. A run that fills it dies with
+
+```
+Failed to pull singularity image
+  ...
+  FATAL: ... write /home/.../.apptainer/cache/oci-tmp/tmp_2881498929: disk quota exceeded
+```
+
+after the download has already run — the pull is retried, so this can cost
+hours before it fails.
+
+Put all four caches on scratch:
+
+```bash
+SCRATCH=/vast/scratch/users/$USER
+
+# Apptainer unpacks OCI layers here. This one is an environment variable, not a
+# pipeline parameter: Nextflow pulls images from its own process rather than
+# from a task, so nothing in nextflow.config can redirect it.
+export APPTAINER_CACHEDIR=$SCRATCH/apptainer_cache
+export SINGULARITY_CACHEDIR=$APPTAINER_CACHEDIR
+mkdir -p "$APPTAINER_CACHEDIR"
+
+nextflow run WEHI-SODA-Hub/sp_segment \
+   -profile apptainer,medium \
+   -work-dir $SCRATCH/nextflow/work \
+   --container_cache_dir $SCRATCH/apptainer_images \
+   --cellpose_models_dir $SCRATCH/cellpose_models \
+   --deepcell_cache_dir $SCRATCH/deepcell \
+   --input samplesheet.csv \
+   --outdir <OUTDIR>
+```
+
+| Cache                          | Setting                        | Holds                                                              |
+| ------------------------------ | ------------------------------ | ------------------------------------------------------------------ |
+| Apptainer OCI layers (largest) | `APPTAINER_CACHEDIR` (env var) | Layer blobs unpacked during conversion to SIF                      |
+| Converted container images     | `--container_cache_dir`        | The finished `.img` files Nextflow reuses across runs              |
+| Cellpose weights               | `--cellpose_models_dir`        | Pre-staged checkpoints; skips the download entirely                |
+| DeepCell / CellSAM weights     | `--deepcell_cache_dir`         | `{dir}/{username}/.deepcell/models/`, shared across tasks and runs |
+
+The two container settings are separate because a pull writes two separate
+things, and only one of them is Nextflow's to place. Setting
+`--container_cache_dir` without exporting `APPTAINER_CACHEDIR` leaves the larger
+half in your home directory, so the pipeline treats that combination as an error
+and stops at startup rather than repeating the failure above.
+
+`--deepcell_cache_dir` is bind-mounted into the container automatically.
+Apptainer's `autoMounts` covers only `$HOME`, `/tmp` and the work directory, so
+a path on scratch would otherwise be invisible inside the container and every
+task would re-download the weights.
 
 ### Updating the pipeline
 
