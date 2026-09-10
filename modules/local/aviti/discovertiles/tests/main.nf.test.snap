@@ -8,11 +8,11 @@
                             "id": "test_stub",
                             "wells": ""
                         },
-                        "test_stub.manifest.csv:md5,f24c73819a2bef2148b27547052dd867"
+                        "test_stub.manifest.csv:md5,577e8d377e59eded59d8bf60eac92a83"
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,7a86256c2fc3c537191da14793d7306d"
+                    "versions.yml:md5,6b863e50f06c7f0b017a256dc7118eed"
                 ],
                 "manifest": [
                     [
@@ -20,11 +20,11 @@
                             "id": "test_stub",
                             "wells": ""
                         },
-                        "test_stub.manifest.csv:md5,f24c73819a2bef2148b27547052dd867"
+                        "test_stub.manifest.csv:md5,577e8d377e59eded59d8bf60eac92a83"
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,7a86256c2fc3c537191da14793d7306d"
+                    "versions.yml:md5,6b863e50f06c7f0b017a256dc7118eed"
                 ]
             }
         ],
@@ -32,18 +32,18 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2026-09-01T10:18:25.293198531"
+        "timestamp": "2026-09-10T14:30:51.543162395"
     },
     "aviti_discovertiles - real run directory": {
         "content": [
             [
-                "versions.yml:md5,7a86256c2fc3c537191da14793d7306d"
+                "versions.yml:md5,6b863e50f06c7f0b017a256dc7118eed"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2026-09-01T10:29:24.724802356"
+        "timestamp": "2026-09-10T14:30:19.931781802"
     }
 }

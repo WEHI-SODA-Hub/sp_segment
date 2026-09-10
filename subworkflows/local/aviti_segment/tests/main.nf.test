@@ -1,0 +1,81 @@
+nextflow_workflow {
+
+    name "Test Subworkflow AVITI_SEGMENT"
+    script "../main.nf"
+    workflow "AVITI_SEGMENT"
+
+    tag "subworkflows"
+    tag "subworkflows_"
+    tag "subworkflows/aviti_segment"
+    tag "aviti"
+
+    // Real (non-stub) execution requires a GPU and real Cellpose model
+    // checkpoints for three separate segmenters, none of which is available
+    // in this test environment, so this exercises the stub path only. The
+    // point of this test is the per-row branch/mix/join wiring (does a
+    // blank membrane_model route through AVITIWHOLECELLSEGMENT and a set
+    // membrane_model through AVITIMEMBRANESEGMENT, without disturbing the
+    // shared nuclear/image joins or well-level grouping?), not segmentation
+    // content -- see tests/python/test_aviti_cellpose3_segment.py and the
+    // per-module nf-tests for that.
+    //
+    // AVITIDISCOVERTILES' stub emits the same two real WellA1 tile rows a
+    // non-stub run against tests/data/aviti would (see its own main.nf), so
+    // both sample rows below produce real tiles to route rather than an
+    // empty manifest.
+    test("aviti_segment - blank and set membrane_model coexist in one run") {
+
+        options "-stub"
+
+        when {
+            workflow {
+                """
+                input[0] = Channel.of(
+                    // Blank membrane_model -- routes through AVITIWHOLECELLSEGMENT (v4 SAM),
+                    // the unchanged default path.
+                    [
+                        [ id:'test_v4', wells:'', membrane_model:'', cell_diameter:0 ],
+                        file('${projectDir}/tests/data/aviti', checkIfExists: true)
+                    ],
+                    // Non-blank membrane_model -- routes through AVITIMEMBRANESEGMENT.
+                    // Comparing models on the same run_dir is one samplesheet row per
+                    // model/sample, per the documented pattern -- not fan-out.
+                    [
+                        [ id:'test_v3', wells:'', membrane_model:'test_model', cell_diameter:15 ],
+                        file('${projectDir}/tests/data/aviti', checkIfExists: true)
+                    ]
+                )
+                // ch_nuclear_model: any existing file works as a stand-in in stub
+                // mode (its content is never read), matching AVITINUCLEARSEGMENT's
+                // own stub test -- deliberately *not* one of the tile TIFFs above,
+                // since AVITINUCLEARSEGMENT's per-tile task stages both the tile's
+                // own nucleus_tif and this model file together, and Nextflow
+                // refuses two distinct inputs staged under the same basename.
+                input[1] = Channel.value(file('${projectDir}/tests/data/aviti/RunParameters.json', checkIfExists: true))
+                // ch_membrane_models_dir: must resolve models_dir/test_model for the
+                // test_v3 row above.
+                input[2] = Channel.value(file('${projectDir}/tests/data/aviti/models', checkIfExists: true))
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                // One stitched whole-cell mask per sample/well, regardless of which
+                // branch (v4 SAM vs Cellpose 3.x membrane model) produced the
+                // per-tile masks that fed it -- confirms mix() didn't drop either
+                // branch and join()/groupTuple() completed for both.
+                { assert workflow.out.wholecell_segmentation_mask.size() == 2 },
+                { assert workflow.out.nuclear_segmentation_mask.size() == 2 },
+                { assert workflow.out.annotations.size() == 2 },
+                {
+                    def well_ids = workflow.out.wholecell_segmentation_mask.collect { meta, _mask -> meta.id }.sort()
+                    assert well_ids == ['test_v3__WellA1', 'test_v4__WellA1']
+                }
+            )
+        }
+
+    }
+
+}

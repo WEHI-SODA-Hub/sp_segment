@@ -13,7 +13,7 @@ nextflow_process {
     // custom nuclear model, neither of which is available in this test
     // environment, so only the stub path is exercised here. The underlying
     // Python logic is covered independently by
-    // tests/python/test_aviti_nuclear_segment.py.
+    // tests/python/test_aviti_cellpose3_segment.py.
     test("aviti_nuclearsegment - stub") {
 
         options "-stub"

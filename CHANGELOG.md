@@ -189,6 +189,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **AVITI24 (Teton/Teton Atlas) cytoprofiling runs can be segmented**, through
+  a samplesheet-driven path fully separate from the COMET/MIBI `--input`
+  samplesheet and its Mesmer/SOPA-Cellpose/CellSAM subworkflows. Enable it
+  with `--aviti_input`; `--input` and `--aviti_input` can be used together or
+  independently.
+
+  A samplesheet row (`sample, run_dir, wells[, membrane_model][,
+cell_diameter]`) points at a run directory (`RunParameters.json` +
+  `Projection/`); wells/tiles are discovered from it and processed one task
+  per `(well, tile)` in parallel, on the full tile image -- AVITI tiles are
+  already HPC-friendly in size, so unlike the COMET/MIBI Cellpose path they
+  are not further sub-patched. Every tile is both nuclear- and whole-cell-
+  segmented (there is no `run_mesmer`/`run_cellpose`/`run_cellsam` selector,
+  and background subtraction does not run for AVITI samples); per-well
+  stitching then uses each tile's stage coordinates to rejoin them for the
+  existing CELLMEASUREMENT/KRONOS2/segmentation-report machinery. Outputs
+  publish under `avitisegmentation/<sample>/CellSegmentation/Well<well>/`
+  (per-tile, matching the AVITI Cytocanvas viewer layout) and
+  `avitistitched/<sample>/Well<well>/` (per-well).
+
+  Whole-cell segmentation defaults to Cellpose v4 segment-anything
+  (`cpsam_v2`), or a named Cellpose 3.x membrane model selected per
+  samplesheet row via `membrane_model` -- Elembio ships several pretrained
+  membrane models and the right one depends on cell type. Comparing models on
+  the same run directory is one samplesheet row per model (same `run_dir`/
+  `wells`, distinct `sample` names), not in-pipeline fan-out, so tile
+  discovery and nuclear segmentation simply re-run once per row. Nuclear
+  segmentation always uses a custom Cellpose 3.x model (`aviti_nuclear_model`,
+  default `20250212_cellpose_nuc_8diam`). Both model families are resolved by
+  name under one shared `aviti_models_dir`, staged once per run and validated
+  in `PIPELINE_INITIALISATION` before any tile task runs, so a bad model name
+  fails the run immediately rather than mid-way through. A per-row
+  `cell_diameter` overrides the whole-cell/membrane diameter for that row
+  only.
+
+  Cellpose v4 SAM and Cellpose 3.x cannot be installed in one environment, so
+  whole-cell segmentation and nuclear/membrane segmentation run in two
+  separate containers and never share a task. `bin/aviti_cellpose3_segment.py`
+  covers both the nuclear and membrane Cellpose 3.x paths (`--mode
+{nuclear,membrane}`): membrane mode stacks channels as `[cell, nucleus[,
+actin]]` -- a different order from the v4 SAM path's independently-built
+  `[nucleus, membrane[, actin]]` stack -- and matches the composite's channel
+  count to whatever the selected model checkpoint was trained with (Elembio
+  ships a 2-channel and a 3-channel model per cell type), padding or dropping
+  the actin plane with a loud warning if a run's cell-paint mode does not
+  match the chosen model.
+
+  2-channel (nucleus + membrane) and 3-channel (+ actin) cell-paint modes are
+  auto-detected per tile from whether an `Actin` file is present
+  (`aviti_channel_mode`, default `auto`; force one mode with `2ch`/`3ch`).
+  Cellpose tuning (diameter, flow/cellprob thresholds, minimum object area)
+  uses its own `aviti_*` parameter namespace, kept separate per segmentation
+  stage where the structure being segmented differs in size -- notably
+  `aviti_nuclear_min_area` defaults to `0`, unlike the `200` px² default
+  shared by the whole-cell and membrane paths, since nuclei (~8 px diameter,
+  ~50 px²) are far smaller than whole cells.
+
+  See [docs/usage.md](docs/usage.md#aviti24-cytoprofiling-segmentation) for
+  the full samplesheet format, parameter list, and output layout.
+
 - **`kronos_exclude_markers`, which withholds channels from KRONOS2 so they
   contribute nothing to the embedding.** A COMET panel's `Autofluorescence`
   channel is not a marker and is not in the 288-marker vocabulary, so the run

@@ -2,14 +2,14 @@
     "aviti_stitchwell - two adjacent tiles": {
         "content": [
             [
-                "versions.yml:md5,f02d412ada06955b8e68241b1af1e573"
+                "versions.yml:md5,91435aaf6f1c86fcc3f1e923a78a3853"
             ]
         ],
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2026-09-04T14:37:22.531200298"
+        "timestamp": "2026-09-10T14:39:45.093345591"
     },
     "aviti_stitchwell - stub": {
         "content": [
@@ -39,7 +39,7 @@
                     ]
                 ],
                 "3": [
-                    "versions.yml:md5,f02d412ada06955b8e68241b1af1e573"
+                    "versions.yml:md5,91435aaf6f1c86fcc3f1e923a78a3853"
                 ],
                 "cell_mask": [
                     [
@@ -66,7 +66,7 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,f02d412ada06955b8e68241b1af1e573"
+                    "versions.yml:md5,91435aaf6f1c86fcc3f1e923a78a3853"
                 ]
             }
         ],
@@ -74,6 +74,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2026-09-04T14:41:24.944716475"
+        "timestamp": "2026-09-10T14:41:16.448804349"
     }
 }

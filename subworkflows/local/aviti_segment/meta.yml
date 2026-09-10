@@ -23,6 +23,7 @@ components:
   - aviti/discovertiles
   - aviti/mergetilechannels
   - aviti/wholecellsegment
+  - aviti/membranesegment
   - aviti/nuclearsegment
   - aviti/stitchwell
   - cellmeasurement
@@ -40,6 +41,14 @@ input:
         Value channel with the staged Cellpose 3.x custom nuclear model file
         (20250212_cellpose_nuc_8diam), shared across all tiles/wells/samples
         Structure: path(model_file)
+  - ch_membrane_models_dir:
+      type: channel
+      description: |
+        Value channel with the staged directory of Cellpose 3.x membrane
+        model files (params.aviti_models_dir), shared across all tiles/wells/
+        samples that set a per-row membrane_model. Empty channel if
+        aviti_models_dir is unset (no AVITI row uses membrane_model).
+        Structure: path(models_dir)
 output:
   - nuclear_segmentation_mask:
       type: file

@@ -186,15 +186,48 @@ workflow PIPELINE_INITIALISATION {
     }
 
     //
+    // Read the AVITI samplesheet once here (rather than again below) so its
+    // rows can be validated -- specifically each row's optional
+    // membrane_model -- before any channel is built from them.
+    //
+    def aviti_rows = params.aviti_input
+        ? samplesheetToList(params.aviti_input, "${projectDir}/assets/schema_input_aviti.json")
+        : []
+
+    //
     // AVITI segmentation requires the custom Cellpose 3.x nuclear model: there
     // is no built-in model to fall back to, unlike cellpose_pretrained_model
-    // on the COMET/MIBI path.
+    // on the COMET/MIBI path. Membrane segmentation is optional per row (a
+    // blank membrane_model uses the Cellpose v4 SAM path instead), but any
+    // row that does name a model must resolve to an existing file under
+    // aviti_models_dir -- fail fast here rather than mid-run on whichever
+    // tile happens to run first.
     //
-    if (params.aviti_input && !params.aviti_nuclear_model_path) {
-        error("--aviti_nuclear_model_path is required when --aviti_input is set (path to the custom Cellpose 3.x nuclear model, e.g. 20250212_cellpose_nuc_8diam).")
-    }
-    if (params.aviti_nuclear_model_path && !file(params.aviti_nuclear_model_path).exists()) {
-        error("aviti_nuclear_model_path does not exist: ${params.aviti_nuclear_model_path}")
+    if (params.aviti_input) {
+        if (!params.aviti_models_dir) {
+            error("--aviti_models_dir is required when --aviti_input is set and must contain the Cellpose 3.x model files.")
+        }
+        if (!file(params.aviti_models_dir).exists()) {
+            error("aviti_models_dir does not exist: ${params.aviti_models_dir}")
+        }
+        def nuclear_model_path = "${params.aviti_models_dir}/${params.aviti_nuclear_model}"
+        if (!file(nuclear_model_path).exists()) {
+            error("AVITI nuclear model could not be resolved: ${nuclear_model_path}")
+        }
+
+        aviti_rows.each { sample, _run_dir, _wells, membrane_model, _cell_diameter ->
+            def model_name = (membrane_model ?: '').toString().trim()
+            if (!model_name) {
+                return
+            }
+            def model_path = file("${params.aviti_models_dir}/${model_name}")
+            if (!model_path.exists()) {
+                error(
+                    "AVITI membrane model for sample '${sample.id}' could not be resolved: ${model_path}\n" +
+                    "(membrane_model: '${model_name}', aviti_models_dir: ${params.aviti_models_dir})"
+                )
+            }
+        }
     }
 
     //
@@ -215,14 +248,21 @@ workflow PIPELINE_INITIALISATION {
     // Rows are [ meta, run_dir, wells ] -- run_dir is staged as a path so
     // Nextflow's own file-existence handling applies to it like any other
     // input, and wells (empty string when unset) folds into meta below so
-    // AVITIDISCOVERTILES can read it off a single tuple.
+    // AVITIDISCOVERTILES can read it off a single tuple. Reuses aviti_rows
+    // (already read above for validation) rather than re-parsing the
+    // samplesheet a second time.
     //
     ch_aviti_samplesheet = channel.empty()
     if (params.aviti_input) {
         channel
-            .fromList(samplesheetToList(params.aviti_input, "${projectDir}/assets/schema_input_aviti.json"))
-            .map { sample, run_dir, wells ->
-                def meta = [ id: sample.id, wells: wells ?: '' ]
+            .fromList(aviti_rows)
+            .map { sample, run_dir, wells, membrane_model = '', cell_diameter = 0 ->
+                def meta = [
+                    id: sample.id,
+                    wells: wells ?: '',
+                    membrane_model: membrane_model ?: '',
+                    cell_diameter: cell_diameter ?: 0
+                ]
                 [ meta, file(run_dir) ]
             }
             .set { ch_aviti_samplesheet }

@@ -1,6 +1,7 @@
 include { AVITIDISCOVERTILES     } from '../../../modules/local/aviti/discovertiles/main.nf'
 include { AVITIMERGETILECHANNELS } from '../../../modules/local/aviti/mergetilechannels/main.nf'
 include { AVITIWHOLECELLSEGMENT  } from '../../../modules/local/aviti/wholecellsegment/main.nf'
+include { AVITIMEMBRANESEGMENT   } from '../../../modules/local/aviti/membranesegment/main.nf'
 include { AVITINUCLEARSEGMENT    } from '../../../modules/local/aviti/nuclearsegment/main.nf'
 include { AVITISTITCHWELL        } from '../../../modules/local/aviti/stitchwell/main.nf'
 include { CELLMEASUREMENT         } from '../../../modules/local/cellmeasurement/main.nf'
@@ -9,8 +10,9 @@ include { SEGMENTATIONREPORT      } from '../../../modules/local/segmentationrep
 workflow AVITI_SEGMENT {
 
     take:
-    ch_aviti_samplesheet // channel: [ meta, run_dir ] -- meta.id is the sample name; meta.wells (optional) restricts --wells
-    ch_nuclear_model     // channel: value, path to the staged Cellpose 3.x custom nuclear model
+    ch_aviti_samplesheet   // channel: [ meta, run_dir ] -- meta.id is the sample name; meta.wells (optional) restricts --wells
+    ch_nuclear_model       // channel: value, path to the staged Cellpose 3.x custom nuclear model
+    ch_membrane_models_dir // channel: value, path to the staged directory of Cellpose 3.x membrane model files (empty if no row uses membrane_model)
 
     main:
 
@@ -42,13 +44,15 @@ workflow AVITI_SEGMENT {
         .map { sample_meta, row, run_dir ->
             def base = file(run_dir).parent
             def meta_tile = [
-                id           : "${sample_meta.id}__Well${row.well}__${row.tile}",
-                sample       : sample_meta.id,
-                well         : row.well,
-                tile         : row.tile,
-                x_mm         : row.x_mm,
-                y_mm         : row.y_mm,
-                channel_mode : row.channel_mode,
+                id             : "${sample_meta.id}__Well${row.well}__${row.tile}",
+                sample         : sample_meta.id,
+                well           : row.well,
+                tile           : row.tile,
+                x_mm           : row.x_mm,
+                y_mm           : row.y_mm,
+                channel_mode   : row.channel_mode,
+                membrane_model : sample_meta.membrane_model ?: '',
+                cell_diameter  : sample_meta.cell_diameter ?: 0,
             ]
             [
                 meta_tile,
@@ -72,14 +76,38 @@ workflow AVITI_SEGMENT {
     ch_versions = ch_versions.mix(AVITIMERGETILECHANNELS.out.versions.first())
 
     //
-    // Whole-cell/membrane segmentation (Cellpose v4 SAM). Runs on the full
-    // tile (no internal sub-tiling): AVITI tiles are already HPC-friendly in
-    // size, unlike the whole-slide COMET images the SOPA path patchifies.
+    // Whole-cell/membrane segmentation. Use the v4 SAM path when no
+    // membrane model is specified, and the Cellpose 3.x membrane model path
+    // when a per-row model name is present.
     //
+    ch_tiles
+        .branch { meta_tile, _nucleus_tif, _membrane_tif, _actin_tif ->
+            v3: (meta_tile.membrane_model ?: '').trim() != ''
+            v4: true
+        }
+        .set { ch_tiles_by_membrane_model }
+
     AVITIWHOLECELLSEGMENT(
-        ch_tiles
+        ch_tiles_by_membrane_model.v4
     )
     ch_versions = ch_versions.mix(AVITIWHOLECELLSEGMENT.out.versions.first())
+
+    // model_path is resolved and carried in the same tuple as meta/tiles
+    // (one map, one output tuple) rather than split into two separately
+    // mapped channels re-paired positionally at the process call -- the
+    // v3 branch predicate above already guarantees membrane_model is
+    // non-blank here, so there is no "no model" case left to filter out.
+    ch_membrane_input = ch_tiles_by_membrane_model.v3
+        .combine(ch_membrane_models_dir)
+        .map { meta_tile, nucleus_tif, membrane_tif, actin_tif, models_dir ->
+            def model_path = file("${models_dir}/${meta_tile.membrane_model.trim()}", checkIfExists: true)
+            [ meta_tile, nucleus_tif, membrane_tif, actin_tif, model_path ]
+        }
+
+    AVITIMEMBRANESEGMENT(
+        ch_membrane_input
+    )
+    ch_versions = ch_versions.mix(AVITIMEMBRANESEGMENT.out.versions.first())
 
     //
     // Nuclear segmentation with the Cellpose 3.x custom model, in its own
@@ -98,6 +126,7 @@ workflow AVITI_SEGMENT {
     // all three.
     //
     AVITIWHOLECELLSEGMENT.out.cell_mask
+        .mix(AVITIMEMBRANESEGMENT.out.cell_mask)
         // Stitch the instance-labeled nuclear mask, not the binary
         // Nuclear.tif -- CELLMEASUREMENT needs per-nucleus instance IDs to
         // match nuclei against whole cells by centroid.

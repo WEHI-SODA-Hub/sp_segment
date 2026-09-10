@@ -204,21 +204,29 @@ workflow SP_SEGMENT {
     // stitched per-well outputs rejoin the existing CELLMEASUREMENT/KRONOS
     // contract.
     //
-    // The custom nuclear model is staged once here (a `path()` input, not a
+    // aviti_models_dir is staged once here (a `path()` input, not a
     // download) for the same reason ch_cellpose_models is hoisted above: it
-    // is read by every tile task in the run, and staging inside the
-    // subworkflow itself would still be shared correctly, but keeping every
-    // "stage a shared model once" decision at this level makes the
-    // parallelism/model-sharing shape of the whole workflow easier to read
-    // from one place.
+    // is read by every membrane-model tile task in the run, and staging
+    // inside the subworkflow itself would still be shared correctly, but
+    // keeping every "stage a shared model once" decision at this level makes
+    // the parallelism/model-sharing shape of the whole workflow easier to
+    // read from one place. The nuclear model is resolved from this same
+    // staged directory rather than re-reading params.aviti_models_dir
+    // separately, so there is exactly one staged handle on the directory
+    // shared by both the nuclear and membrane model lookups.
     //
-    ch_aviti_nuclear_model = params.aviti_nuclear_model_path
-        ? channel.value(file(params.aviti_nuclear_model_path, checkIfExists: true))
+    ch_aviti_models_dir = params.aviti_models_dir
+        ? channel.value(file(params.aviti_models_dir, checkIfExists: true))
+        : channel.empty()
+
+    ch_aviti_nuclear_model = params.aviti_nuclear_model
+        ? ch_aviti_models_dir.map { models_dir -> file("${models_dir}/${params.aviti_nuclear_model}", checkIfExists: true) }
         : channel.empty()
 
     AVITI_SEGMENT(
         ch_aviti_samplesheet,
-        ch_aviti_nuclear_model
+        ch_aviti_nuclear_model,
+        ch_aviti_models_dir
     )
     ch_versions = ch_versions.mix(AVITI_SEGMENT.out.versions)
 

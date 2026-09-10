@@ -342,7 +342,7 @@
                     "schema": "assets/schema_input_aviti.json",
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.(csv|y(a)?ml)$",
-                    "description": "Path to comma-separated file listing AVITI runs to segment (columns: sample, run_dir[, wells]). Separate from --input.",
+                    "description": "Path to comma-separated file listing AVITI runs to segment (columns: sample, run_dir[, wells][, membrane_model][, cell_diameter]). Separate from --input.",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "aviti_cellpaint_batch": {
@@ -358,11 +358,60 @@
                     "description": "Force 2-channel (nucleus + membrane) or 3-channel (+ actin) cell-paint mode, or auto-detect per run from the presence of the Actin file.",
                     "fa_icon": "fas fa-sliders-h"
                 },
-                "aviti_nuclear_model_path": {
+                "aviti_models_dir": {
                     "type": "string",
-                    "format": "path",
-                    "description": "Path to the custom Cellpose 3.x nuclear model (e.g. 20250212_cellpose_nuc_8diam). Required when --aviti_input is set.",
+                    "format": "directory-path",
+                    "exists": true,
+                    "description": "Shared directory containing the Cellpose 3.x model files for AVITI nuclear and membrane segmentation. Required when --aviti_input is set.",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "aviti_nuclear_model": {
+                    "type": "string",
+                    "default": "20250212_cellpose_nuc_8diam",
+                    "description": "Name of the custom Cellpose 3.x nuclear model, resolved as <aviti_models_dir>/<aviti_nuclear_model>.",
                     "fa_icon": "fas fa-file-medical"
+                },
+                "aviti_wholecell_diameter": {
+                    "type": "number",
+                    "default": 30,
+                    "description": "Diameter (pixels) for the Cellpose v4 SAM whole-cell path (AVITIWHOLECELLSEGMENT).",
+                    "fa_icon": "fas fa-circle"
+                },
+                "aviti_membrane_diameter": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Diameter (pixels) for the Cellpose 3.x membrane path (AVITIMEMBRANESEGMENT). 0 uses the model's own trained diameter.",
+                    "fa_icon": "fas fa-circle"
+                },
+                "aviti_nuclear_diameter": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Diameter (pixels) for the Cellpose 3.x nuclear path (AVITINUCLEARSEGMENT). 0 uses the model's own trained diameter.",
+                    "fa_icon": "fas fa-circle"
+                },
+                "aviti_cellpose_flow_threshold": {
+                    "type": "number",
+                    "default": 0.4,
+                    "description": "Maximum flow error allowed for a mask to be kept, shared across all three AVITI segmentation stages.",
+                    "fa_icon": "fas fa-tachometer-alt"
+                },
+                "aviti_cellpose_cellprob_threshold": {
+                    "type": "number",
+                    "default": 0.0,
+                    "description": "Cutoff on Cellpose's per-pixel cell probability, shared across all three AVITI segmentation stages.",
+                    "fa_icon": "fas fa-check-circle"
+                },
+                "aviti_cellpose_min_area": {
+                    "type": "number",
+                    "default": 200,
+                    "description": "Discard objects smaller than this many square pixels, shared by the whole-cell (v4 SAM) and Cellpose 3.x membrane paths. 0 disables the filter.",
+                    "fa_icon": "fas fa-arrows-alt"
+                },
+                "aviti_nuclear_min_area": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Discard nuclei smaller than this many square pixels (Cellpose 3.x nuclear path). Separate from aviti_cellpose_min_area since nuclei are far smaller than whole cells; 0 (default) disables the filter.",
+                    "fa_icon": "fas fa-arrows-alt"
                 },
                 "aviti_tile_gap_microns": {
                     "type": "number",

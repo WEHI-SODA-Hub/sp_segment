@@ -23,6 +23,14 @@
                 "type": "string",
                 "pattern": "^[A-Za-z0-9]+(:[A-Za-z0-9]+)*$",
                 "errorMessage": "wells must be a colon-separated list of WellLocation values (e.g. 'A1:A2'), or left empty to process every well in the run"
+            },
+            "membrane_model": {
+                "type": "string",
+                "errorMessage": "Optional Cellpose 3.x membrane model name; empty means use the default Cellpose v4 SAM path"
+            },
+            "cell_diameter": {
+                "type": "number",
+                "errorMessage": "Optional per-row Cellpose diameter override; 0 means use the model's default diameter"
             }
         },
         "required": ["sample", "run_dir"]

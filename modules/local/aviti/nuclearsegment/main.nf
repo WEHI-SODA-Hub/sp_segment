@@ -27,9 +27,13 @@ process AVITINUCLEARSEGMENT {
 
     script:
     def args = task.ext.args ?: ''
+    // Diameter comes solely from ext.args (aviti_nuclear_diameter): the
+    // nuclear model/diameter is one fixed choice for the whole run, not a
+    // per-row property, so meta.cell_diameter (a per-row samplesheet
+    // override intended for the whole-cell/membrane path) does not apply here.
     """
-    aviti_nuclear_segment.py \\
-        ${nucleus_tif} \\
+    aviti_cellpose3_segment.py --mode nuclear \\
+        --nucleus-tif ${nucleus_tif} \\
         --output ${meta.tile}_Nuclear.tif \\
         --output-label ${meta.tile}_Nuclear_label.tif \\
         --model-path ${model_path} \\

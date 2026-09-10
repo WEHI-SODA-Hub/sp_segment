@@ -14,8 +14,8 @@ dependencies = []
 [tool.uv.pip]
 python-version = "3.10"
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "pytest>=7.0",
     "numpy",
     "tifffile",

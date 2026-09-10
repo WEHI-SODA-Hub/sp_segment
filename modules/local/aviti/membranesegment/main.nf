@@ -1,23 +1,20 @@
-process AVITIWHOLECELLSEGMENT {
+process AVITIMEMBRANESEGMENT {
     tag "$meta.id"
     label 'process_gpu'
 
     conda "${moduleDir}/environment.yml"
-    // Reuses the exact container already staged and validated for
-    // sopa/segmentationcellpose and CELLPOSEMODEL, which carries Cellpose
-    // 4.2.1.1 (cpsam_v2 support) -- no new GPU image needed for the
-    // whole-cell path.
     container "${workflow.containerEngine == 'apptainer' && !task.ext.singularity_pull_docker_container
-        ? 'docker://community.wave.seqera.io/library/python_pip_sopacellpose_cellpose:2bb51160896b005b'
-        : 'community.wave.seqera.io/library/python_pip_sopacellpose_cellpose:2bb51160896b005b'}"
+        ? 'docker://community.wave.seqera.io/library/python_numpy_pandas_scikit-image_pruned:4cec16761766b006'
+        : 'community.wave.seqera.io/library/python_numpy_pandas_scikit-image_pruned:4cec16761766b006'}"
 
     input:
-    tuple val(meta), path(nucleus_tif), path(membrane_tif), path(actin_tif)
+    // model_path is carried in the same tuple as meta/tiles, not passed as a
+    // separate input: unlike the nuclear model (one shared file for the
+    // whole run, broadcast via a value channel), this row's membrane model
+    // varies per meta.membrane_model, so it is a genuinely per-tile value.
+    tuple val(meta), path(nucleus_tif), path(membrane_tif), path(actin_tif), path(model_path)
 
     output:
-    // Named after the source tile, not meta.id: this is exactly the AVITI
-    // viewer filename (`<tile>_Cell.tif`) expected under `Well<well>/`, per
-    // the Cytocanvas output contract.
     tuple val(meta), path("${meta.tile}_Cell.tif"), emit: cell_mask
     path "versions.yml"                           , emit: versions
 
@@ -29,18 +26,16 @@ process AVITIWHOLECELLSEGMENT {
     // Row-level cell_diameter must come *after* args: both set --diameter,
     // and typer/click keeps the last occurrence of a repeated option, so
     // this order is what lets a per-row override actually win over the
-    // global aviti_wholecell_diameter in ext.args.
+    // global aviti_membrane_diameter in ext.args.
     def diameter_arg = (meta.cell_diameter != null && meta.cell_diameter.toFloat() > 0) ? "--diameter ${meta.cell_diameter}" : ''
-    // actin_tif is staged as a literal "NO_FILE" placeholder in 2-channel mode.
     def actin_arg = (actin_tif.name != 'NO_FILE') ? "--actin-tif ${actin_tif}" : ''
     """
-    export NUMBA_CACHE_DIR=\$PWD/.numba_cache
-
-    aviti_wholecell_segment.py \\
+    aviti_cellpose3_segment.py --mode membrane \\
+        --cell-tif ${membrane_tif} \\
         --nucleus-tif ${nucleus_tif} \\
-        --membrane-tif ${membrane_tif} \\
         ${actin_arg} \\
         --output ${meta.tile}_Cell.tif \\
+        --model-path ${model_path} \\
         ${args} \\
         ${diameter_arg}
 

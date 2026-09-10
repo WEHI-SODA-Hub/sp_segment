@@ -230,13 +230,22 @@ can use set the parameter `enable_measurements` to `false`.
 AVITI24/Teton runs use a separate input samplesheet via `--aviti_input`. To
 keep the configuration surface consistent, the AVITI defaults live in
 `conf/aviti_defaults.config`; pass it with `-c conf/aviti_defaults.config` to
-override the global `pixel_size_microns` and Cellpose defaults with AVITI-
-friendly values.
+override the AVITI-friendly defaults for `pixel_size_microns`, model staging,
+and the AVITI-specific Cellpose tuning keys.
 
-The AVITI path reuses the global Cellpose parameters for whole-cell
-segmentation and always requires `--aviti_nuclear_model_path` for the staged
-Cellpose 3.x nuclear model. See [docs/usage.md](docs/usage.md#aviti24-cytoprofiling-segmentation)
-for the AVITI samplesheet format, parameter details, and output layout.
+The AVITI path has its own parameter namespace (`aviti_*`) rather than reusing
+COMET/MIBI `cellpose_*` values. `--aviti_models_dir` (required when
+`--aviti_input` is set) must point to a shared Cellpose 3.x model directory, and
+the nuclear model is resolved from it as
+`<aviti_models_dir>/<aviti_nuclear_model>`. Each samplesheet row may also
+optionally set `membrane_model` (a named Cellpose 3.x membrane model under the
+same `aviti_models_dir`; blank falls back to the Cellpose v4 SAM whole-cell
+path) and `cell_diameter` (per-row diameter override for the membrane/whole-cell
+path; `0`/blank falls back to the global `aviti_membrane_diameter` /
+`aviti_wholecell_diameter`).
+
+See [docs/usage.md](docs/usage.md#aviti24-cytoprofiling-segmentation) for the
+AVITI samplesheet format, parameter details, and output layout.
 
 ### KRONOS2 embeddings
 

@@ -12,7 +12,7 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,71e4b28c874f3354f8e5a32cca2ca33b"
+                    "versions.yml:md5,b5ac66172d71a8c7e89c2cec6d2a10f8"
                 ],
                 "cell_mask": [
                     [
@@ -24,7 +24,7 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,71e4b28c874f3354f8e5a32cca2ca33b"
+                    "versions.yml:md5,b5ac66172d71a8c7e89c2cec6d2a10f8"
                 ]
             }
         ],
@@ -32,7 +32,7 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2026-09-01T11:22:29.113786081"
+        "timestamp": "2026-09-10T14:52:25.132343074"
     },
     "aviti_wholecellsegment - stub, 3-channel": {
         "content": [
@@ -47,7 +47,7 @@
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,71e4b28c874f3354f8e5a32cca2ca33b"
+                    "versions.yml:md5,b5ac66172d71a8c7e89c2cec6d2a10f8"
                 ],
                 "cell_mask": [
                     [
@@ -59,7 +59,7 @@
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,71e4b28c874f3354f8e5a32cca2ca33b"
+                    "versions.yml:md5,b5ac66172d71a8c7e89c2cec6d2a10f8"
                 ]
             }
         ],
@@ -67,6 +67,6 @@
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
         },
-        "timestamp": "2026-09-01T11:12:08.275494253"
+        "timestamp": "2026-09-10T14:45:55.107170084"
     }
 }

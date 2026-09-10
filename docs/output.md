@@ -44,7 +44,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 AVITI produces tile-level viewer outputs plus stitched per-well outputs:
 
-- `avitisegmentation/sample/CellSegmentation/WellA1/<tile>_Cell.tif` -- per-tile whole-cell mask (uint16, instance-labeled) published in the Cytocanvas layout.
+- `avitisegmentation/sample/CellSegmentation/WellA1/<tile>_Cell.tif` -- per-tile whole-cell mask (uint16, instance-labeled) published in the Cytocanvas layout. Produced by the Cellpose v4 SAM path, or by the Cellpose 3.x membrane-model path when the samplesheet row sets `membrane_model`; both write to this same path.
 - `avitisegmentation/sample/CellSegmentation/WellA1/<tile>_Nuclear.tif` -- per-tile nuclear mask (uint8, binary 0/1 presence) published in the Cytocanvas layout, matching Elembio's own `cells2stats`/Cytocanvas convention.
 - `avitistitched/sample/WellA1/sample__WellA1_cell_stitched.tif` -- stitched whole-cell mask for one well.
 - `avitistitched/sample/WellA1/sample__WellA1_nuclear_stitched.tif` -- stitched **instance-labeled** nuclear mask for one well (not the binary Nuclear.tif convention above -- see note below).

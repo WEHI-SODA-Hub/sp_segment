@@ -41,8 +41,17 @@ process AVITIDISCOVERTILES {
     """
 
     stub:
+    // Emits the same two tile rows a real run against tests/data/aviti's
+    // WellA1 (RunParameters.json + Projection/WellA1/CP01_L1R01C0{1,2}S1_*)
+    // would produce, so downstream subworkflow-level stub tests (e.g.
+    // subworkflows/local/aviti_segment) get real (well, tile) rows to route
+    // through the branch/join/stitch logic instead of an empty manifest.
     """
-    echo "well,tile,x_mm,y_mm,nucleus_tif,membrane_tif,actin_tif,channel_mode" > ${meta.id}.manifest.csv
+    cat <<-END_MANIFEST > ${meta.id}.manifest.csv
+    well,tile,x_mm,y_mm,nucleus_tif,membrane_tif,actin_tif,channel_mode
+    A1,L1R01C01S1,0.0,0.0,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Nucleus.tif,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Cell-Membrane.tif,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Actin.tif,3ch
+    A1,L1R01C02S1,0.001,0.0,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Nucleus.tif,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Cell-Membrane.tif,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Actin.tif,3ch
+    END_MANIFEST
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
