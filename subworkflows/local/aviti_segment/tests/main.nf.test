@@ -72,7 +72,68 @@ nextflow_workflow {
                 {
                     def well_ids = workflow.out.wholecell_segmentation_mask.collect { meta, _mask -> meta.id }.sort()
                     assert well_ids == ['test_v3__WellA1', 'test_v4__WellA1']
+                },
+                // annotations/kronos_input are the channels the top-level
+                // KRONOS2EMBEDDINGS join in workflows/sp_segment.nf keys on --
+                // plate assembly (on by default here) must not add or remove
+                // anything from either, or that join breaks.
+                {
+                    def well_ids = workflow.out.annotations.collect { meta, _f -> meta.id }.sort()
+                    assert well_ids == ['test_v3__WellA1', 'test_v4__WellA1']
+                },
+                {
+                    def well_ids = workflow.out.kronos_input.collect { meta, _tiff, _mask -> meta.id }.sort()
+                    assert well_ids == ['test_v3__WellA1', 'test_v4__WellA1']
+                },
+                // Plate assembly defaults on: one plate image/layout/GeoJSON per
+                // sample (not per well), distinctly id'd from the well-level ones.
+                { assert workflow.out.plate_image.size() == 2 },
+                { assert workflow.out.plate_layout.size() == 2 },
+                { assert workflow.out.plate_annotations.size() == 2 },
+                {
+                    def plate_ids = workflow.out.plate_image.collect { meta, _f -> meta.id }.sort()
+                    assert plate_ids == ['test_v3__plate', 'test_v4__plate']
+                },
+                {
+                    def plate_ids = workflow.out.plate_annotations.collect { meta, _f -> meta.id }.sort()
+                    assert plate_ids == ['test_v3__plate', 'test_v4__plate']
                 }
+            )
+        }
+
+    }
+
+    test("aviti_segment - plate assembly disabled leaves well-level outputs untouched") {
+
+        options "-stub"
+
+        when {
+            params {
+                aviti_plate_assembly = false
+            }
+            workflow {
+                """
+                input[0] = Channel.of(
+                    [
+                        [ id:'test_v4', wells:'', membrane_model:'', cell_diameter:0 ],
+                        file('${projectDir}/tests/data/aviti', checkIfExists: true)
+                    ]
+                )
+                input[1] = Channel.value(file('${projectDir}/tests/data/aviti/RunParameters.json', checkIfExists: true))
+                input[2] = Channel.value(file('${projectDir}/tests/data/aviti/models', checkIfExists: true))
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.wholecell_segmentation_mask.size() == 1 },
+                { assert workflow.out.annotations.size() == 1 },
+                // No plate artefacts at all when the switch is off.
+                { assert workflow.out.plate_image.size() == 0 },
+                { assert workflow.out.plate_layout.size() == 0 },
+                { assert workflow.out.plate_annotations.size() == 0 }
             )
         }
 

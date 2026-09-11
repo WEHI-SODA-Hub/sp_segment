@@ -417,7 +417,62 @@
                     "type": "number",
                     "default": 32.0,
                     "description": "Visual gap in microns inserted between adjacent tiles when stitching a well, for viewer clarity only -- not a measurement of the true stage gap between tiles.",
-                    "fa_icon": "fas fa-arrows-alt-h"
+                    "fa_icon": "fas fa-arrows-alt-h",
+                    "hidden": true
+                },
+                "aviti_plate_assembly": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Assemble every well's stitched output for a sample into one plate-level pyramidal OME-TIFF and one merged GeoJSON, viewable as a whole plate in QuPath. Additive to the per-well outputs, which are unaffected.",
+                    "fa_icon": "fas fa-th-large"
+                },
+                "aviti_plate_report": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Generate the plate-level segmentation report (when the samplesheet row's wells covers the whole run). Set to false to keep the plate image/GeoJSON but skip the report, which needs substantially more memory than a per-well report.",
+                    "fa_icon": "fas fa-file-medical-alt"
+                },
+                "aviti_plate_classify_by_well": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Tag every cell in the merged plate GeoJSON with its well as a QuPath classification, so objects can be coloured/filtered by well.",
+                    "fa_icon": "fas fa-tags"
+                },
+                "aviti_well_gap_microns": {
+                    "type": "number",
+                    "default": 500.0,
+                    "description": "Visual gap in microns inserted between adjacent wells on the plate canvas.",
+                    "fa_icon": "fas fa-arrows-alt-h",
+                    "hidden": true
+                },
+                "aviti_plate_tile_size": {
+                    "type": "integer",
+                    "default": 512,
+                    "description": "Output plate OME-TIFF tile edge in pixels; must be a multiple of 16.",
+                    "fa_icon": "fas fa-th",
+                    "hidden": true
+                },
+                "aviti_plate_max_levels": {
+                    "type": "integer",
+                    "default": 8,
+                    "description": "Maximum number of reduced-resolution pyramid levels written to the plate OME-TIFF.",
+                    "fa_icon": "fas fa-layer-group",
+                    "hidden": true
+                },
+                "aviti_plate_min_level_size": {
+                    "type": "integer",
+                    "default": 1024,
+                    "description": "Stop adding pyramid levels once both dimensions of the plate image are at most this many pixels.",
+                    "fa_icon": "fas fa-compress",
+                    "hidden": true
+                },
+                "aviti_plate_compression": {
+                    "type": "string",
+                    "default": "zlib",
+                    "enum": ["zlib", "none", "lzw"],
+                    "description": "TIFF compression used for every pyramid level of the plate OME-TIFF.",
+                    "fa_icon": "fas fa-file-archive",
+                    "hidden": true
                 }
             }
         },

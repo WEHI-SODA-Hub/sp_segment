@@ -246,6 +246,31 @@ actin]]` -- a different order from the v4 SAM path's independently-built
   shared by the whole-cell and membrane paths, since nuclei (~8 px diameter,
   ~50 px²) are far smaller than whole cells.
 
+  The pixel size used for stitching gaps, OME `PhysicalSizeX/Y`, and
+  `CELLMEASUREMENT`'s µm-based measurements is read per run from
+  `RunParameters.json`'s own `ImageInfo.PixelSizeUm`, not the global
+  `pixel_size_microns` default (which is now only a fallback for a run
+  directory predating that field).
+
+  Every well's stitched output for a sample can additionally be assembled
+  into one plate-level view (`aviti_plate_assembly`, default `true`,
+  additive to the per-well outputs): a single pyramidal, tiled BigTIFF
+  OME-TIFF laying out every well on the plate grid (letter = column, number
+  = row -- A1 top-left, A2 directly below A1, B1 the next column across),
+  streamed tile-by-tile from the memory-mapped per-well images so the full
+  plate canvas (tens of GB uncompressed) is never held in memory; and one
+  merged GeoJSON translating every well's `CELLMEASUREMENT` annotations into
+  plate coordinates, with one labelled rectangle per well and every
+  colliding id (`properties.id`, `nucleus_label`, `whole_cell_label`) offset
+  to stay unique across the plate, streamed feature-by-feature since a
+  single well's GeoJSON can be gigabytes of text. Both open directly in
+  QuPath. `SEGMENTATIONREPORT` follows suit: a samplesheet row that
+  restricts `wells` still gets per-well reports, a row covering the whole
+  run gets one plate-level report instead (`aviti_plate_report`, default
+  `true`, needs the `medium`/`large`/`wehi_*` profiles for its memory).
+  Published under `avitiplate/<sample>/`, by symlink rather than copy given
+  the plate image's size.
+
   See [docs/usage.md](docs/usage.md#aviti24-cytoprofiling-segmentation) for
   the full samplesheet format, parameter list, and output layout.
 

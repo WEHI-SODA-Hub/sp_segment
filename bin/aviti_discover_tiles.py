@@ -65,6 +65,30 @@ def load_run_parameters(run_dir: Path) -> dict:
         return json.load(fh)
 
 
+def get_pixel_size_microns(run_parameters: dict, fallback: Optional[float]) -> Optional[float]:
+    '''
+    Read the instrument's own pixel size from RunParameters.json's
+    ``ImageInfo.PixelSizeUm``.
+
+    This is the authoritative value for the projection TIFFs this manifest
+    points at, and it varies by run -- reading it here means stitching, the
+    plate assembly's OME PhysicalSize (which QuPath displays as its scale
+    bar), and cellmeasurement's micron-based measurements all agree with the
+    instrument rather than with a pipeline-wide default. Returns ``fallback``
+    when the key is absent, so run directories written by older instrument
+    software still work.
+    '''
+    image_info = run_parameters.get("ImageInfo") or {}
+    pixel_size = image_info.get("PixelSizeUm")
+    if pixel_size is None:
+        log(
+            "WARNING: RunParameters.json has no ImageInfo.PixelSizeUm; falling back to "
+            f"{fallback} micron(s)/px."
+        )
+        return fallback
+    return float(pixel_size)
+
+
 def select_wells(run_parameters: dict, wells_filter: Optional[List[str]]) -> List[dict]:
     '''
     Return the list of well records to process, in RunParameters.json order.
@@ -100,6 +124,7 @@ def discover_manifest_rows(
     wells_filter: Optional[List[str]],
     cellpaint_batch: str,
     channel_mode: ChannelMode,
+    pixel_size_fallback: Optional[float] = None,
 ) -> List[dict]:
     '''
     Build one manifest row per (well, tile), validating that the raw
@@ -116,6 +141,7 @@ def discover_manifest_rows(
     if not projection_dir.is_dir():
         raise FileNotFoundError(f"Projection directory not found: {projection_dir}")
 
+    pixel_size_microns = get_pixel_size_microns(run_parameters, pixel_size_fallback)
     wells = select_wells(run_parameters, wells_filter)
 
     rows = []
@@ -181,6 +207,7 @@ def discover_manifest_rows(
                 "membrane_tif": str(membrane),
                 "actin_tif": str(actin) if use_actin else "",
                 "channel_mode": resolved_mode.value,
+                "pixel_size_microns": "" if pixel_size_microns is None else pixel_size_microns,
             })
 
     if not rows:
@@ -193,6 +220,7 @@ def write_manifest(rows: List[dict], output: Path) -> None:
     fieldnames = [
         "well", "tile", "x_mm", "y_mm",
         "nucleus_tif", "membrane_tif", "actin_tif", "channel_mode",
+        "pixel_size_microns",
     ]
     with open(output, "w", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=fieldnames)
@@ -219,6 +247,11 @@ def main(
         help="Force 2-channel (nucleus + membrane) or 3-channel "
              "(+ actin) mode, or auto-detect from the presence of the Actin file."
     )] = ChannelMode.AUTO,
+    pixel_size_microns: Annotated[Optional[float], typer.Option(
+        help="Fallback pixel size (microns) recorded in the manifest when the run's "
+             "RunParameters.json has no ImageInfo.PixelSizeUm. The instrument's own "
+             "value is always preferred when present."
+    )] = None,
 ):
     '''
     Discover AVITI wells/tiles and write a flat per-tile manifest CSV.
@@ -235,11 +268,16 @@ def main(
         wells_filter=wells_filter,
         cellpaint_batch=cellpaint_batch,
         channel_mode=channel_mode,
+        pixel_size_fallback=pixel_size_microns,
     )
     write_manifest(rows, output)
 
     n_wells = len({row["well"] for row in rows})
-    log(f"Discovered {len(rows)} tile(s) across {n_wells} well(s); manifest written to {output}")
+    log(
+        f"Discovered {len(rows)} tile(s) across {n_wells} well(s) at "
+        f"{rows[0]['pixel_size_microns'] or 'unknown'} micron(s)/px; "
+        f"manifest written to {output}"
+    )
 
 
 if __name__ == "__main__":

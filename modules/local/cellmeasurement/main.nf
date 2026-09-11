@@ -27,6 +27,12 @@ process CELLMEASUREMENT {
     // checkpoint survives the fresh work dir that Nextflow allocates on retry.
     def checkpoint_flag = params.geometry_checkpoint_dir ?
         "--geometry-checkpoint-dir ${file(params.geometry_checkpoint_dir).toAbsolutePath()}/${meta.id}" : ''
+    // A per-run pixel size (AVITI reads it from the instrument's own
+    // RunParameters.json) overrides the global params.pixel_size_microns in
+    // ext.args. It must come *after* args, since typer/click keeps the last
+    // occurrence of a repeated option. Absent for COMET/MIBI callers, whose
+    // meta carries no pixel_size_microns, leaving their behaviour unchanged.
+    def pixel_size_arg = meta.pixel_size_microns ? "--pixel-size-microns=${meta.pixel_size_microns}" : ''
     """
     cellmeasurement \\
         --whole-cell-mask ${whole_cell_mask} \\
@@ -36,7 +42,8 @@ process CELLMEASUREMENT {
         --output-mask ${prefix}_mask.tiff \\
         --threads ${task.cpus} \\
         ${checkpoint_flag} \\
-        ${args}
+        ${args} \\
+        ${pixel_size_arg}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

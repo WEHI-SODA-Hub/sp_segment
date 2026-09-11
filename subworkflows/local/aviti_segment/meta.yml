@@ -3,12 +3,15 @@ name: "aviti_segment"
 description: |
   Segments AVITI24 cytoprofiling (Teton/Teton Atlas) runs: discovers wells and
   tiles from an AVITI run directory, segments whole cells with Cellpose v4 SAM
-  and nuclei with a Cellpose 3.x custom model in separate tile-level
-  processes, publishes per-tile masks in the AVITI Cytocanvas viewer layout
-  (Well<well>/<tile>_Cell.tif, Well<well>/<tile>_Nuclear.tif), then stitches
-  per-tile masks/images into per-well outputs so the existing
-  CELLMEASUREMENT/SEGMENTATIONREPORT/KRONOS2EMBEDDINGS modules can run
-  unmodified.
+  (or a per-row Cellpose 3.x membrane model) and nuclei with a Cellpose 3.x
+  custom model in separate tile-level processes, publishes per-tile masks in
+  the AVITI Cytocanvas viewer layout (Well<well>/<tile>_Cell.tif,
+  Well<well>/<tile>_Nuclear.tif), then stitches per-tile masks/images into
+  per-well outputs so the existing CELLMEASUREMENT/SEGMENTATIONREPORT/
+  KRONOS2EMBEDDINGS modules can run unmodified. Additionally, and
+  additively, assembles every well's stitched output for a sample into a
+  plate-level pyramidal OME-TIFF and merged GeoJSON (params.aviti_plate_assembly),
+  so a whole run can be viewed in QuPath at once.
 keywords:
   - AVITI
   - Teton
@@ -19,6 +22,7 @@ keywords:
   - whole-cell
   - stitching
   - measurement
+  - plate-level aggregation
 components:
   - aviti/discovertiles
   - aviti/mergetilechannels
@@ -26,6 +30,8 @@ components:
   - aviti/membranesegment
   - aviti/nuclearsegment
   - aviti/stitchwell
+  - aviti/assembleplate
+  - aviti/mergeplategeojson
   - cellmeasurement
   - segmentationreport
 input:
@@ -65,20 +71,47 @@ output:
   - annotations:
       type: file
       description: |
-        Channel containing parquet files with cell measurements and annotations
-        Structure: [ val(meta), path(parquet) ]
-      pattern: "*.parquet"
+        Channel containing per-well cellmeasurement GeoJSON annotations.
+        Well-scoped only -- feeds the top-level KRONOS2EMBEDDINGS join, which
+        keys on this exact meta shape, so plate-level annotations are never
+        mixed in here (see plate_annotations below).
+        Structure: [ val(meta), path(geojson) ]
+      pattern: "*.geojson{,.gz}"
   - kronos_input:
       type: file
       description: |
-        Channel containing the stitched per-well image and whole-cell mask, for KRONOS2EMBEDDINGS
+        Channel containing the stitched per-well image and whole-cell mask, for KRONOS2EMBEDDINGS.
+        Well-scoped only, for the same reason as annotations above.
         Structure: [ val(meta), path(image_tif), path(cell_mask) ]
   - report:
       type: file
       description: |
-        Optional segmentation report HTML files
+        Optional segmentation report HTML files. A mix of per-well reports and
+        (when params.aviti_plate_assembly/aviti_plate_report are enabled and a
+        sample's row does not restrict wells) plate-level reports.
         Structure: [ val(meta), path(html) ]
       pattern: "*.html"
+  - plate_image:
+      type: file
+      description: |
+        Optional (params.aviti_plate_assembly) pyramidal, tiled BigTIFF
+        OME-TIFF assembling every well of a sample onto the plate grid.
+        Structure: [ val(plate_meta), path(ome_tif) ]
+      pattern: "*_plate.ome.tif"
+  - plate_layout:
+      type: file
+      description: |
+        Optional (params.aviti_plate_assembly) plate layout CSV
+        (well,col,row,x0,y0,width,height) matching plate_image's well placement.
+        Structure: [ val(plate_meta), path(csv) ]
+      pattern: "*_plate_layout.csv"
+  - plate_annotations:
+      type: file
+      description: |
+        Optional (params.aviti_plate_assembly) merged GeoJSON of every cell in
+        plate coordinates, plus one labelled rectangle per well.
+        Structure: [ val(plate_meta), path(geojson) ]
+      pattern: "*_plate.geojson{,.gz}"
   - versions:
       type: file
       description: |

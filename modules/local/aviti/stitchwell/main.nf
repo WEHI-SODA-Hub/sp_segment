@@ -24,6 +24,12 @@ process AVITISTITCHWELL {
 
     script:
     def args = task.ext.args ?: ''
+    // The run's own pixel size must come *after* args: both set
+    // --pixel-size-microns, and typer/click keeps the last occurrence of a
+    // repeated option, so this order is what lets the value discovered from
+    // RunParameters.json win over the global params.pixel_size_microns in
+    // ext.args.
+    def pixel_size_arg = meta.pixel_size_microns ? "--pixel-size-microns ${meta.pixel_size_microns}" : ''
     def manifest_lines = (
         ['tile,x_mm,y_mm,cell_mask,nuclear_mask,image_tif'] +
         tile_rows.collect { r -> "${r.tile},${r.x_mm},${r.y_mm},${r.cell_mask},${r.nuclear_mask},${r.image_tif}" }
@@ -38,7 +44,8 @@ process AVITISTITCHWELL {
         --output-cell ${meta.id}_cell_stitched.tif \\
         --output-nuclear ${meta.id}_nuclear_stitched.tif \\
         --output-image ${meta.id}_image_stitched.tif \\
-        ${args}
+        ${args} \\
+        ${pixel_size_arg}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

@@ -1,0 +1,91 @@
+{
+    "aviti_assembleplate - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test__plate",
+                            "sample": "test",
+                            "pixel_size_microns": ""
+                        },
+                        "test__plate_plate.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    [
+                        {
+                            "id": "test__plate",
+                            "sample": "test",
+                            "pixel_size_microns": ""
+                        },
+                        "test__plate_plate_overview.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "2": [
+                    [
+                        {
+                            "id": "test__plate",
+                            "sample": "test",
+                            "pixel_size_microns": ""
+                        },
+                        "test__plate_plate_layout.csv:md5,80abfb69e144b05aa4790b2b5623045f"
+                    ]
+                ],
+                "3": [
+                    "versions.yml:md5,6706d8224c0f76c5653476b2d8ce34a5"
+                ],
+                "image": [
+                    [
+                        {
+                            "id": "test__plate",
+                            "sample": "test",
+                            "pixel_size_microns": ""
+                        },
+                        "test__plate_plate.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "layout": [
+                    [
+                        {
+                            "id": "test__plate",
+                            "sample": "test",
+                            "pixel_size_microns": ""
+                        },
+                        "test__plate_plate_layout.csv:md5,80abfb69e144b05aa4790b2b5623045f"
+                    ]
+                ],
+                "overview": [
+                    [
+                        {
+                            "id": "test__plate",
+                            "sample": "test",
+                            "pixel_size_microns": ""
+                        },
+                        "test__plate_plate_overview.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,6706d8224c0f76c5653476b2d8ce34a5"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2026-09-11T15:46:12.266742017"
+    },
+    "aviti_assembleplate - two wells": {
+        "content": [
+            [
+                "versions.yml:md5,6706d8224c0f76c5653476b2d8ce34a5"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2026-09-11T15:56:50.954427643"
+    }
+}

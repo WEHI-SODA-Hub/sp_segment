@@ -48,9 +48,9 @@ process AVITIDISCOVERTILES {
     // through the branch/join/stitch logic instead of an empty manifest.
     """
     cat <<-END_MANIFEST > ${meta.id}.manifest.csv
-    well,tile,x_mm,y_mm,nucleus_tif,membrane_tif,actin_tif,channel_mode
-    A1,L1R01C01S1,0.0,0.0,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Nucleus.tif,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Cell-Membrane.tif,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Actin.tif,3ch
-    A1,L1R01C02S1,0.001,0.0,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Nucleus.tif,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Cell-Membrane.tif,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Actin.tif,3ch
+    well,tile,x_mm,y_mm,nucleus_tif,membrane_tif,actin_tif,channel_mode,pixel_size_microns
+    A1,L1R01C01S1,0.0,0.0,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Nucleus.tif,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Cell-Membrane.tif,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Actin.tif,3ch,0.48
+    A1,L1R01C02S1,0.001,0.0,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Nucleus.tif,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Cell-Membrane.tif,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Actin.tif,3ch,0.48
     END_MANIFEST
 
     cat <<-END_VERSIONS > versions.yml

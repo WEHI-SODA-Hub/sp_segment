@@ -1,0 +1,81 @@
+nextflow_process {
+
+    name "Test Process AVITIMERGEPLATEGEOJSON"
+    script "../main.nf"
+    process "AVITIMERGEPLATEGEOJSON"
+
+    tag "modules"
+    tag "modules_local"
+    tag "aviti"
+    tag "aviti_mergeplategeojson"
+
+    test("aviti_mergeplategeojson - two wells") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test__plate', sample:'test' ], // meta map
+                    [
+                        [ well:'A1', geojson:'test__WellA1.geojson' ],
+                        [ well:'B1', geojson:'test__WellB1.geojson' ],
+                    ], // well_rows
+                    [
+                        file('${projectDir}/tests/data/aviti/plate/test__WellA1.geojson', checkIfExists: true),
+                        file('${projectDir}/tests/data/aviti/plate/test__WellB1.geojson', checkIfExists: true),
+                    ], // geojsons
+                    file('${projectDir}/tests/data/aviti/plate/test_plate_layout.csv', checkIfExists: true), // layout
+                ]
+                """
+            }
+        }
+
+        then {
+            // Content is gzipped by default (params.gzip_geojson), so it is
+            // verified via snapshot() rather than .text -- reading a gzip
+            // file as text throws (see bin/aviti_merge_plate_geojson.py's
+            // own tests for the actual merge-logic assertions: FeatureCollection
+            // shape, well rectangles, cell id offsetting). Here we only
+            // confirm the module wires up correctly end to end.
+            assertAll(
+                { assert process.success },
+                { assert file(process.out.annotations[0][1]).name.endsWith('.geojson.gz') },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+    test("aviti_mergeplategeojson - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test__plate', sample:'test' ], // meta map
+                    [
+                        [ well:'A1', geojson:'test__WellA1.geojson' ],
+                        [ well:'B1', geojson:'test__WellB1.geojson' ],
+                    ], // well_rows
+                    [
+                        file('${projectDir}/tests/data/aviti/plate/test__WellA1.geojson', checkIfExists: true),
+                        file('${projectDir}/tests/data/aviti/plate/test__WellB1.geojson', checkIfExists: true),
+                    ], // geojsons
+                    file('${projectDir}/tests/data/aviti/plate/test_plate_layout.csv', checkIfExists: true), // layout
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}

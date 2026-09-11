@@ -687,14 +687,61 @@ containers/environments and never share a task.
 | `aviti_cellpose_min_area`           | Discard objects smaller than this many square pixels; shared by the whole-cell (v4 SAM) and Cellpose 3.x membrane paths, `0` disables the filter (default: `200`).                                                                                                                               |
 | `aviti_nuclear_min_area`            | Discard nuclei smaller than this many square pixels (Cellpose 3.x nuclear path). Separate from `aviti_cellpose_min_area`: nuclei (~8px diameter, ~50px²) are far smaller than whole cells, so the 200px² whole-cell default would discard every nucleus. `0` disables the filter (default: `0`). |
 | `aviti_tile_gap_microns`            | Visual gap (microns) inserted between adjacent tiles when stitching a well; viewer clarity only, not the true stage gap. Default `32.0`.                                                                                                                                                         |
+| `aviti_plate_assembly`              | Assemble every well's stitched output for a sample into one plate-level pyramidal OME-TIFF and merged GeoJSON, additive to the per-well outputs. Default `true`. See [Plate-level assembly](#plate-level-assembly) below.                                                                        |
+| `aviti_plate_report`                | Escape hatch to skip just the plate-level `SEGMENTATIONREPORT` (the image/GeoJSON artefacts are unaffected) -- it needs substantially more memory than a per-well report. Default `true`.                                                                                                        |
+| `aviti_well_gap_microns`            | Visual gap (microns) inserted between adjacent wells on the plate canvas. Default `500.0`.                                                                                                                                                                                                       |
+| `aviti_plate_tile_size`             | Output plate OME-TIFF tile edge in pixels; must be a multiple of 16. Default `512`.                                                                                                                                                                                                              |
+| `aviti_plate_max_levels`            | Maximum number of reduced-resolution pyramid levels written to the plate OME-TIFF. Default `8`.                                                                                                                                                                                                  |
+| `aviti_plate_min_level_size`        | Stop adding pyramid levels once both plate image dimensions are at most this many pixels. Default `1024`.                                                                                                                                                                                        |
+| `aviti_plate_compression`           | TIFF compression for every pyramid level of the plate OME-TIFF (`zlib`, `none`, or `lzw`). Default `zlib`.                                                                                                                                                                                       |
+| `aviti_plate_classify_by_well`      | Tag every cell in the merged plate GeoJSON with its well as a QuPath classification, so objects can be coloured/filtered by well. Default `false`.                                                                                                                                               |
 
 The AVITI path uses its own tuning namespace (`aviti_*`) for diameters and
 Cellpose thresholds instead of the COMET/MIBI `cellpose_*` values, because the
 AVITI segmentation stacks are not the same pipeline and do not share a single
-default cell size or model. The two exceptions still read from the global
-parameters are `cellpose_pretrained_model` (the v4 SAM whole-cell checkpoint,
-`cpsam_v2` by default) and `pixel_size_microns` (used by well stitching);
-`conf/aviti_defaults.config` sets both to AVITI-friendly values.
+default cell size or model. The one exception still read from the global
+parameters is `cellpose_pretrained_model` (the v4 SAM whole-cell checkpoint,
+`cpsam_v2` by default); `conf/aviti_defaults.config` sets it to an
+AVITI-friendly value.
+
+`pixel_size_microns` is **not** the AVITI pixel size in the way it is for
+COMET/MIBI: AVITI tile discovery reads the run's own `ImageInfo.PixelSizeUm`
+from `RunParameters.json` and that value -- not the global param -- drives
+well/plate stitching gaps, the plate image's scale bar, and
+`CELLMEASUREMENT`'s µm-based measurements. `pixel_size_microns` (and
+`conf/aviti_defaults.config`'s AVITI-friendly default for it) is only a
+fallback for a run directory whose `RunParameters.json` predates this field.
+
+#### Plate-level assembly
+
+With `aviti_plate_assembly` on (the default), every well's stitched image and
+`CELLMEASUREMENT` GeoJSON for a sample are additionally combined into one
+plate-level pyramidal OME-TIFF and one merged GeoJSON, viewable as a whole
+plate in QuPath -- in addition to, not instead of, the per-well outputs. Wells
+are placed on the plate grid by their WellLocation id: the letter is the
+**column** and the number is the **row** (A1 top-left, A2 directly below A1,
+B1 the next column across) -- this is the opposite of the standard microplate
+convention, matching how these runs are laid out. See
+[output docs](output.md#plate-level-assembly) for the exact files.
+
+`SEGMENTATIONREPORT` scope follows the samplesheet row: a row that restricts
+`wells` gets the existing per-well report(s); a row covering the whole run
+gets one plate-level report instead (unless `aviti_plate_assembly` or
+`aviti_plate_report` is `false`, in which case every row falls back to
+per-well reports, so disabling plate assembly never silently drops a report).
+The plate report is fed the full-resolution plate OME-TIFF, not the small
+overview, so it shares one pixel frame with the plate GeoJSON.
+
+A whole-plate report reads the entire merged GeoJSON into memory (R's
+`jsonlite::fromJSON`, no streaming) and can therefore need substantially more
+memory than a per-well report -- run plate-level reports under the
+`medium`/`large`/`wehi_*` profiles (`process_high` is 24 GB on the default
+profile but 36-744 GB on those), or set `--aviti_plate_report false` to keep
+the plate image/GeoJSON without the report.
+
+The merged plate GeoJSON can hold well over a million cells on a full plate.
+QuPath itself can struggle to load that many objects regardless of file
+format; if it does, try increasing QuPath's `-Xmx` heap setting.
 
 #### Output layout
 
@@ -702,7 +749,8 @@ Per-tile masks are published in the AVITI Cytocanvas viewer's expected layout
 (`Well<well>/<tile>_Cell.tif`, `Well<well>/<tile>_Nuclear.tif`), and per-well
 stitched masks/image are published separately so the existing
 `CELLMEASUREMENT`/`SEGMENTATIONREPORT`/`KRONOS2EMBEDDINGS` steps can run on
-them unmodified. See [output docs](output.md) for the full layout.
+them unmodified. Plate-level artefacts are published alongside these under
+`avitiplate/`. See [output docs](output.md) for the full layout.
 
 Per Elembio's own convention, `<tile>_Nuclear.tif` is a binary 0/1 presence
 mask, unlike `<tile>_Cell.tif` which is instance-labeled -- so nuclear

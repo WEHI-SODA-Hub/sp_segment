@@ -1,0 +1,20 @@
+{
+  "WellLayout": "TwelveWellStandard",
+  "Wells": [
+    {
+      "WellLocation": "A1",
+      "Tiles": [
+        {
+          "Name": "L1R01C01S1",
+          "XMillimeters": 0.0,
+          "YMillimeters": 0.0
+        },
+        {
+          "Name": "L1R01C02S1",
+          "XMillimeters": 0.001,
+          "YMillimeters": 0.0
+        }
+      ]
+    }
+  ]
+}

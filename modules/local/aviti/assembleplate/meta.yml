@@ -1,0 +1,68 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: AVITIASSEMBLEPLATE
+description: |
+  Assembles every stitched AVITI well image for one sample into a single
+  plate-level, tiled, pyramidal BigTIFF OME-TIFF laid out on the plate grid,
+  plus the plate layout CSV that AVITIMERGEPLATEGEOJSON uses to place cell
+  polygons in the same coordinate frame. Streams the output tile-by-tile from
+  memory-mapped well images, so the full plate canvas is never held in
+  memory. Also emits a small single-resolution overview image for quick-look
+  QC.
+keywords:
+  - AVITI
+  - Teton
+  - cytoprofiling
+  - plate-level aggregation
+  - pyramidal OME-TIFF
+tools:
+  - aviti_assemble_plate_image:
+      description: Custom WEHI SODA Hub script to stream-assemble a pyramidal plate OME-TIFF from per-well stitched images
+      homepage: https://github.com/WEHI-SODA-Hub/sp_segment
+      documentation: https://github.com/WEHI-SODA-Hub/sp_segment
+      licence: ["MIT"]
+
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test__plate', sample:'test' ]
+  - well_rows:
+      type: list
+      description: |
+        List of maps, one per well of this sample, each with keys well,
+        image (the latter being the basename of the staged file passed in
+        images)
+  - images:
+      type: file
+      description: Per-well stitched intensity images for this sample
+      pattern: "*_image_stitched.tif"
+
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test__plate', sample:'test' ]
+  - image:
+      type: file
+      description: Pyramidal, tiled BigTIFF OME-TIFF of every well on the plate grid
+      pattern: "*_plate.ome.tif"
+  - overview:
+      type: file
+      description: Small single-resolution overview image (the smallest pyramid level) for quick-look QC
+      pattern: "*_plate_overview.tif"
+  - layout:
+      type: file
+      description: Plate layout CSV (well,col,row,x0,y0,width,height) used to place cells in AVITIMERGEPLATEGEOJSON
+      pattern: "*_plate_layout.csv"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@mcmero"
+maintainers:
+  - "@mcmero"
