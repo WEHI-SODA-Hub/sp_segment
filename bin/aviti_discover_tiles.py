@@ -13,8 +13,16 @@ Description : Discovers wells and tiles for an AVITI24 Teton/Teton Atlas
                   <run_dir>/Projection/Well<WellLocation>/<batch>_<tile>_<Channel>.tif
 
               where <Channel> is one of Nucleus, Cell-Membrane, or (in
-              3-channel cell paint mode) Actin. This mirrors the AVITI Cyto
-              run output layout documented at
+              3-channel cell paint mode) Actin, and <batch> is an imaging
+              batch prefix (e.g. "CP01") that this script deliberately does
+              not know or care about: Elembio can split a run's channels
+              across more than one batch (core cell-paint channels like
+              Nucleus/Cell-Membrane under one batch, extended cell-paint
+              channels like Golgi/Mitochondria/ER this pipeline never reads
+              under another), so channel files are located by matching
+              "*_<tile>_<Channel>.tif" within the well directory rather than
+              requiring a single batch value up front. This mirrors the AVITI
+              Cyto run output layout documented at
               https://docs.elembio.io/docs/elembio-cloud/runs/cyto-run-output/
               -- an independent implementation, not derived from Elembio's
               own (BSD-licensed) analysis notebook.
@@ -115,14 +123,34 @@ def select_wells(run_parameters: dict, wells_filter: Optional[List[str]]) -> Lis
     return [by_location[w] for w in wells_filter]
 
 
-def tile_channel_path(well_dir: Path, batch: str, tile_name: str, channel: str) -> Path:
-    return well_dir / f"{batch}_{tile_name}_{channel}.tif"
+def find_tile_channel_file(well_dir: Path, tile_name: str, channel: str) -> Optional[Path]:
+    '''
+    Locate the single projection TIFF for one (tile, channel) combination,
+    regardless of whatever imaging batch prefix Elembio's software wrote it
+    under. The batch prefix is not meaningful to this pipeline and is not
+    assumed to be consistent across channels (see the module docstring), so
+    every file in ``well_dir`` matching "*_<tile_name>_<channel>.tif" is
+    treated as a candidate.
+
+    Returns ``None`` if no file matches -- callers turn that into either a
+    hard failure (a required channel) or "channel absent" (the optional
+    Actin channel). Raises ``ValueError`` if more than one file matches:
+    that means the batch is genuinely ambiguous for this (tile, channel),
+    and silently picking one could segment the wrong image.
+    '''
+    matches = sorted(p for p in well_dir.glob(f"*_{tile_name}_{channel}.tif") if p.is_file())
+    if len(matches) > 1:
+        raise ValueError(
+            f"Multiple candidate files for tile {tile_name!r}, channel {channel!r} in "
+            f"{well_dir}: {[m.name for m in matches]}. Expected exactly one "
+            "batch-prefixed file per (tile, channel)."
+        )
+    return matches[0] if matches else None
 
 
 def discover_manifest_rows(
     run_dir: Path,
     wells_filter: Optional[List[str]],
-    cellpaint_batch: str,
     channel_mode: ChannelMode,
     pixel_size_fallback: Optional[float] = None,
 ) -> List[dict]:
@@ -163,18 +191,22 @@ def discover_manifest_rows(
 
         for tile in tiles:
             tile_name = tile["Name"]
-            nucleus = tile_channel_path(well_dir, cellpaint_batch, tile_name, NUCLEUS_SUFFIX)
-            membrane = tile_channel_path(well_dir, cellpaint_batch, tile_name, MEMBRANE_SUFFIX)
-            actin = tile_channel_path(well_dir, cellpaint_batch, tile_name, ACTIN_SUFFIX)
+            nucleus = find_tile_channel_file(well_dir, tile_name, NUCLEUS_SUFFIX)
+            membrane = find_tile_channel_file(well_dir, tile_name, MEMBRANE_SUFFIX)
+            actin = find_tile_channel_file(well_dir, tile_name, ACTIN_SUFFIX)
 
-            missing = [p for p in (nucleus, membrane) if not p.is_file()]
+            missing = [
+                channel for channel, path in
+                ((NUCLEUS_SUFFIX, nucleus), (MEMBRANE_SUFFIX, membrane))
+                if path is None
+            ]
             if missing:
                 raise FileNotFoundError(
-                    f"Missing required channel file(s) for well {well_location}, "
-                    f"tile {tile_name}: {missing}"
+                    f"Missing required channel file(s) for well {well_location}, tile "
+                    f"{tile_name}: {missing} (looked for *_{tile_name}_<channel>.tif in {well_dir})"
                 )
 
-            actin_present = actin.is_file()
+            actin_present = actin is not None
             this_tile_mode = ChannelMode.THREE_CHANNEL if actin_present else ChannelMode.TWO_CHANNEL
 
             if resolved_mode is None:
@@ -239,10 +271,6 @@ def main(
         help="Comma-separated list of WellLocation values to restrict processing to "
              "(e.g. 'A1,A2'). Unset processes every well in the run."
     )] = None,
-    cellpaint_batch: Annotated[str, typer.Option(
-        help="Imaging batch prefix holding the segmentation-relevant channels "
-             "(nucleus/membrane/actin), e.g. 'CP01'."
-    )] = "CP01",
     channel_mode: Annotated[ChannelMode, typer.Option(
         help="Force 2-channel (nucleus + membrane) or 3-channel "
              "(+ actin) mode, or auto-detect from the presence of the Actin file."
@@ -266,7 +294,6 @@ def main(
     rows = discover_manifest_rows(
         run_dir=run_dir,
         wells_filter=wells_filter,
-        cellpaint_batch=cellpaint_batch,
         channel_mode=channel_mode,
         pixel_size_fallback=pixel_size_microns,
     )

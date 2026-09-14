@@ -7,12 +7,14 @@ synthetic run directories -- no real AVITI data, no image content, no GPU.
 
 import json
 from pathlib import Path
+from typing import Optional
 
 import pytest
 
 from aviti_discover_tiles import (
     ChannelMode,
     discover_manifest_rows,
+    find_tile_channel_file,
     select_wells,
 )
 
@@ -22,13 +24,16 @@ def _make_run(
     wells: dict,
     batch: str = "CP01",
     include_actin: bool = True,
+    actin_batch: Optional[str] = None,
 ) -> Path:
     """Build a minimal synthetic AVITI run directory.
 
     ``wells`` maps WellLocation -> list of (tile_name, x_mm, y_mm). Every tile
-    gets empty Nucleus/Cell-Membrane files (and Actin, unless
-    ``include_actin`` is False) -- discovery only checks for file existence,
-    not image content.
+    gets empty Nucleus/Cell-Membrane files under ``batch`` (and Actin, unless
+    ``include_actin`` is False, under ``actin_batch`` if given -- Elembio can
+    split extended cell-paint channels into a separate batch from the core
+    ones, and discovery must not assume all channels share one batch) --
+    discovery only checks for file existence, not image content.
     """
     run_dir = tmp_path / "run"
     projection_dir = run_dir / "Projection"
@@ -56,7 +61,7 @@ def _make_run(
             (well_dir / f"{batch}_{name}_Nucleus.tif").touch()
             (well_dir / f"{batch}_{name}_Cell-Membrane.tif").touch()
             if include_actin:
-                (well_dir / f"{batch}_{name}_Actin.tif").touch()
+                (well_dir / f"{actin_batch or batch}_{name}_Actin.tif").touch()
 
     return run_dir
 
@@ -102,7 +107,7 @@ def test_discovers_one_row_per_tile_across_wells(tmp_path):
             "A2": [("L1R01C01S1", 0.9, -0.08)],
         },
     )
-    rows = discover_manifest_rows(run_dir, None, "CP01", ChannelMode.AUTO)
+    rows = discover_manifest_rows(run_dir, None, ChannelMode.AUTO)
     assert len(rows) == 3
     assert {r["well"] for r in rows} == {"A1", "A2"}
     assert all(r["channel_mode"] == "3ch" for r in rows)
@@ -113,7 +118,7 @@ def test_auto_detects_2_channel_mode_when_actin_absent(tmp_path):
     run_dir = _make_run(
         tmp_path, {"A1": [("L1R01C01S1", 0.9, -0.08)]}, include_actin=False
     )
-    rows = discover_manifest_rows(run_dir, None, "CP01", ChannelMode.AUTO)
+    rows = discover_manifest_rows(run_dir, None, ChannelMode.AUTO)
     assert rows[0]["channel_mode"] == "2ch"
     assert rows[0]["actin_tif"] == ""
 
@@ -123,7 +128,7 @@ def test_forcing_3ch_without_actin_fails_loudly(tmp_path):
         tmp_path, {"A1": [("L1R01C01S1", 0.9, -0.08)]}, include_actin=False
     )
     with pytest.raises(FileNotFoundError, match="Actin"):
-        discover_manifest_rows(run_dir, None, "CP01", ChannelMode.THREE_CHANNEL)
+        discover_manifest_rows(run_dir, None, ChannelMode.THREE_CHANNEL)
 
 
 def test_inconsistent_channel_mode_across_run_fails_loudly(tmp_path):
@@ -135,7 +140,7 @@ def test_inconsistent_channel_mode_across_run_fails_loudly(tmp_path):
     (run_dir / "Projection" / "WellA2" / "CP01_L1R01C01S1_Actin.tif").unlink()
 
     with pytest.raises(ValueError, match="Inconsistent channel mode"):
-        discover_manifest_rows(run_dir, None, "CP01", ChannelMode.AUTO)
+        discover_manifest_rows(run_dir, None, ChannelMode.AUTO)
 
 
 def test_missing_required_channel_file_fails_loudly(tmp_path):
@@ -143,14 +148,14 @@ def test_missing_required_channel_file_fails_loudly(tmp_path):
     (run_dir / "Projection" / "WellA1" / "CP01_L1R01C01S1_Cell-Membrane.tif").unlink()
 
     with pytest.raises(FileNotFoundError, match="Missing required channel"):
-        discover_manifest_rows(run_dir, None, "CP01", ChannelMode.AUTO)
+        discover_manifest_rows(run_dir, None, ChannelMode.AUTO)
 
 
 def test_missing_run_parameters_json_fails_loudly(tmp_path):
     run_dir = tmp_path / "empty_run"
     run_dir.mkdir()
     with pytest.raises(FileNotFoundError, match="RunParameters.json"):
-        discover_manifest_rows(run_dir, None, "CP01", ChannelMode.AUTO)
+        discover_manifest_rows(run_dir, None, ChannelMode.AUTO)
 
 
 def test_missing_projection_directory_fails_loudly(tmp_path):
@@ -158,11 +163,75 @@ def test_missing_projection_directory_fails_loudly(tmp_path):
     run_dir.mkdir()
     (run_dir / "RunParameters.json").write_text(json.dumps({"Wells": [{"WellLocation": "A1", "Tiles": []}]}))
     with pytest.raises(FileNotFoundError, match="Projection"):
-        discover_manifest_rows(run_dir, None, "CP01", ChannelMode.AUTO)
+        discover_manifest_rows(run_dir, None, ChannelMode.AUTO)
 
 
 def test_stage_coordinates_are_carried_through_to_manifest_rows(tmp_path):
     run_dir = _make_run(tmp_path, {"A1": [("L1R01C01S1", 0.9, -0.08)]})
-    rows = discover_manifest_rows(run_dir, None, "CP01", ChannelMode.AUTO)
+    rows = discover_manifest_rows(run_dir, None, ChannelMode.AUTO)
     assert rows[0]["x_mm"] == 0.9
     assert rows[0]["y_mm"] == -0.08
+
+
+# ----------------------------------------------------------------------------
+# batch-agnostic channel file discovery
+#
+# There is no aviti_cellpaint_batch parameter: the imaging batch prefix
+# (e.g. "CP01") is not meaningful to this pipeline and is not assumed to be
+# the same across channels -- Elembio can put core cell-paint channels
+# (Nucleus/Cell-Membrane) under one batch and extended cell-paint channels
+# (Golgi/Mitochondria/ER, which this pipeline never reads) under another.
+# Discovery locates each channel file by tile name and channel suffix alone.
+# ----------------------------------------------------------------------------
+
+
+def test_find_tile_channel_file_matches_any_batch_prefix(tmp_path):
+    well_dir = tmp_path / "WellA1"
+    well_dir.mkdir()
+    (well_dir / "XYZ99_L1R01C01S1_Nucleus.tif").touch()
+
+    found = find_tile_channel_file(well_dir, "L1R01C01S1", "Nucleus")
+    assert found == well_dir / "XYZ99_L1R01C01S1_Nucleus.tif"
+
+
+def test_find_tile_channel_file_returns_none_when_absent(tmp_path):
+    well_dir = tmp_path / "WellA1"
+    well_dir.mkdir()
+    assert find_tile_channel_file(well_dir, "L1R01C01S1", "Nucleus") is None
+
+
+def test_find_tile_channel_file_rejects_ambiguous_batches(tmp_path):
+    well_dir = tmp_path / "WellA1"
+    well_dir.mkdir()
+    (well_dir / "CP01_L1R01C01S1_Nucleus.tif").touch()
+    (well_dir / "CP02_L1R01C01S1_Nucleus.tif").touch()
+
+    with pytest.raises(ValueError, match="Multiple candidate files"):
+        find_tile_channel_file(well_dir, "L1R01C01S1", "Nucleus")
+
+
+def test_discovery_does_not_require_a_specific_or_uniform_batch_name(tmp_path):
+    # Nucleus/Cell-Membrane use an entirely arbitrary batch string, unrelated
+    # to the "CP0N" convention Elembio happens to use in practice.
+    run_dir = _make_run(
+        tmp_path, {"A1": [("L1R01C01S1", 0.9, -0.08)]},
+        batch="totally-arbitrary-batch-name", include_actin=False,
+    )
+    rows = discover_manifest_rows(run_dir, None, ChannelMode.AUTO)
+    assert len(rows) == 1
+    assert "totally-arbitrary-batch-name" in rows[0]["nucleus_tif"]
+
+
+def test_discovery_allows_different_batches_per_channel_in_one_tile(tmp_path):
+    # e.g. core cell-paint (Nucleus/Cell-Membrane) under "CP01" and an
+    # extended cell-paint pass (whose Actin happens to be re-emitted under a
+    # different batch) under "CP02" -- both are legitimate for one tile, and
+    # discovery must not assume they match.
+    run_dir = _make_run(
+        tmp_path, {"A1": [("L1R01C01S1", 0.9, -0.08)]},
+        batch="CP01", actin_batch="CP02",
+    )
+    rows = discover_manifest_rows(run_dir, None, ChannelMode.AUTO)
+    assert rows[0]["channel_mode"] == "3ch"
+    assert "CP01" in rows[0]["nucleus_tif"]
+    assert "CP02" in rows[0]["actin_tif"]

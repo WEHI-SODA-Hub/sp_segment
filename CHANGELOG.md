@@ -239,12 +239,19 @@ actin]]` -- a different order from the v4 SAM path's independently-built
   2-channel (nucleus + membrane) and 3-channel (+ actin) cell-paint modes are
   auto-detected per tile from whether an `Actin` file is present
   (`aviti_channel_mode`, default `auto`; force one mode with `2ch`/`3ch`).
+  Per-channel projection TIFFs are located by tile name and channel suffix
+  alone (`*_<tile>_<Nucleus|Cell-Membrane|Actin>.tif`); the imaging batch
+  prefix Elembio writes them under (e.g. `CP01`) is not user-configurable
+  and is not assumed to be the same across channels, since Elembio can split
+  core cell-paint channels from an extended cell-paint pass (Golgi/
+  Mitochondria/ER, never read by this pipeline) into separate batches.
   Cellpose tuning (diameter, flow/cellprob thresholds, minimum object area)
   uses its own `aviti_*` parameter namespace, kept separate per segmentation
-  stage where the structure being segmented differs in size -- notably
-  `aviti_nuclear_min_area` defaults to `0`, unlike the `200` px² default
-  shared by the whole-cell and membrane paths, since nuclei (~8 px diameter,
-  ~50 px²) are far smaller than whole cells.
+  stage where the structure being segmented differs in size -- `aviti_nuclear_min_area`
+  and `aviti_cellpose_min_area` (whole-cell/membrane) are two independent
+  knobs, both defaulting to `0` (no filtering) rather than one shared value,
+  since a floor sized for whole cells would discard every nucleus at the
+  ~8 px nuclear diameter (~50 px²).
 
   The pixel size used for stitching gaps, OME `PhysicalSizeX/Y`, and
   `CELLMEASUREMENT`'s µm-based measurements is read per run from

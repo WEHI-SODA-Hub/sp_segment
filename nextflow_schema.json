@@ -345,12 +345,6 @@
                     "description": "Path to comma-separated file listing AVITI runs to segment (columns: sample, run_dir[, wells][, membrane_model][, cell_diameter]). Separate from --input.",
                     "fa_icon": "fas fa-file-csv"
                 },
-                "aviti_cellpaint_batch": {
-                    "type": "string",
-                    "default": "CP01",
-                    "description": "Imaging batch prefix holding the segmentation-relevant channels (Nucleus/Cell-Membrane/Actin), e.g. 'CP01'.",
-                    "fa_icon": "fas fa-layer-group"
-                },
                 "aviti_channel_mode": {
                     "type": "string",
                     "default": "auto",
@@ -374,19 +368,19 @@
                 "aviti_wholecell_diameter": {
                     "type": "number",
                     "default": 30,
-                    "description": "Diameter (pixels) for the Cellpose v4 SAM whole-cell path (AVITIWHOLECELLSEGMENT).",
+                    "description": "Diameter (pixels) for the Cellpose v4 SAM whole-cell segmentation path.",
                     "fa_icon": "fas fa-circle"
                 },
                 "aviti_membrane_diameter": {
                     "type": "number",
                     "default": 0,
-                    "description": "Diameter (pixels) for the Cellpose 3.x membrane path (AVITIMEMBRANESEGMENT). 0 uses the model's own trained diameter.",
+                    "description": "Diameter (pixels) for the Cellpose 3.x membrane segmentation path. 0 uses the model's own trained diameter.",
                     "fa_icon": "fas fa-circle"
                 },
                 "aviti_nuclear_diameter": {
                     "type": "number",
                     "default": 0,
-                    "description": "Diameter (pixels) for the Cellpose 3.x nuclear path (AVITINUCLEARSEGMENT). 0 uses the model's own trained diameter.",
+                    "description": "Diameter (pixels) for the Cellpose 3.x nuclear segmentation path. 0 uses the model's own trained diameter.",
                     "fa_icon": "fas fa-circle"
                 },
                 "aviti_cellpose_flow_threshold": {
@@ -403,8 +397,8 @@
                 },
                 "aviti_cellpose_min_area": {
                     "type": "number",
-                    "default": 200,
-                    "description": "Discard objects smaller than this many square pixels, shared by the whole-cell (v4 SAM) and Cellpose 3.x membrane paths. 0 disables the filter.",
+                    "default": 0,
+                    "description": "Discard objects smaller than this many square pixels, shared by the whole-cell (v4 SAM) and Cellpose 3.x membrane paths. 0 (default) disables the filter.",
                     "fa_icon": "fas fa-arrows-alt"
                 },
                 "aviti_nuclear_min_area": {
@@ -608,7 +602,7 @@
                     "minimum": 0.1,
                     "maximum": 10.0,
                     "fa_icon": "fas fa-ruler-combined",
-                    "help_text": "COMET: 0.28 \u00b5m/px, MIBI: 0.390625 \u00b5m/px, OPAL: 0.4964 \u00b5m/px."
+                    "help_text": "COMET: 0.28 \u00b5m/px, MIBI: 0.390625 \u00b5m/px, OPAL: 0.4964 \u00b5m/px. AVITI: 0.48 \u00b5m/px."
                 },
                 "estimate_cell_boundary_dist": {
                     "type": "integer",
