@@ -13,7 +13,8 @@ jobs:
       - name: Check PRs
         if: github.repository == 'wehi-soda-hub/sp_segment'
         run: |
-          { [[ ${{github.event.pull_request.head.repo.full_name }} == wehi-soda-hub/sp_segment ]] && [[ $GITHUB_HEAD_REF == "dev" ]]; } || [[ $GITHUB_HEAD_REF == "patch" ]]
+          HEAD_REPO="${{ github.event.pull_request.head.repo.full_name }}"
+          { [[ "${HEAD_REPO,,}" == "wehi-soda-hub/sp_segment" ]] && [[ "$GITHUB_HEAD_REF" == "dev" ]]; } || [[ "$GITHUB_HEAD_REF" == "patch" ]]
 
       # If the above check failed, post a comment on the PR explaining the failure
       # NOTE - this doesn't currently work if the PR is coming from a fork, due to limitations in GitHub actions secrets
