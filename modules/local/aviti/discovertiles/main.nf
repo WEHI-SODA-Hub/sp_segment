@@ -27,10 +27,10 @@ process AVITIDISCOVERTILES {
     // rather than adding a second list separator to the script's own CLI.
     def wells_arg = meta.wells ? "--wells '${meta.wells.replace(':', ',')}'" : ''
     """
-    aviti_discover_tiles.py \\
-        ${run_dir} \\
-        --output ${meta.id}.manifest.csv \\
-        ${wells_arg} \\
+    aviti_discover_tiles.py \
+        "${run_dir}" \
+        --output "${meta.id}.manifest.csv" \
+        ${wells_arg} \
         ${args}
 
     cat <<-END_VERSIONS > versions.yml
