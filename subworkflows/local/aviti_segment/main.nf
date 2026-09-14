@@ -219,6 +219,40 @@ workflow AVITI_SEGMENT {
         .set { ch_kronos_input }
 
     //
+    // Group per-well outputs by sample under a plate-scoped meta, and count
+    // wells per sample while we're at it. Computed unconditionally (it's a
+    // cheap channel-only transform, not a process) because both the plate
+    // assembly block and the report-scope logic below need the *true*
+    // per-sample well count -- not just whether the samplesheet row
+    // restricted `wells`, which says nothing about how many wells a run
+    // actually has (an unrestricted row can still resolve to one well).
+    //
+    def plate_meta_of = { well_meta -> [
+        id                 : "${well_meta.sample}__plate",
+        sample             : well_meta.sample,
+        channel_mode       : well_meta.channel_mode,
+        pixel_size_microns : well_meta.pixel_size_microns,
+    ] }
+
+    // groupTuple emits in task-completion order, which would otherwise make
+    // the well_rows/images lists (and so the task hash) vary run to run.
+    // Sorting the two parallel lists together by well -- rather than
+    // groupTuple's own `sort:`, which would sort each list independently and
+    // de-pair rows from files -- keeps -resume stable.
+    AVITISTITCHWELL.out.image
+        .map { well_meta, image -> [ plate_meta_of(well_meta), [ well: well_meta.well, image: image.name ], image ] }
+        .groupTuple(by: 0)
+        .map { plate_meta, well_rows, images ->
+            def pairs = [ well_rows, images ].transpose().sort { a, b -> a[0].well <=> b[0].well }
+            [ plate_meta, pairs.collect { pair -> pair[0] }, pairs.collect { pair -> pair[1] } ]
+        }
+        .set { ch_plate_image_input_all }
+
+    ch_plate_image_input_all
+        .map { plate_meta, well_rows, _images -> [ plate_meta.sample, well_rows.size() ] }
+        .set { ch_well_count }
+
+    //
     // Plate-level assembly (additive, optional): combine every well's
     // stitched image / cellmeasurement GeoJSON for a sample into one
     // pyramidal plate OME-TIFF and one merged plate GeoJSON, so a whole run
@@ -232,25 +266,11 @@ workflow AVITI_SEGMENT {
 
     if (params.aviti_plate_assembly) {
 
-        def plate_meta_of = { well_meta -> [
-            id                 : "${well_meta.sample}__plate",
-            sample             : well_meta.sample,
-            channel_mode       : well_meta.channel_mode,
-            pixel_size_microns : well_meta.pixel_size_microns,
-        ] }
-
-        // groupTuple emits in task-completion order, which would otherwise
-        // make the well_rows/images lists (and so the task hash) vary run to
-        // run. Sorting the two parallel lists together by well -- rather than
-        // groupTuple's own `sort:`, which would sort each list independently
-        // and de-pair rows from files -- keeps -resume stable.
-        AVITISTITCHWELL.out.image
-            .map { well_meta, image -> [ plate_meta_of(well_meta), [ well: well_meta.well, image: image.name ], image ] }
-            .groupTuple(by: 0)
-            .map { plate_meta, well_rows, images ->
-                def pairs = [ well_rows, images ].transpose().sort { a, b -> a[0].well <=> b[0].well }
-                [ plate_meta, pairs.collect { pair -> pair[0] }, pairs.collect { pair -> pair[1] } ]
-            }
+        // A sample with only one well has nothing to combine -- the "plate"
+        // would just be that well's own image again, at the cost of a full
+        // pyramidal-image write/read pass. Skip it.
+        ch_plate_image_input_all
+            .filter { _plate_meta, well_rows, _images -> well_rows.size() > 1 }
             .set { ch_plate_image_input }
 
         AVITIASSEMBLEPLATE(
@@ -262,7 +282,10 @@ workflow AVITI_SEGMENT {
 
         // The layout comes from AVITIASSEMBLEPLATE, not recomputed here, so
         // the image and the merged GeoJSON place every well at
-        // byte-identical coordinates.
+        // byte-identical coordinates. Joining against ch_plate_layout (by:
+        // 0) also means a single-well sample -- which never gets a layout,
+        // per the filter above -- is naturally excluded here too, with no
+        // separate well-count filter needed on this side.
         ch_annotations
             .map { well_meta, geojson -> [ plate_meta_of(well_meta), [ well: well_meta.well, geojson: geojson.name ], geojson ] }
             .groupTuple(by: 0)
@@ -287,8 +310,12 @@ workflow AVITI_SEGMENT {
     // run_cellpose is reported as true since both AVITI segmenters are
     // Cellpose-family models; run_mesmer/run_cellsam are false.
     //
-    // Report scope is per sample: a samplesheet row that restricted `wells`
-    // gets the existing per-well report(s); a row covering the whole run
+    // Report scope is per sample, based on the *actual* discovered well
+    // count (ch_well_count) rather than whether the samplesheet row
+    // restricted `wells`: a sample with only one well never gets plate
+    // assembly (see the >1-well filter above), so it must fall back to a
+    // per-well report regardless of what `wells` said -- an unrestricted
+    // row can still resolve to one well. A sample with more than one well
     // gets one plate-level report instead, IF plate assembly/reporting is
     // enabled -- otherwise every sample falls back to per-well reports, so
     // disabling the plate path never silently drops a sample's report.
@@ -296,10 +323,10 @@ workflow AVITI_SEGMENT {
     ch_report = channel.empty()
     if (params.generate_report) {
         def plate_reports_enabled = params.aviti_plate_assembly && params.aviti_plate_report
-        ch_report_scope = ch_aviti_samplesheet
-            .map { sample_meta, _run_dir ->
-                def scope = (plate_reports_enabled && !sample_meta.wells?.trim()) ? 'plate' : 'well'
-                [ sample_meta.id, scope ]
+        ch_report_scope = ch_well_count
+            .map { sample, well_count ->
+                def scope = (plate_reports_enabled && well_count > 1) ? 'plate' : 'well'
+                [ sample, scope ]
             }
 
         def to_report_input = { meta, annotations, image ->

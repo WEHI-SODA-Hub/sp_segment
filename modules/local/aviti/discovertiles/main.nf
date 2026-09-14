@@ -41,17 +41,32 @@ process AVITIDISCOVERTILES {
     """
 
     stub:
-    // Emits the same two tile rows a real run against tests/data/aviti's
-    // WellA1 (RunParameters.json + Projection/WellA1/CP01_L1R01C0{1,2}S1_*)
-    // would produce, so downstream subworkflow-level stub tests (e.g.
-    // subworkflows/local/aviti_segment) get real (well, tile) rows to route
-    // through the branch/join/stitch logic instead of an empty manifest.
+    // Emits the same two tiles a real run against tests/data/aviti's WellA1
+    // (RunParameters.json + Projection/WellA1/CP01_L1R01C0{1,2}S1_*) would
+    // produce, for either one well (A1) or two (A1 + a second, "A2", row
+    // reusing the same real files purely for staging -- their content is
+    // never read in stub mode). Branching on meta.id here (rather than on
+    // run_dir's contents, which is a small fixture with only one real well)
+    // is test-only scaffolding: it lets downstream stub-mode tests --
+    // subworkflows/local/aviti_segment in particular -- exercise both a
+    // genuinely single-well sample (plate assembly must be skipped) and a
+    // multi-well one (plate assembly must run) without needing a second run
+    // directory fixture. Real (non-stub) discovery always reflects whatever
+    // RunParameters.json actually contains.
+    def wells = (meta.id ?: '').contains('single_well') ? ['A1'] : ['A1', 'A2']
+    def manifest_lines = (
+        ['well,tile,x_mm,y_mm,nucleus_tif,membrane_tif,actin_tif,channel_mode,pixel_size_microns'] +
+        wells.collectMany { well ->
+            [
+                "${well},L1R01C01S1,0.0,0.0,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Nucleus.tif,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Cell-Membrane.tif,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Actin.tif,3ch,0.48",
+                "${well},L1R01C02S1,0.001,0.0,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Nucleus.tif,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Cell-Membrane.tif,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Actin.tif,3ch,0.48",
+            ]
+        }
+    ).join('\n    ')
     """
-    cat <<-END_MANIFEST > ${meta.id}.manifest.csv
-    well,tile,x_mm,y_mm,nucleus_tif,membrane_tif,actin_tif,channel_mode,pixel_size_microns
-    A1,L1R01C01S1,0.0,0.0,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Nucleus.tif,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Cell-Membrane.tif,${run_dir}/Projection/WellA1/CP01_L1R01C01S1_Actin.tif,3ch,0.48
-    A1,L1R01C02S1,0.001,0.0,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Nucleus.tif,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Cell-Membrane.tif,${run_dir}/Projection/WellA1/CP01_L1R01C02S1_Actin.tif,3ch,0.48
-    END_MANIFEST
+    cat > ${meta.id}.manifest.csv <<'AVITI_STUB_MANIFEST_EOF'
+    ${manifest_lines}
+    AVITI_STUB_MANIFEST_EOF
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

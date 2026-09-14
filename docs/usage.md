@@ -722,13 +722,21 @@ B1 the next column across) -- this is the opposite of the standard microplate
 convention, matching how these runs are laid out. See
 [output docs](output.md#plate-level-assembly) for the exact files.
 
-`SEGMENTATIONREPORT` scope follows the samplesheet row: a row that restricts
-`wells` gets the existing per-well report(s); a row covering the whole run
-gets one plate-level report instead (unless `aviti_plate_assembly` or
-`aviti_plate_report` is `false`, in which case every row falls back to
-per-well reports, so disabling plate assembly never silently drops a report).
-The plate report is fed the full-resolution plate OME-TIFF, not the small
-overview, so it shares one pixel frame with the plate GeoJSON.
+Plate assembly only runs for a sample that actually discovers **more than one
+well**: a "plate" of a single well would just be that well's own stitched
+image again, at the cost of a full pyramidal-image write/read pass, so it is
+skipped. This is judged from the number of wells the run actually resolves
+to, not from whether the samplesheet row set `wells` -- a row that leaves
+`wells` unset can still turn out to cover only one well.
+
+`SEGMENTATIONREPORT` scope follows suit: a sample with more than one well
+gets one plate-level report instead of its per-well report(s), unless
+`aviti_plate_assembly` or `aviti_plate_report` is `false`, or the sample only
+has one well, in which case it falls back to (or simply keeps) its per-well
+report -- disabling plate assembly, or a run that only ever had one well,
+never silently drops a report. The plate report is fed the full-resolution
+plate OME-TIFF, not the small overview, so it shares one pixel frame with the
+plate GeoJSON.
 
 A whole-plate report reads the entire merged GeoJSON into memory (R's
 `jsonlite::fromJSON`, no streaming) and can therefore need substantially more

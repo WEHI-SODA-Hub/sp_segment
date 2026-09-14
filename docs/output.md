@@ -66,7 +66,9 @@ gets stitched into `sample__WellA1_nuclear_stitched.tif` above.
 
 When `aviti_plate_assembly` is enabled (the default), every well's stitched
 output for a sample is additionally combined into one plate-level view,
-alongside -- not instead of -- the per-well outputs above:
+alongside -- not instead of -- the per-well outputs above. This only happens
+for a sample that actually discovers more than one well; a single-well sample
+has nothing to combine, so no `avitiplate/` outputs are produced for it:
 
 - `avitiplate/sample/sample_plate.ome.tif` -- a single pyramidal, tiled
   BigTIFF OME-TIFF laying out every well on the plate grid (letter = column,
@@ -84,9 +86,7 @@ alongside -- not instead of -- the per-well outputs above:
 - `avitiplate/sample/sample_plate_overview.tif` -- a small, single-resolution
   overview image (the smallest pyramid level) for a quick-look outside QuPath.
 
-The plate image can be tens of GB uncompressed; `avitiplate/` is published by
-symlink rather than copy for that reason. See
-[docs/usage.md](usage.md#aviti24-cytoprofiling-segmentation) for the
+See [docs/usage.md](usage.md#aviti24-cytoprofiling-segmentation) for the
 plate-related parameters and the rule for when a per-well vs. plate-level
 `SEGMENTATIONREPORT` is generated.
 

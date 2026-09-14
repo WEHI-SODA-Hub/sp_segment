@@ -88,28 +88,33 @@ output:
       description: |
         Optional segmentation report HTML files. A mix of per-well reports and
         (when params.aviti_plate_assembly/aviti_plate_report are enabled and a
-        sample's row does not restrict wells) plate-level reports.
+        sample has more than one well -- see plate_image below) plate-level
+        reports.
         Structure: [ val(meta), path(html) ]
       pattern: "*.html"
   - plate_image:
       type: file
       description: |
         Optional (params.aviti_plate_assembly) pyramidal, tiled BigTIFF
-        OME-TIFF assembling every well of a sample onto the plate grid.
+        OME-TIFF assembling every well of a sample onto the plate grid. Only
+        emitted for samples with more than one well -- a single-well "plate"
+        would just be that well's own image again, so it is skipped.
         Structure: [ val(plate_meta), path(ome_tif) ]
       pattern: "*_plate.ome.tif"
   - plate_layout:
       type: file
       description: |
         Optional (params.aviti_plate_assembly) plate layout CSV
-        (well,col,row,x0,y0,width,height) matching plate_image's well placement.
+        (well,col,row,x0,y0,width,height) matching plate_image's well
+        placement. Same >1-well condition as plate_image.
         Structure: [ val(plate_meta), path(csv) ]
       pattern: "*_plate_layout.csv"
   - plate_annotations:
       type: file
       description: |
         Optional (params.aviti_plate_assembly) merged GeoJSON of every cell in
-        plate coordinates, plus one labelled rectangle per well.
+        plate coordinates, plus one labelled rectangle per well. Same >1-well
+        condition as plate_image.
         Structure: [ val(plate_meta), path(geojson) ]
       pattern: "*_plate.geojson{,.gz}"
   - versions:
