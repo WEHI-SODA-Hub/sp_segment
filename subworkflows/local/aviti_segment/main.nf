@@ -9,6 +9,34 @@ include { AVITIMERGEPLATEGEOJSON } from '../../../modules/local/aviti/mergeplate
 include { CELLMEASUREMENT         } from '../../../modules/local/cellmeasurement/main.nf'
 include { SEGMENTATIONREPORT      } from '../../../modules/local/segmentationreport/main.nf'
 
+// Top-level functions -- need to be defined here; if they are inside the
+// workflow { } block, they are treated as out-of scope in sibling
+// .map/.filter calls in Nextflow's strict syntax parser (24.10+/26.x)
+def plate_meta_of(well_meta) {
+    [
+        id                 : "${well_meta.sample}__plate",
+        sample             : well_meta.sample,
+        channel_mode       : well_meta.channel_mode,
+        pixel_size_microns : well_meta.pixel_size_microns,
+        aviti_diameter     : well_meta.aviti_diameter,
+        aviti_model        : well_meta.aviti_model,
+    ]
+}
+
+// Top-level for the same reason as plate_meta_of above.
+def to_report_input(meta, annotations, image) {
+    [
+        meta,
+        annotations,
+        false, // run_mesmer
+        true,  // run_cellpose
+        false, // run_cellsam
+        'Nucleus',
+        meta.channel_mode == '2ch' ? 'Cell-Membrane' : 'Cell-Membrane:Actin',
+        image,
+    ]
+}
+
 workflow AVITI_SEGMENT {
 
     take:
@@ -237,15 +265,6 @@ workflow AVITI_SEGMENT {
     // restricted `wells`, which says nothing about how many wells a run
     // actually has (an unrestricted row can still resolve to one well).
     //
-    def plate_meta_of = { well_meta -> [
-        id                 : "${well_meta.sample}__plate",
-        sample             : well_meta.sample,
-        channel_mode       : well_meta.channel_mode,
-        pixel_size_microns : well_meta.pixel_size_microns,
-        aviti_diameter     : well_meta.aviti_diameter,
-        aviti_model        : well_meta.aviti_model,
-    ] }
-
     // groupTuple emits in task-completion order, which would otherwise make
     // the well_rows/images lists (and so the task hash) vary run to run.
     // Sorting the two parallel lists together by well -- rather than
@@ -340,19 +359,6 @@ workflow AVITI_SEGMENT {
                 def scope = (plate_reports_enabled && well_count > 1) ? 'plate' : 'well'
                 [ sample, scope ]
             }
-
-        def to_report_input = { meta, annotations, image ->
-            [
-                meta,
-                annotations,
-                false, // run_mesmer
-                true,  // run_cellpose
-                false, // run_cellsam
-                'Nucleus',
-                meta.channel_mode == '2ch' ? 'Cell-Membrane' : 'Cell-Membrane:Actin',
-                image,
-            ]
-        }
 
         ch_well_report_input = AVITISTITCHWELL.out.image
             .join(ch_annotations, by: 0)
