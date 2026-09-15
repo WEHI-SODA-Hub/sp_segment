@@ -140,12 +140,22 @@ workflow AVITI_SEGMENT {
         .join(AVITINUCLEARSEGMENT.out.nuclear_label_mask, by: 0)
         .join(AVITIMERGETILECHANNELS.out.image, by: 0)
         .map { meta_tile, cell_mask, nuclear_label_mask, image ->
+            // The diameter/model actually used for this sample's whole-cell
+            // segmentation, carried through for SEGMENTATIONREPORT to
+            // display
+            def has_membrane_model = (meta_tile.membrane_model ?: '').trim() != ''
+            def cell_diameter_override = (meta_tile.cell_diameter ?: 0).toFloat()
+            def aviti_diameter = cell_diameter_override > 0
+                ? cell_diameter_override
+                : (has_membrane_model ? params.aviti_membrane_diameter : params.aviti_wholecell_diameter)
             def well_meta = [
                 id                 : "${meta_tile.sample}__Well${meta_tile.well}",
                 sample             : meta_tile.sample,
                 well               : meta_tile.well,
                 channel_mode       : meta_tile.channel_mode,
                 pixel_size_microns : meta_tile.pixel_size_microns,
+                aviti_diameter     : aviti_diameter,
+                aviti_model        : has_membrane_model ? meta_tile.membrane_model.trim() : '',
             ]
             def row = [
                 tile        : meta_tile.tile,
@@ -232,6 +242,8 @@ workflow AVITI_SEGMENT {
         sample             : well_meta.sample,
         channel_mode       : well_meta.channel_mode,
         pixel_size_microns : well_meta.pixel_size_microns,
+        aviti_diameter     : well_meta.aviti_diameter,
+        aviti_model        : well_meta.aviti_model,
     ] }
 
     // groupTuple emits in task-completion order, which would otherwise make
