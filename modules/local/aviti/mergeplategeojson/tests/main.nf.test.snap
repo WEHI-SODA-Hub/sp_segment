@@ -8,7 +8,7 @@
                             "id": "test__plate",
                             "sample": "test"
                         },
-                        "test__plate_plate.geojson:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "test_plate.geojson:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "1": [
@@ -20,7 +20,7 @@
                             "id": "test__plate",
                             "sample": "test"
                         },
-                        "test__plate_plate.geojson:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "test_plate.geojson:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "versions": [
@@ -43,7 +43,7 @@
                             "id": "test__plate",
                             "sample": "test"
                         },
-                        "test__plate_plate.geojson.gz:md5,36fdae145b9c9ee2c901a3a926337eb9"
+                        "test_plate.geojson.gz:md5,36fdae145b9c9ee2c901a3a926337eb9"
                     ]
                 ],
                 "1": [
@@ -55,7 +55,7 @@
                             "id": "test__plate",
                             "sample": "test"
                         },
-                        "test__plate_plate.geojson.gz:md5,36fdae145b9c9ee2c901a3a926337eb9"
+                        "test_plate.geojson.gz:md5,36fdae145b9c9ee2c901a3a926337eb9"
                     ]
                 ],
                 "versions": [

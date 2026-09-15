@@ -321,6 +321,7 @@ actin]]` -- a different order from the v4 SAM path's independently-built
 
   See [docs/usage.md](docs/usage.md#aviti24-cytoprofiling-segmentation) for
   the full samplesheet format, parameter list, and output layout.
+
 - **Resumable polygon extraction in `CELLMEASUREMENT`.** On whole-slide images
   with millions of cells, polygon extraction is the longest phase. Setting the
   new `geometry_checkpoint_dir` parameter writes each completed batch of cells

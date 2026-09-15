@@ -18,8 +18,9 @@ process AVITIMERGEPLATEGEOJSON {
     tuple val(meta), val(well_rows), path(geojsons), path(layout)
 
     output:
-    tuple val(meta), path("${meta.id}_plate.geojson{,.gz}"), emit: annotations
-    path "versions.yml"                                     , emit: versions
+    // Named from meta.sample, not meta.id -- see AVITIASSEMBLEPLATE for why.
+    tuple val(meta), path("${meta.sample}_plate.geojson{,.gz}"), emit: annotations
+    path "versions.yml"                                        , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -38,7 +39,7 @@ process AVITIMERGEPLATEGEOJSON {
     aviti_merge_plate_geojson.py \\
         manifest.csv \\
         --layout ${layout} \\
-        --output ${meta.id}_plate.geojson \\
+        --output ${meta.sample}_plate.geojson \\
         ${args}
 
     cat <<-END_VERSIONS > versions.yml
@@ -56,7 +57,7 @@ process AVITIMERGEPLATEGEOJSON {
     // only the unsuffixed name for the same reason. The output glob still
     // matches either way.
     """
-    touch ${meta.id}_plate.geojson
+    touch ${meta.sample}_plate.geojson
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

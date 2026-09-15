@@ -15,10 +15,11 @@ process AVITIASSEMBLEPLATE {
     tuple val(meta), val(well_rows), path(images)
 
     output:
-    tuple val(meta), path("${meta.id}_plate.ome.tif")     , emit: image
-    tuple val(meta), path("${meta.id}_plate_overview.tif"), emit: overview
-    tuple val(meta), path("${meta.id}_plate_layout.csv")  , emit: layout
-    path "versions.yml"                                   , emit: versions
+    // Named from meta.sample, not meta.id as it carries the "__plate" suffix
+    tuple val(meta), path("${meta.sample}_plate.ome.tif")     , emit: image
+    tuple val(meta), path("${meta.sample}_plate_overview.tif"), emit: overview
+    tuple val(meta), path("${meta.sample}_plate_layout.csv")  , emit: layout
+    path "versions.yml"                                       , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -40,9 +41,9 @@ process AVITIASSEMBLEPLATE {
 
     aviti_assemble_plate_image.py \\
         manifest.csv \\
-        --output-image ${meta.id}_plate.ome.tif \\
-        --output-layout ${meta.id}_plate_layout.csv \\
-        --output-overview ${meta.id}_plate_overview.tif \\
+        --output-image ${meta.sample}_plate.ome.tif \\
+        --output-layout ${meta.sample}_plate_layout.csv \\
+        --output-overview ${meta.sample}_plate_overview.tif \\
         ${args} \\
         ${pixel_size_arg}
 
@@ -61,9 +62,9 @@ process AVITIASSEMBLEPLATE {
     // stub emitting real manifest rows).
     def first_well = well_rows[0].well
     """
-    touch ${meta.id}_plate.ome.tif
-    touch ${meta.id}_plate_overview.tif
-    cat <<-END_LAYOUT > ${meta.id}_plate_layout.csv
+    touch ${meta.sample}_plate.ome.tif
+    touch ${meta.sample}_plate_overview.tif
+    cat <<-END_LAYOUT > ${meta.sample}_plate_layout.csv
     well,col,row,x0,y0,width,height
     ${first_well},0,0,0,0,8,8
     END_LAYOUT

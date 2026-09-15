@@ -9,7 +9,7 @@
                             "sample": "test",
                             "pixel_size_microns": ""
                         },
-                        "test__plate_plate.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "test_plate.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "1": [
@@ -19,7 +19,7 @@
                             "sample": "test",
                             "pixel_size_microns": ""
                         },
-                        "test__plate_plate_overview.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "test_plate_overview.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "2": [
@@ -29,7 +29,7 @@
                             "sample": "test",
                             "pixel_size_microns": ""
                         },
-                        "test__plate_plate_layout.csv:md5,80abfb69e144b05aa4790b2b5623045f"
+                        "test_plate_layout.csv:md5,80abfb69e144b05aa4790b2b5623045f"
                     ]
                 ],
                 "3": [
@@ -42,7 +42,7 @@
                             "sample": "test",
                             "pixel_size_microns": ""
                         },
-                        "test__plate_plate.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "test_plate.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "layout": [
@@ -52,7 +52,7 @@
                             "sample": "test",
                             "pixel_size_microns": ""
                         },
-                        "test__plate_plate_layout.csv:md5,80abfb69e144b05aa4790b2b5623045f"
+                        "test_plate_layout.csv:md5,80abfb69e144b05aa4790b2b5623045f"
                     ]
                 ],
                 "overview": [
@@ -62,7 +62,7 @@
                             "sample": "test",
                             "pixel_size_microns": ""
                         },
-                        "test__plate_plate_overview.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                        "test_plate_overview.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
                     ]
                 ],
                 "versions": [
