@@ -1,0 +1,59 @@
+{
+    "aviti_mergetilechannels - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_stub"
+                        },
+                        "test_stub_image.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,4b4eabcedc4ba8eee36ed02542fa7311"
+                ],
+                "image": [
+                    [
+                        {
+                            "id": "test_stub"
+                        },
+                        "test_stub_image.ome.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,4b4eabcedc4ba8eee36ed02542fa7311"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2026-09-10T14:37:42.258866726"
+    },
+    "aviti_mergetilechannels - 2-channel tile (no actin)": {
+        "content": [
+            [
+                "versions.yml:md5,4b4eabcedc4ba8eee36ed02542fa7311"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2026-09-10T14:36:17.964702715"
+    },
+    "aviti_mergetilechannels - 3-channel tile": {
+        "content": [
+            [
+                "versions.yml:md5,4b4eabcedc4ba8eee36ed02542fa7311"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2026-09-10T14:34:44.322592554"
+    }
+}

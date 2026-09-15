@@ -19,16 +19,25 @@
 ## Introduction
 
 **WEHI-SODA-Hub/sp_segment** is a pipeline for running cell segmentation
-on COMET, MIBI, and OPAL data. For COMET, background subtraction can be performed
-followed by patched cellpose segmentation, non-patched mesmer segmentation, or
-CellSAM foundation model segmentation. For MIBI, mesmer or CellSAM segmentation
-can be run. Optionally, nuclear segmentation can be run and consolidated into
-whole cells with nuclei. This also allows for cell measurements per compartment,
-along with standard shape and channel intensity measurements, as well as extended
-measurement features such as erosion and expansion measurements, and
-neighbourhood aggregation. The output GeoJSON files can be viewed in QuPath. A
-segmentation report can also be generated to provide a QC summary of cell
-measurements.
+on COMET, MIBI, OPAL, and AVITI24 (Teton/Teton Atlas) cytoprofiling data. For
+COMET, background subtraction can be performed followed by patched cellpose
+segmentation, non-patched mesmer segmentation, or CellSAM foundation model
+segmentation. For MIBI, mesmer or CellSAM segmentation can be run. Optionally,
+nuclear segmentation can be run and consolidated into whole cells with nuclei.
+This also allows for cell measurements per compartment, along with standard
+shape and channel intensity measurements, as well as extended measurement
+features such as erosion and expansion measurements, and neighbourhood
+aggregation. The output GeoJSON files can be viewed in QuPath. A segmentation
+report can also be generated to provide a QC summary of cell measurements.
+
+AVITI24 runs are supported through a completely separate path with their own
+samplesheet: wells and tiles are discovered directly from the run directory,
+whole cells are segmented with Cellpose (the v4 segment-anything model by
+default, or a named Cellpose 3.x membrane model chosen per sample) alongside a
+custom Cellpose 3.x nuclear model, and results are stitched per well. Runs
+covering more than one well are additionally assembled into a single
+whole-plate pyramidal OME-TIFF and merged GeoJSON, viewable in QuPath alongside
+the per-well outputs.
 
 Workflow diagram (steps in dotted lined boxes are optional):
 
@@ -108,6 +117,50 @@ The pipeline uses the following tools:
 - [spatialVis](https://github.com/WEHI-SODA-Hub/spatialVis) -- R package for spatial
   analyses, used to generate plots for the segmentation report.
 
+AVITI24 (Teton/Teton Atlas) cytoprofiling runs follow a separate workflow
+(steps in dotted lined boxes are optional):
+
+```mermaid
+flowchart TD
+  aviti_input("AVITI24 run
+              directory") --> aviti_discover["Discover
+                                              wells/tiles"]
+  aviti_discover --> aviti_merge["Merge tile
+                                 channels"]
+
+  aviti_merge --> aviti_choose{"membrane_model
+                               set?"}
+  aviti_choose -- No --> aviti_wc["cellpose SAM
+                                  (whole-cell)"]
+  aviti_choose -- Yes --> aviti_wc3["cellpose 3.x
+                                    (membrane model)"]
+  aviti_merge --> aviti_nuc["cellpose 3.x
+                            (nuclear)"]
+
+  aviti_wc --> aviti_stitch["Stitch well"]
+  aviti_wc3 --> aviti_stitch
+  aviti_nuc --> aviti_stitch
+
+  aviti_stitch --> aviti_measure["Cell measurement"]
+  aviti_measure --> aviti_geojson["GeoJSON"]
+  aviti_measure --> aviti_embeddings["KRONOS2
+                                     embeddings"]
+  style aviti_embeddings stroke:#bbb,stroke-dasharray: 5 5
+  aviti_measure --> aviti_report["Segmentation
+                                 report"]
+  style aviti_report stroke:#bbb,stroke-dasharray: 5 5
+
+  aviti_stitch --> aviti_plate["Assemble plate
+                               (>1 well)"]
+  style aviti_plate stroke:#bbb,stroke-dasharray: 5 5
+  aviti_plate --> aviti_qupath["Plate OME-TIFF +
+                               GeoJSON (QuPath)"]
+  style aviti_qupath stroke:#bbb,stroke-dasharray: 5 5
+```
+
+See [AVITI24 cytoprofiling segmentation](#aviti24-cytoprofiling-segmentation)
+below for the full samplesheet format and parameter details.
+
 Please see the [docs for more detailed information on pipeline usage and output](docs/README.md)
 
 ## Usage
@@ -170,7 +223,7 @@ nextflow run WEHI-SODA-Hub/sp_segment \
 ```
 
 > [!WARNING]
-> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
+> Please provide user-supplied pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
 ### Mesmer segmentation
 
@@ -224,6 +277,31 @@ parameters.
 
 If you want to skip measurements (this may take some time for large images), you
 can use set the parameter `enable_measurements` to `false`.
+
+### AVITI24 cytoprofiling segmentation
+
+AVITI24/Teton runs use a separate input samplesheet via `--aviti_input`. Its
+defaults live directly in `nextflow.config`, so no separate config overlay is
+needed to run it.
+
+The AVITI path has its own parameter namespace (`aviti_*`) rather than reusing
+COMET/MIBI `cellpose_*` values. `--aviti_models_dir` (required when
+`--aviti_input` is set) must point to a shared Cellpose 3.x model directory, and
+the nuclear model is resolved from it as
+`<aviti_models_dir>/<aviti_nuclear_model>`. Each samplesheet row may also
+optionally set `membrane_model` (a named Cellpose 3.x membrane model under the
+same `aviti_models_dir`; blank falls back to the Cellpose v4 SAM whole-cell
+path) and `cell_diameter` (per-row diameter override for the membrane/whole-cell
+path; `0`/blank falls back to the global `aviti_membrane_diameter` /
+`aviti_wholecell_diameter`).
+
+For a sample that discovers more than one well, every well's stitched output
+is additionally assembled into a single whole-plate pyramidal OME-TIFF and
+merged GeoJSON (`aviti_plate_assembly`, on by default), so the whole run can
+be opened and browsed as one image in QuPath instead of well by well.
+
+See [docs/usage.md](docs/usage.md#aviti24-cytoprofiling-segmentation) for the
+AVITI samplesheet format, parameter details, and output layout.
 
 ### KRONOS2 embeddings
 

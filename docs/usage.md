@@ -586,6 +586,183 @@ Mesmer's `mesmer_min_nuclei_area` is deliberately **not** aligned with these: it
 filters nuclei rather than whole cells, and is applied inside the Mesmer
 container rather than by this pipeline.
 
+### AVITI24 cytoprofiling segmentation
+
+AVITI24 (Teton/Teton Atlas) cytoprofiling runs are segmented through a
+completely separate path from the COMET/MIBI `--input` samplesheet above, using
+its own samplesheet and parameter group. Enable it with `--aviti_input`; `--input`
+and `--aviti_input` may be used together or independently, but at least one must
+be set.
+
+AVITI-friendly defaults for its `aviti_*` parameters (model staging, Cellpose
+tuning, etc.) already live directly in `nextflow.config` -- no separate config
+overlay is needed to run it. See [AVITI parameters](#aviti-parameters) below
+for the full list and their defaults; override any of them via the CLI or a
+`-params-file` as usual.
+
+#### Samplesheet format
+
+An AVITI samplesheet has one row per AVITI run:
+
+```csv
+sample,run_dir,wells,membrane_model,cell_diameter
+run1,/path/to/aviti_run_dir,A1:A2,model_membrane_001,0
+run2,/path/to/aviti_run_dir2,A3,,
+```
+
+- `sample`: a unique sample or run name.
+- `run_dir`: the AVITI run directory, containing `RunParameters.json` and a
+  `Projection/` directory with per-well/per-tile TIFFs.
+- `wells` (optional): a colon-separated list of wells to restrict processing
+  to. If omitted, every well in `RunParameters.json` is processed.
+- `membrane_model` (optional): name of a Cellpose 3.x membrane model file
+  under `--aviti_models_dir`. If blank or unset, the tile uses the default
+  Cellpose v4 SAM whole-cell path instead.
+- `cell_diameter` (optional): per-row diameter (pixels) for this row's
+  whole-cell/membrane segmentation. When `> 0` it overrides
+  `aviti_wholecell_diameter` (v4 SAM path) or `aviti_membrane_diameter`
+  (Cellpose 3.x membrane path) for that row only. `0`, blank, or unset falls
+  back to the global parameter. It never applies to the nuclear path, whose
+  diameter is the single global `aviti_nuclear_diameter`.
+
+Unlike the COMET/MIBI path, background subtraction is not run for AVITI
+samples, and there is no `run_mesmer`/`run_cellpose`/`run_cellsam` selector:
+AVITI samples always run the whole-cell path and the nuclear path, since that
+is the pair the AVITI Cytocanvas viewer expects.
+
+#### Parallelisation model
+
+Each samplesheet row is one AVITI run, but processing fans out to one task per
+tile: every `(well, tile)` combination discovered from `RunParameters.json`
+runs segmentation independently and in parallel, on the full tile image (AVITI
+tiles are already HPC-friendly in size, so unlike the COMET/MIBI Cellpose path,
+tiles are not further sub-patched). Per-tile results are only brought back
+together at the per-well stitching step.
+
+#### 2-channel and 3-channel cell-paint modes
+
+AVITI exports either 2-channel (nucleus + membrane) or 3-channel (+ actin)
+cell-paint tiles. `aviti_channel_mode` defaults to `auto`, detecting the mode
+per tile from whether an `Actin` file is present; set it to `2ch` or `3ch` to
+force one mode and fail loudly if a tile does not match.
+
+#### Model staging and lookup
+
+`--aviti_models_dir` (required when `--aviti_input` is set) is a single shared
+directory holding the Cellpose 3.x model files. It is staged once per run and
+both the nuclear and membrane models are resolved from it by name:
+
+- the nuclear model as `${aviti_models_dir}/${aviti_nuclear_model}` (one fixed
+  choice for the whole run), and
+- each row's `membrane_model`, when set, as
+  `${aviti_models_dir}/${membrane_model}`.
+
+`PIPELINE_INITIALISATION` checks up front that `aviti_models_dir` exists, that
+the nuclear model resolves to a file inside it, and that every non-blank
+`membrane_model` in the samplesheet resolves to a file inside it, so a bad
+model name fails the run immediately rather than mid-way through. A blank
+`membrane_model` means “use the default Cellpose v4 SAM path”; a non-empty
+model name means “run the Cellpose 3.x membrane model of that name”.
+
+#### Dual Cellpose environments
+
+Whole-cell segmentation uses Cellpose v4 (`cpsam_v2` / segment-anything);
+nuclear and membrane segmentation use the Cellpose 3.x environment pinned to the
+custom AVITI nuclear/membrane checkpoints. These run in separate
+containers/environments and never share a task.
+
+#### AVITI parameters
+
+| Parameter Name                      | Description                                                                                                                                                                                                                                                         |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `aviti_input`                       | Path to the AVITI samplesheet (columns: `sample`, `run_dir`[, `wells`][, `membrane_model`][, `cell_diameter`]).                                                                                                                                                     |
+| `aviti_channel_mode`                | `auto` (default), `2ch`, or `3ch`.                                                                                                                                                                                                                                  |
+| `aviti_models_dir`                  | Shared directory containing the Cellpose 3.x model files for AVITI nuclear and membrane segmentation. **Required** when `--aviti_input` is set.                                                                                                                     |
+| `aviti_nuclear_model`               | Name of the custom Cellpose 3.x nuclear model under `--aviti_models_dir` (default: `20250212_cellpose_nuc_8diam`).                                                                                                                                                  |
+| `aviti_wholecell_diameter`          | Diameter (pixels) for the Cellpose v4 SAM whole-cell path; this path has no trained-diameter fallback, so it is always a real value (default: `30`). A per-row `cell_diameter` > 0 overrides it for that row.                                                       |
+| `aviti_membrane_diameter`           | Diameter (pixels) for the Cellpose 3.x membrane path; `0` means “let the model use its trained diameter” (default: `0`). A per-row `cell_diameter` > 0 overrides it for that row.                                                                                   |
+| `aviti_nuclear_diameter`            | Diameter (pixels) for the Cellpose 3.x nuclear path; `0` means “let the model use its trained diameter” (default: `0`).                                                                                                                                             |
+| `aviti_cellpose_flow_threshold`     | Cellpose flow threshold, shared by all three AVITI segmentation stages (default: `0.4`).                                                                                                                                                                            |
+| `aviti_cellpose_cellprob_threshold` | Cellpose cell-probability threshold, shared by all three AVITI segmentation stages (default: `0.0`).                                                                                                                                                                |
+| `aviti_cellpose_min_area`           | Discard objects smaller than this many square pixels; shared by the whole-cell (v4 SAM) and Cellpose 3.x membrane paths. `0` (default) disables the filter.                                                                                                         |
+| `aviti_nuclear_min_area`            | Discard nuclei smaller than this many square pixels (Cellpose 3.x nuclear path). Separate from `aviti_cellpose_min_area`, since a floor sized for whole cells would discard every nucleus at the ~8px nuclear diameter (~50px²). `0` (default) disables the filter. |
+| `aviti_tile_gap_microns`            | Visual gap (microns) inserted between adjacent tiles when stitching a well; viewer clarity only, not the true stage gap. Default `32.0`.                                                                                                                            |
+| `aviti_plate_assembly`              | Assemble every well's stitched output for a sample into one plate-level pyramidal OME-TIFF and merged GeoJSON, additive to the per-well outputs. Default `true`. See [Plate-level assembly](#plate-level-assembly) below.                                           |
+| `aviti_plate_report`                | Escape hatch to skip just the plate-level `SEGMENTATIONREPORT` (the image/GeoJSON artefacts are unaffected) -- it needs substantially more memory than a per-well report. Default `true`.                                                                           |
+| `aviti_well_gap_microns`            | Visual gap (microns) inserted between adjacent wells on the plate canvas. Default `500.0`.                                                                                                                                                                          |
+| `aviti_plate_tile_size`             | Output plate OME-TIFF tile edge in pixels; must be a multiple of 16. Default `512`.                                                                                                                                                                                 |
+| `aviti_plate_max_levels`            | Maximum number of reduced-resolution pyramid levels written to the plate OME-TIFF. Default `8`.                                                                                                                                                                     |
+| `aviti_plate_min_level_size`        | Stop adding pyramid levels once both plate image dimensions are at most this many pixels. Default `1024`.                                                                                                                                                           |
+| `aviti_plate_compression`           | TIFF compression for every pyramid level of the plate OME-TIFF (`zlib`, `none`, or `lzw`). Default `zlib`.                                                                                                                                                          |
+| `aviti_plate_classify_by_well`      | Tag every cell in the merged plate GeoJSON with its well as a QuPath classification, so objects can be coloured/filtered by well. Default `false`.                                                                                                                  |
+
+The AVITI path uses its own tuning namespace (`aviti_*`) for diameters and
+Cellpose thresholds instead of the COMET/MIBI `cellpose_*` values, because the
+AVITI segmentation stacks are not the same pipeline and do not share a single
+default cell size or model. The one exception still read from the global
+parameters is `cellpose_pretrained_model` (the v4 SAM whole-cell checkpoint,
+`cpsam_v2` by default), which is already AVITI-friendly as shipped.
+
+`pixel_size_microns` is **not** the AVITI pixel size in the way it is for
+COMET/MIBI: AVITI tile discovery reads the run's own `ImageInfo.PixelSizeUm`
+from `RunParameters.json` and that value -- not the global param -- drives
+well/plate stitching gaps, the plate image's scale bar, and
+`CELLMEASUREMENT`'s µm-based measurements. `pixel_size_microns` is only a
+fallback for a run directory whose `RunParameters.json` predates this field.
+
+#### Plate-level assembly
+
+With `aviti_plate_assembly` on (the default), every well's stitched image and
+`CELLMEASUREMENT` GeoJSON for a sample are additionally combined into one
+plate-level pyramidal OME-TIFF and one merged GeoJSON, viewable as a whole
+plate in QuPath -- in addition to, not instead of, the per-well outputs. Wells
+are placed on the plate grid by their WellLocation id: the letter is the
+**column** and the number is the **row** (A1 top-left, A2 directly below A1,
+B1 the next column across) -- this is the opposite of the standard microplate
+convention, matching how these runs are laid out. See
+[output docs](output.md#plate-level-assembly) for the exact files.
+
+Plate assembly only runs for a sample that actually discovers **more than one
+well**: a "plate" of a single well would just be that well's own stitched
+image again, at the cost of a full pyramidal-image write/read pass, so it is
+skipped. This is judged from the number of wells the run actually resolves
+to, not from whether the samplesheet row set `wells` -- a row that leaves
+`wells` unset can still turn out to cover only one well.
+
+`SEGMENTATIONREPORT` scope follows suit: a sample with more than one well
+gets one plate-level report instead of its per-well report(s), unless
+`aviti_plate_assembly` or `aviti_plate_report` is `false`, or the sample only
+has one well, in which case it falls back to (or simply keeps) its per-well
+report -- disabling plate assembly, or a run that only ever had one well,
+never silently drops a report. The plate report is fed the full-resolution
+plate OME-TIFF, not the small overview, so it shares one pixel frame with the
+plate GeoJSON.
+
+A whole-plate report reads the entire merged GeoJSON into memory (R's
+`jsonlite::fromJSON`, no streaming) and can therefore need substantially more
+memory than a per-well report -- run plate-level reports under the
+`medium`/`large`/`wehi_*` profiles (`process_high` is 24 GB on the default
+profile but 36-744 GB on those), or set `--aviti_plate_report false` to keep
+the plate image/GeoJSON without the report.
+
+The merged plate GeoJSON can hold well over a million cells on a full plate.
+QuPath itself can struggle to load that many objects regardless of file
+format; if it does, try increasing QuPath's `-Xmx` heap setting.
+
+#### Output layout
+
+Per-tile masks are published in the AVITI Cytocanvas viewer's expected layout
+(`Well<well>/<tile>_Cell.tif`, `Well<well>/<tile>_Nuclear.tif`), and per-well
+stitched masks/image are published separately so the existing
+`CELLMEASUREMENT`/`SEGMENTATIONREPORT`/`KRONOS2EMBEDDINGS` steps can run on
+them unmodified. Plate-level artefacts are published alongside these under
+`avitiplate/`. See [output docs](output.md) for the full layout.
+
+Per Elembio's own convention, `<tile>_Nuclear.tif` is a binary 0/1 presence
+mask, unlike `<tile>_Cell.tif` which is instance-labeled -- so nuclear
+segmentation also writes an internal, unpublished `<tile>_Nuclear_label.tif`
+(instance-labeled) for stitching/`CELLMEASUREMENT` to consume instead.
+
 ### KRONOS2 embeddings
 
 KRONOS2 is an optional step that runs after cell measurement and writes a

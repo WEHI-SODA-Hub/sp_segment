@@ -1,0 +1,73 @@
+nextflow_process {
+
+    name "Test Process AVITIASSEMBLEPLATE"
+    script "../main.nf"
+    process "AVITIASSEMBLEPLATE"
+
+    tag "modules"
+    tag "modules_local"
+    tag "aviti"
+    tag "aviti_assembleplate"
+
+    test("aviti_assembleplate - two wells") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test__plate', sample:'test', pixel_size_microns:'' ], // meta map
+                    [
+                        [ well:'A1', image:'test__WellA1_image_stitched.tif' ],
+                        [ well:'B1', image:'test__WellB1_image_stitched.tif' ],
+                    ], // well_rows
+                    [
+                        file('${projectDir}/tests/data/aviti/plate/test__WellA1_image_stitched.tif', checkIfExists: true),
+                        file('${projectDir}/tests/data/aviti/plate/test__WellB1_image_stitched.tif', checkIfExists: true),
+                    ], // images
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out.versions).match() },
+                { assert path(process.out.layout[0][1]).readLines().size() == 3 }, // header + 2 wells
+            )
+        }
+
+    }
+
+    test("aviti_assembleplate - stub") {
+
+        options "-stub"
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test__plate', sample:'test', pixel_size_microns:'' ], // meta map
+                    [
+                        [ well:'A1', image:'test__WellA1_image_stitched.tif' ],
+                        [ well:'B1', image:'test__WellB1_image_stitched.tif' ],
+                    ], // well_rows
+                    [
+                        file('${projectDir}/tests/data/aviti/plate/test__WellA1_image_stitched.tif', checkIfExists: true),
+                        file('${projectDir}/tests/data/aviti/plate/test__WellB1_image_stitched.tif', checkIfExists: true),
+                    ], // images
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert process.success },
+                { assert snapshot(process.out).match() }
+            )
+        }
+
+    }
+
+}

@@ -227,6 +227,101 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **AVITI24 (Teton/Teton Atlas) cytoprofiling runs can be segmented**, through
+  a samplesheet-driven path fully separate from the COMET/MIBI `--input`
+  samplesheet and its Mesmer/SOPA-Cellpose/CellSAM subworkflows. Enable it
+  with `--aviti_input`; `--input` and `--aviti_input` can be used together or
+  independently.
+
+  A samplesheet row (`sample, run_dir, wells[, membrane_model][,
+cell_diameter]`) points at a run directory (`RunParameters.json` +
+  `Projection/`); wells/tiles are discovered from it and processed one task
+  per `(well, tile)` in parallel, on the full tile image -- AVITI tiles are
+  already HPC-friendly in size, so unlike the COMET/MIBI Cellpose path they
+  are not further sub-patched. Every tile is both nuclear- and whole-cell-
+  segmented (there is no `run_mesmer`/`run_cellpose`/`run_cellsam` selector,
+  and background subtraction does not run for AVITI samples); per-well
+  stitching then uses each tile's stage coordinates to rejoin them for the
+  existing CELLMEASUREMENT/KRONOS2/segmentation-report machinery. Outputs
+  publish under `avitisegmentation/<sample>/CellSegmentation/Well<well>/`
+  (per-tile, matching the AVITI Cytocanvas viewer layout) and
+  `avitistitched/<sample>/Well<well>/` (per-well).
+
+  Whole-cell segmentation defaults to Cellpose v4 segment-anything
+  (`cpsam_v2`), or a named Cellpose 3.x membrane model selected per
+  samplesheet row via `membrane_model` -- Elembio ships several pretrained
+  membrane models and the right one depends on cell type. Comparing models on
+  the same run directory is one samplesheet row per model (same `run_dir`/
+  `wells`, distinct `sample` names), not in-pipeline fan-out, so tile
+  discovery and nuclear segmentation simply re-run once per row. Nuclear
+  segmentation always uses a custom Cellpose 3.x model (`aviti_nuclear_model`,
+  default `20250212_cellpose_nuc_8diam`). Both model families are resolved by
+  name under one shared `aviti_models_dir`, staged once per run and validated
+  in `PIPELINE_INITIALISATION` before any tile task runs, so a bad model name
+  fails the run immediately rather than mid-way through. A per-row
+  `cell_diameter` overrides the whole-cell/membrane diameter for that row
+  only.
+
+  Cellpose v4 SAM and Cellpose 3.x cannot be installed in one environment, so
+  whole-cell segmentation and nuclear/membrane segmentation run in two
+  separate containers and never share a task. `bin/aviti_cellpose3_segment.py`
+  covers both the nuclear and membrane Cellpose 3.x paths (`--mode
+{nuclear,membrane}`): membrane mode stacks channels as `[cell, nucleus[,
+actin]]` -- a different order from the v4 SAM path's independently-built
+  `[nucleus, membrane[, actin]]` stack -- and matches the composite's channel
+  count to whatever the selected model checkpoint was trained with (Elembio
+  ships a 2-channel and a 3-channel model per cell type), padding or dropping
+  the actin plane with a loud warning if a run's cell-paint mode does not
+  match the chosen model.
+
+  2-channel (nucleus + membrane) and 3-channel (+ actin) cell-paint modes are
+  auto-detected per tile from whether an `Actin` file is present
+  (`aviti_channel_mode`, default `auto`; force one mode with `2ch`/`3ch`).
+  Per-channel projection TIFFs are located by tile name and channel suffix
+  alone (`*_<tile>_<Nucleus|Cell-Membrane|Actin>.tif`); the imaging batch
+  prefix Elembio writes them under (e.g. `CP01`) is not user-configurable
+  and is not assumed to be the same across channels, since Elembio can split
+  core cell-paint channels from an extended cell-paint pass (Golgi/
+  Mitochondria/ER, never read by this pipeline) into separate batches.
+  Cellpose tuning (diameter, flow/cellprob thresholds, minimum object area)
+  uses its own `aviti_*` parameter namespace, kept separate per segmentation
+  stage where the structure being segmented differs in size -- `aviti_nuclear_min_area`
+  and `aviti_cellpose_min_area` (whole-cell/membrane) are two independent
+  knobs, both defaulting to `0` (no filtering) rather than one shared value,
+  since a floor sized for whole cells would discard every nucleus at the
+  ~8 px nuclear diameter (~50 px²).
+
+  The pixel size used for stitching gaps, OME `PhysicalSizeX/Y`, and
+  `CELLMEASUREMENT`'s µm-based measurements is read per run from
+  `RunParameters.json`'s own `ImageInfo.PixelSizeUm`, not the global
+  `pixel_size_microns` default (which is now only a fallback for a run
+  directory predating that field).
+
+  Every well's stitched output for a sample with **more than one well** can
+  additionally be assembled into one plate-level view
+  (`aviti_plate_assembly`, default `true`, additive to the per-well
+  outputs; a single-well sample has nothing to combine, so it is skipped):
+  a single pyramidal, tiled BigTIFF OME-TIFF laying out every well on the
+  plate grid (letter = column, number = row -- A1 top-left, A2 directly
+  below A1, B1 the next column across), streamed tile-by-tile from the
+  memory-mapped per-well images so the full plate canvas (tens of GB
+  uncompressed) is never held in memory; and one merged GeoJSON translating
+  every well's `CELLMEASUREMENT` annotations into plate coordinates, with
+  one labelled rectangle per well and every colliding id (`properties.id`,
+  `nucleus_label`, `whole_cell_label`) offset to stay unique across the
+  plate, streamed feature-by-feature since a single well's GeoJSON can be
+  gigabytes of text. Both open directly in QuPath. `SEGMENTATIONREPORT`
+  follows suit: a sample with more than one well gets one plate-level
+  report instead of its per-well report(s) (`aviti_plate_report`, default
+  `true`, needs the `medium`/`large`/`wehi_*` profiles for its memory); a
+  single-well sample keeps its per-well report regardless, based on the
+  actual discovered well count rather than whether the samplesheet row set
+  `wells`, since an unrestricted row can still resolve to one well.
+  Published under `avitiplate/<sample>/`.
+
+  See [docs/usage.md](docs/usage.md#aviti24-cytoprofiling-segmentation) for
+  the full samplesheet format, parameter list, and output layout.
+
 - **Resumable polygon extraction in `CELLMEASUREMENT`.** On whole-slide images
   with millions of cells, polygon extraction is the longest phase. Setting the
   new `geometry_checkpoint_dir` parameter writes each completed batch of cells

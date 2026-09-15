@@ -1,0 +1,80 @@
+{
+    "aviti_membranesegment - stub, 3-channel": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test__WellA1__L1R01C01S1",
+                            "tile": "L1R01C01S1",
+                            "membrane_model": "test_model",
+                            "cell_diameter": 0
+                        },
+                        "L1R01C01S1_Cell.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,3847baa01cd1a552c34b87b53c855c87"
+                ],
+                "cell_mask": [
+                    [
+                        {
+                            "id": "test__WellA1__L1R01C01S1",
+                            "tile": "L1R01C01S1",
+                            "membrane_model": "test_model",
+                            "cell_diameter": 0
+                        },
+                        "L1R01C01S1_Cell.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,3847baa01cd1a552c34b87b53c855c87"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2026-09-10T14:31:52.303276457"
+    },
+    "aviti_membranesegment - stub, 2-channel (no actin)": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test__WellA1__L1R01C02S1",
+                            "tile": "L1R01C02S1",
+                            "membrane_model": "test_model",
+                            "cell_diameter": 15
+                        },
+                        "L1R01C02S1_Cell.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,3847baa01cd1a552c34b87b53c855c87"
+                ],
+                "cell_mask": [
+                    [
+                        {
+                            "id": "test__WellA1__L1R01C02S1",
+                            "tile": "L1R01C02S1",
+                            "membrane_model": "test_model",
+                            "cell_diameter": 15
+                        },
+                        "L1R01C02S1_Cell.tif:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,3847baa01cd1a552c34b87b53c855c87"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2026-09-10T14:32:54.172929181"
+    }
+}

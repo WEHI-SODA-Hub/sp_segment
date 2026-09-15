@@ -10,7 +10,7 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["input", "outdir"],
+            "required": ["outdir"],
             "properties": {
                 "input": {
                     "type": "string",
@@ -329,6 +329,147 @@
                 }
             }
         },
+        "aviti_options": {
+            "title": "AVITI24 segmentation options",
+            "type": "object",
+            "fa_icon": "fas fa-th-large",
+            "description": "Parameters used by the AVITI24/Teton/Teton Atlas cytoprofiling segmentation path (params.aviti_input), fully separate from the COMET/MIBI params.input samplesheet.",
+            "properties": {
+                "aviti_input": {
+                    "type": "string",
+                    "format": "file-path",
+                    "exists": true,
+                    "schema": "assets/schema_input_aviti.json",
+                    "mimetype": "text/csv",
+                    "pattern": "^\\S+\\.(csv|y(a)?ml)$",
+                    "description": "Path to comma-separated file listing AVITI runs to segment (columns: sample, run_dir[, wells][, membrane_model][, cell_diameter]). Separate from --input.",
+                    "fa_icon": "fas fa-file-csv"
+                },
+                "aviti_channel_mode": {
+                    "type": "string",
+                    "default": "auto",
+                    "enum": ["auto", "2ch", "3ch"],
+                    "description": "Force 2-channel (nucleus + membrane) or 3-channel (+ actin) cell-paint mode, or auto-detect per run from the presence of the Actin file.",
+                    "fa_icon": "fas fa-sliders-h"
+                },
+                "aviti_models_dir": {
+                    "type": "string",
+                    "format": "directory-path",
+                    "exists": true,
+                    "description": "Shared directory containing the Cellpose 3.x model files for AVITI nuclear and membrane segmentation. Required when --aviti_input is set.",
+                    "fa_icon": "fas fa-folder-open"
+                },
+                "aviti_nuclear_model": {
+                    "type": "string",
+                    "default": "20250212_cellpose_nuc_8diam",
+                    "description": "Name of the custom Cellpose 3.x nuclear model, resolved as <aviti_models_dir>/<aviti_nuclear_model>.",
+                    "fa_icon": "fas fa-file-medical"
+                },
+                "aviti_wholecell_diameter": {
+                    "type": "number",
+                    "default": 30,
+                    "description": "Diameter (pixels) for the Cellpose v4 SAM whole-cell segmentation path.",
+                    "fa_icon": "fas fa-circle"
+                },
+                "aviti_membrane_diameter": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Diameter (pixels) for the Cellpose 3.x membrane segmentation path. 0 uses the model's own trained diameter.",
+                    "fa_icon": "fas fa-circle"
+                },
+                "aviti_nuclear_diameter": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Diameter (pixels) for the Cellpose 3.x nuclear segmentation path. 0 uses the model's own trained diameter.",
+                    "fa_icon": "fas fa-circle"
+                },
+                "aviti_cellpose_flow_threshold": {
+                    "type": "number",
+                    "default": 0.4,
+                    "description": "Maximum flow error allowed for a mask to be kept, shared across all three AVITI segmentation stages.",
+                    "fa_icon": "fas fa-tachometer-alt"
+                },
+                "aviti_cellpose_cellprob_threshold": {
+                    "type": "number",
+                    "default": 0.0,
+                    "description": "Cutoff on Cellpose's per-pixel cell probability, shared across all three AVITI segmentation stages.",
+                    "fa_icon": "fas fa-check-circle"
+                },
+                "aviti_cellpose_min_area": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Discard objects smaller than this many square pixels, shared by the whole-cell (v4 SAM) and Cellpose 3.x membrane paths. 0 (default) disables the filter.",
+                    "fa_icon": "fas fa-arrows-alt"
+                },
+                "aviti_nuclear_min_area": {
+                    "type": "number",
+                    "default": 0,
+                    "description": "Discard nuclei smaller than this many square pixels (Cellpose 3.x nuclear path). Separate from aviti_cellpose_min_area since nuclei are far smaller than whole cells; 0 (default) disables the filter.",
+                    "fa_icon": "fas fa-arrows-alt"
+                },
+                "aviti_tile_gap_microns": {
+                    "type": "number",
+                    "default": 32.0,
+                    "description": "Visual gap in microns inserted between adjacent tiles when stitching a well, for viewer clarity only -- not a measurement of the true stage gap between tiles.",
+                    "fa_icon": "fas fa-arrows-alt-h",
+                    "hidden": true
+                },
+                "aviti_plate_assembly": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Assemble every well's stitched output for a sample into one plate-level pyramidal OME-TIFF and one merged GeoJSON, viewable as a whole plate in QuPath. Additive to the per-well outputs, which are unaffected.",
+                    "fa_icon": "fas fa-th-large"
+                },
+                "aviti_plate_report": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Generate the plate-level segmentation report (when the samplesheet row's wells covers the whole run). Set to false to keep the plate image/GeoJSON but skip the report, which needs substantially more memory than a per-well report.",
+                    "fa_icon": "fas fa-file-medical-alt"
+                },
+                "aviti_plate_classify_by_well": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Tag every cell in the merged plate GeoJSON with its well as a QuPath classification, so objects can be coloured/filtered by well.",
+                    "fa_icon": "fas fa-tags"
+                },
+                "aviti_well_gap_microns": {
+                    "type": "number",
+                    "default": 500.0,
+                    "description": "Visual gap in microns inserted between adjacent wells on the plate canvas.",
+                    "fa_icon": "fas fa-arrows-alt-h",
+                    "hidden": true
+                },
+                "aviti_plate_tile_size": {
+                    "type": "integer",
+                    "default": 512,
+                    "description": "Output plate OME-TIFF tile edge in pixels; must be a multiple of 16.",
+                    "fa_icon": "fas fa-th",
+                    "hidden": true
+                },
+                "aviti_plate_max_levels": {
+                    "type": "integer",
+                    "default": 8,
+                    "description": "Maximum number of reduced-resolution pyramid levels written to the plate OME-TIFF.",
+                    "fa_icon": "fas fa-layer-group",
+                    "hidden": true
+                },
+                "aviti_plate_min_level_size": {
+                    "type": "integer",
+                    "default": 1024,
+                    "description": "Stop adding pyramid levels once both dimensions of the plate image are at most this many pixels.",
+                    "fa_icon": "fas fa-compress",
+                    "hidden": true
+                },
+                "aviti_plate_compression": {
+                    "type": "string",
+                    "default": "zlib",
+                    "enum": ["zlib", "none", "lzw"],
+                    "description": "TIFF compression used for every pyramid level of the plate OME-TIFF.",
+                    "fa_icon": "fas fa-file-archive",
+                    "hidden": true
+                }
+            }
+        },
         "kronos_options": {
             "title": "KRONOS2 embedding options",
             "type": "object",
@@ -461,7 +602,7 @@
                     "minimum": 0.1,
                     "maximum": 10.0,
                     "fa_icon": "fas fa-ruler-combined",
-                    "help_text": "COMET: 0.28 \u00b5m/px, MIBI: 0.390625 \u00b5m/px, OPAL: 0.4964 \u00b5m/px."
+                    "help_text": "COMET: 0.28 \u00b5m/px, MIBI: 0.390625 \u00b5m/px, OPAL: 0.4964 \u00b5m/px. AVITI: 0.48 \u00b5m/px."
                 },
                 "estimate_cell_boundary_dist": {
                     "type": "integer",
@@ -768,6 +909,9 @@
         },
         {
             "$ref": "#/$defs/cellsam_options"
+        },
+        {
+            "$ref": "#/$defs/aviti_options"
         },
         {
             "$ref": "#/$defs/kronos_options"
