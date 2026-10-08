@@ -11,6 +11,9 @@ nextflow_process {
     test("cellmeasurement - basic functionality") {
 
         when {
+            params {
+                use_whole_cell_only = false
+            }
             process {
                 """
                 input[0] = [

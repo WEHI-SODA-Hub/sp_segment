@@ -3,6 +3,20 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Changed
+
+- **:warning: `use_whole_cell_only` now defaults to `true`.** Nuclei are no
+  longer segmented or measured unless `--use_whole_cell_only false` is set.
+  Runs that relied on nuclear masks or nuclear measurements must set it
+  explicitly.
+
+- The **Mask smoothing options** and **Cellpose preprocessing options**
+  parameters are hidden in the Seqera Platform launch form and in `--help`.
+  They are shown with `--show_hidden` and can still be set on the command line
+  or in a params file. Their defaults are unchanged.
+
 ## v0.5.0 - 2026-09-07
 
 ### Changed
