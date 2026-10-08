@@ -122,9 +122,9 @@ You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-c
 
 ### Cell processing parameters
 
-| Parameter Name      | Description                                                                        |
-| ------------------- | ---------------------------------------------------------------------------------- |
-| use_whole_cell_only | Use only the whole-cell segmentation to process cells (skip nuclear segmentation). |
+| Parameter Name      | Description                                                                                                                                            |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| use_whole_cell_only | Use only the whole-cell segmentation to process cells (skip nuclear segmentation). Default: `true`. Set to `false` to also segment and measure nuclei. |
 
 ### Combine channel parameters
 
@@ -304,7 +304,7 @@ were trained on:
 | `equalize_adapthist(clip_limit, kernel)` | sopa     | **off** (`0`)  |
 | percentile (1, 99) rescale               | Cellpose | on (unchanged) |
 
-These four parameters form the **Cellpose preprocessing options** group:
+These four parameters form the **Cellpose preprocessing options** group. They are hidden in the Seqera Platform launch form and in `--help` (shown with `--show_hidden`). They can still be set on the command line or in a params file:
 
 | Parameter Name               | Default | Description                                                                            |
 | ---------------------------- | ------- | -------------------------------------------------------------------------------------- |
@@ -724,6 +724,8 @@ Two things to watch:
 | patch_overlap_pixel | Number of pixels that image patches will overlap                         |
 
 ### Mask smoothing options
+
+These parameters are hidden in the Seqera Platform launch form and in `--help` (shown with `--show_hidden`). They can still be set on the command line or in a params file.
 
 | Parameter Name     | Description                                                                                                                                                                                    |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
