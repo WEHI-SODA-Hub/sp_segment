@@ -97,7 +97,9 @@ AVITI tile discovery reads the run's own `ImageInfo.PixelSizeUm` from
 `pixel_size_microns` default -- for well/plate stitching gaps, the plate
 image's OME `PhysicalSizeX/Y`, and `CELLMEASUREMENT`'s µm-based measurements.
 `pixel_size_microns` is only a fallback for a run directory whose
-`RunParameters.json` predates this field.
+`RunParameters.json` predates this field. That default is COMET's `0.28`, not
+AVITI's (typically `0.48`), so set `--pixel_size_microns` explicitly for such
+runs; see [usage](usage.md#aviti24-cytoprofiling-segmentation).
 
 #### Mesmer segmentation
 
