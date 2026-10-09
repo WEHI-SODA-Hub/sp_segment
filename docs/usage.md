@@ -717,7 +717,7 @@ fallback for a run directory whose `RunParameters.json` predates this field.
 > that value, and stitching gaps, the plate OME `PhysicalSizeX/Y` and all
 > µm-based measurements (including the 20 µm expansion and environment zones)
 > will be scaled wrongly. The only sign is a `WARNING: RunParameters.json has no
-> ImageInfo.PixelSizeUm` line in the `AVITIDISCOVERTILES` task log. For such
+ImageInfo.PixelSizeUm` line in the `AVITIDISCOVERTILES` task log. For such
 > runs, set `--pixel_size_microns` to the instrument's value explicitly. Any
 > value you pass is used as-is; the pipeline cannot tell a deliberate value from
 > a wrong one.
@@ -926,7 +926,7 @@ Two things to watch:
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | enable_measurements         | Calculate intensity and shape measurements for cell compartments (disabling will decrease execution time)                      |
 | percentiles                 | Comma-separated list of percentiles to calculate per channel. Enable measurements must be set to `true` to use this parameter. |
-| pixel_size_microns          | Pixel size in microns, use 0.28 for COMET and 0.390625 for MIBI. For AVITI it is only a fallback, see above (typically 0.48). |
+| pixel_size_microns          | Pixel size in microns, use 0.28 for COMET and 0.390625 for MIBI. For AVITI it is only a fallback, see above (typically 0.48).  |
 | estimate_cell_boundary_dist | Where no matching membrane ROI exists, expand the nucleus by this many pixels                                                  |
 | dist_threshold              | Maximum centroid distance in pixels for matching a nucleus to a whole-cell ROI (default: `10.0`).                              |
 | downsample_factor           | Integer downsample factor applied to image and masks before measurement, `1` = disabled (default: `1.0`).                      |
