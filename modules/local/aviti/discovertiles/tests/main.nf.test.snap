@@ -1,0 +1,49 @@
+{
+    "aviti_discovertiles - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_stub",
+                            "wells": ""
+                        },
+                        "test_stub.manifest.csv:md5,65748571de146b4dfb0ed5610b1178a5"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,6b863e50f06c7f0b017a256dc7118eed"
+                ],
+                "manifest": [
+                    [
+                        {
+                            "id": "test_stub",
+                            "wells": ""
+                        },
+                        "test_stub.manifest.csv:md5,65748571de146b4dfb0ed5610b1178a5"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,6b863e50f06c7f0b017a256dc7118eed"
+                ]
+            }
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2026-09-14T10:36:59.096740106"
+    },
+    "aviti_discovertiles - real run directory": {
+        "content": [
+            [
+                "versions.yml:md5,6b863e50f06c7f0b017a256dc7118eed"
+            ]
+        ],
+        "meta": {
+            "nf-test": "0.9.2",
+            "nextflow": "25.04.4"
+        },
+        "timestamp": "2026-09-10T14:30:19.931781802"
+    }
+}

@@ -1,0 +1,66 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: AVITIMERGEPLATEGEOJSON
+description: |
+  Merges each well's cellmeasurement GeoJSON into one plate-level
+  FeatureCollection in plate pixel coordinates, using the well placements
+  from AVITIASSEMBLEPLATE's layout CSV so cell polygons and the plate image
+  agree on where every well is. Adds one labelled rectangle annotation per
+  well, drops each well's own whole-image bounds annotation, and offsets the
+  colliding id namespaces (properties.id, nucleus_label, whole_cell_label)
+  so every cell has a unique identity across the whole plate. Streams
+  feature-by-feature rather than loading a well's GeoJSON in full, since a
+  single well can carry gigabytes of feature text.
+keywords:
+  - AVITI
+  - Teton
+  - cytoprofiling
+  - plate-level aggregation
+  - GeoJSON
+tools:
+  - aviti_merge_plate_geojson:
+      description: Custom WEHI SODA Hub script to stream-merge per-well cellmeasurement GeoJSON into one plate-level FeatureCollection
+      homepage: https://github.com/WEHI-SODA-Hub/sp_segment
+      documentation: https://github.com/WEHI-SODA-Hub/sp_segment
+      licence: ["MIT"]
+
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test__plate', sample:'test' ]
+  - well_rows:
+      type: list
+      description: |
+        List of maps, one per well of this sample, each with keys well,
+        geojson (the latter being the basename of the staged file passed in
+        geojsons)
+  - geojsons:
+      type: file
+      description: Per-well cellmeasurement annotation GeoJSON files for this sample
+      pattern: "*.geojson{,.gz}"
+  - layout:
+      type: file
+      description: Plate layout CSV (well,col,row,x0,y0,width,height) written by AVITIASSEMBLEPLATE
+      pattern: "*_plate_layout.csv"
+
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test__plate', sample:'test' ]
+  - annotations:
+      type: file
+      description: Merged plate-level GeoJSON (every cell in plate coordinates, plus one rectangle per well)
+      pattern: "*_plate.geojson{,.gz}"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@mcmero"
+maintainers:
+  - "@mcmero"

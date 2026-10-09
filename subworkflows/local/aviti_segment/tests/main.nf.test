@@ -1,0 +1,196 @@
+nextflow_workflow {
+
+    name "Test Subworkflow AVITI_SEGMENT"
+    script "../main.nf"
+    workflow "AVITI_SEGMENT"
+
+    tag "subworkflows"
+    tag "subworkflows_"
+    tag "subworkflows/aviti_segment"
+    tag "aviti"
+
+    // Real (non-stub) execution requires a GPU and real Cellpose model
+    // checkpoints for three separate segmenters, none of which is available
+    // in this test environment, so this exercises the stub path only. The
+    // point of this test is the per-row branch/mix/join wiring (does a
+    // blank membrane_model route through AVITIWHOLECELLSEGMENT and a set
+    // membrane_model through AVITIMEMBRANESEGMENT, without disturbing the
+    // shared nuclear/image joins or well-level grouping?), not segmentation
+    // content -- see tests/python/test_aviti_cellpose3_segment.py and the
+    // per-module nf-tests for that.
+    //
+    // AVITIDISCOVERTILES' stub emits two wells (A1, A2) of two tiles each
+    // for any sample id not containing "single_well" -- see its own main.nf
+    // for why -- so both sample rows below produce real, multi-well tiles
+    // to route rather than an empty manifest.
+    test("aviti_segment - blank and set membrane_model coexist in one run") {
+
+        options "-stub"
+
+        when {
+            workflow {
+                """
+                input[0] = Channel.of(
+                    // Blank membrane_model -- routes through AVITIWHOLECELLSEGMENT (v4 SAM),
+                    // the unchanged default path.
+                    [
+                        [ id:'test_v4', wells:'', membrane_model:'', cell_diameter:0 ],
+                        file('${projectDir}/tests/data/aviti', checkIfExists: true)
+                    ],
+                    // Non-blank membrane_model -- routes through AVITIMEMBRANESEGMENT.
+                    // Comparing models on the same run_dir is one samplesheet row per
+                    // model/sample, per the documented pattern -- not fan-out.
+                    [
+                        [ id:'test_v3', wells:'', membrane_model:'test_model', cell_diameter:15 ],
+                        file('${projectDir}/tests/data/aviti', checkIfExists: true)
+                    ]
+                )
+                // ch_nuclear_model: any existing file works as a stand-in in stub
+                // mode (its content is never read), matching AVITINUCLEARSEGMENT's
+                // own stub test -- deliberately *not* one of the tile TIFFs above,
+                // since AVITINUCLEARSEGMENT's per-tile task stages both the tile's
+                // own nucleus_tif and this model file together, and Nextflow
+                // refuses two distinct inputs staged under the same basename.
+                input[1] = Channel.value(file('${projectDir}/tests/data/aviti/RunParameters.json', checkIfExists: true))
+                // ch_membrane_models_dir: must resolve models_dir/test_model for the
+                // test_v3 row above.
+                input[2] = Channel.value(file('${projectDir}/tests/data/aviti/models', checkIfExists: true))
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                // Two wells (A1, A2) per sample: one stitched whole-cell mask each,
+                // regardless of which branch (v4 SAM vs Cellpose 3.x membrane model)
+                // produced the per-tile masks that fed it -- confirms mix() didn't
+                // drop either branch and join()/groupTuple() completed for both.
+                { assert workflow.out.wholecell_segmentation_mask.size() == 4 },
+                { assert workflow.out.nuclear_segmentation_mask.size() == 4 },
+                { assert workflow.out.annotations.size() == 4 },
+                {
+                    def well_ids = workflow.out.wholecell_segmentation_mask.collect { meta, _mask -> meta.id }.sort()
+                    assert well_ids == ['test_v3__WellA1', 'test_v3__WellA2', 'test_v4__WellA1', 'test_v4__WellA2']
+                },
+                // annotations/kronos_input are the channels the top-level
+                // KRONOS2EMBEDDINGS join in workflows/sp_segment.nf keys on --
+                // plate assembly (on by default here) must not add or remove
+                // anything from either, or that join breaks.
+                {
+                    def well_ids = workflow.out.annotations.collect { meta, _f -> meta.id }.sort()
+                    assert well_ids == ['test_v3__WellA1', 'test_v3__WellA2', 'test_v4__WellA1', 'test_v4__WellA2']
+                },
+                {
+                    def well_ids = workflow.out.kronos_input.collect { meta, _tiff, _mask -> meta.id }.sort()
+                    assert well_ids == ['test_v3__WellA1', 'test_v3__WellA2', 'test_v4__WellA1', 'test_v4__WellA2']
+                },
+                // Both samples have >1 well, so plate assembly runs for both: one
+                // plate image/layout/GeoJSON per sample, distinctly id'd from the
+                // well-level ones.
+                { assert workflow.out.plate_image.size() == 2 },
+                { assert workflow.out.plate_layout.size() == 2 },
+                { assert workflow.out.plate_annotations.size() == 2 },
+                {
+                    def plate_ids = workflow.out.plate_image.collect { meta, _f -> meta.id }.sort()
+                    assert plate_ids == ['test_v3__plate', 'test_v4__plate']
+                },
+                {
+                    def plate_ids = workflow.out.plate_annotations.collect { meta, _f -> meta.id }.sort()
+                    assert plate_ids == ['test_v3__plate', 'test_v4__plate']
+                }
+            )
+        }
+
+    }
+
+    test("aviti_segment - plate assembly disabled leaves well-level outputs untouched") {
+
+        options "-stub"
+
+        when {
+            params {
+                aviti_plate_assembly = false
+            }
+            workflow {
+                """
+                input[0] = Channel.of(
+                    [
+                        [ id:'test_v4', wells:'', membrane_model:'', cell_diameter:0 ],
+                        file('${projectDir}/tests/data/aviti', checkIfExists: true)
+                    ]
+                )
+                input[1] = Channel.value(file('${projectDir}/tests/data/aviti/RunParameters.json', checkIfExists: true))
+                input[2] = Channel.value(file('${projectDir}/tests/data/aviti/models', checkIfExists: true))
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.wholecell_segmentation_mask.size() == 2 },
+                { assert workflow.out.annotations.size() == 2 },
+                // No plate artefacts at all when the switch is off, even though
+                // this sample has >1 well.
+                { assert workflow.out.plate_image.size() == 0 },
+                { assert workflow.out.plate_layout.size() == 0 },
+                { assert workflow.out.plate_annotations.size() == 0 }
+            )
+        }
+
+    }
+
+    // The >1-well requirement (see subworkflows/local/aviti_segment/main.nf)
+    // must be judged on the *actual* discovered well count, not on whether
+    // the samplesheet row restricted `wells` -- this sample deliberately
+    // leaves `wells` blank (unrestricted) and still only resolves to one
+    // well, via AVITIDISCOVERTILES' "single_well" stub branch. If the
+    // report-scope logic wrongly used "wells is blank" as its signal for
+    // "plate", this sample would get no report at all once plate assembly
+    // is skipped for it.
+    test("aviti_segment - a single-well sample skips plate assembly but still gets a report") {
+
+        options "-stub"
+
+        when {
+            params {
+                generate_report = true
+            }
+            workflow {
+                """
+                input[0] = Channel.of(
+                    [
+                        [ id:'test_single_well', wells:'', membrane_model:'', cell_diameter:0 ],
+                        file('${projectDir}/tests/data/aviti', checkIfExists: true)
+                    ]
+                )
+                input[1] = Channel.value(file('${projectDir}/tests/data/aviti/RunParameters.json', checkIfExists: true))
+                input[2] = Channel.value(file('${projectDir}/tests/data/aviti/models', checkIfExists: true))
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert workflow.success },
+                { assert workflow.out.wholecell_segmentation_mask.size() == 1 },
+                { assert workflow.out.annotations.size() == 1 },
+                // Only one well -- no plate artefacts, even though plate
+                // assembly/reporting are both on by default.
+                { assert workflow.out.plate_image.size() == 0 },
+                { assert workflow.out.plate_layout.size() == 0 },
+                { assert workflow.out.plate_annotations.size() == 0 },
+                // A per-well report is still generated -- the single-well sample
+                // fell back to 'well' scope rather than being silently dropped.
+                { assert workflow.out.report.size() == 1 },
+                {
+                    def report_ids = workflow.out.report.collect { meta, _f -> meta.id }
+                    assert report_ids == ['test_single_well__WellA1']
+                }
+            )
+        }
+
+    }
+
+}
