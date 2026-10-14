@@ -271,10 +271,10 @@ and its nucleus, cut at the midline to neighbouring nuclei and at 12 µm from
 the centroid. VSMCs were left out: aSMA is a continuous sheet and gives no cell
 edge. Mean IoU with the reference, paired over the same cells:
 
-| Comparison                     | Difference in IoU | 95% interval   |
-| ------------------------------ | ----------------- | -------------- |
-| Rescaled mean − raw max        | −0.006            | −0.029, +0.019 |
-| Rescaled max − raw max         | −0.007            | −0.028, +0.016 |
+| Comparison              | Difference in IoU | 95% interval   |
+| ----------------------- | ----------------- | -------------- |
+| Rescaled mean − raw max | −0.006            | −0.029, +0.019 |
+| Rescaled max − raw max  | −0.007            | −0.028, +0.016 |
 
 The membrane input did not change the outlines. With every input, Cellpose
 outlines lie inside the reference (98% or more of each outline is on it) and

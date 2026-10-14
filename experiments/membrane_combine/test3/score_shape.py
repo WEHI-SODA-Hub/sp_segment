@@ -185,7 +185,7 @@ def main():
     with open(OUT / "shape_cells.csv", "w", newline="") as fh:
         keys = sorted({k for row in cells for k in row}, key=lambda k: list(cells[-1]).index(k)
                       if k in cells[-1] else 99)
-        w = csv.DictWriter(fh, fieldnames=keys)
+        w = csv.DictWriter(fh, fieldnames=keys, lineterminator="\n")
         w.writeheader()
         w.writerows(cells)
 
@@ -222,7 +222,7 @@ def main():
                        ("shape_by_type.csv", [{"method": m, "label": lab, **summarise(v)}
                                               for (m, lab), v in sorted(by_type.items())])):
         with open(OUT / name, "w", newline="") as fh:
-            w = csv.DictWriter(fh, fieldnames=list(rows[0]))
+            w = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\n")
             w.writeheader()
             w.writerows(rows)
     print("skipped (marker too weak):", dict(skipped))

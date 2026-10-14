@@ -18,7 +18,7 @@ for z in zs:
         r=np.asarray(poly.exterior.coords); s=np.diff(r,axis=0); L=np.hypot(*s.T)
         for k in np.where(L>=15)[0]:
             if abs(s[k,1])<1e-6:
-                y=r[k,1]; 
+                y=r[k,1];
                 if 2<y<H-2: n+=1; near+= np.min(np.abs(ys-y))<=1.5
             elif abs(s[k,0])<1e-6:
                 x=r[k,0]

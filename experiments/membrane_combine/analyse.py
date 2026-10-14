@@ -176,7 +176,7 @@ def figure(path, dapi, markers_raw, inputs, masks, segmenters, corner, gt):
 
 def write_csv(path, rows):
     with open(path, "w", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     print(f"wrote {path}")

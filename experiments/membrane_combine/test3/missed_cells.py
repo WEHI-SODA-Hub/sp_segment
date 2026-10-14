@@ -50,5 +50,5 @@ for crop in ['b6_immune', 'b6_macro', 'b2_endo', 'b2_vsmc', 'b2_tcell']:
                      'other_empty_there': cnt['empty'], 'other_merged_into_bigger_cell': cnt['merged'],
                      'other_partial_or_shifted': cnt['other']})
 with open(T + 'membrane_artefacts/out/missed_vs_raw_max.csv', 'w', newline='') as fh:
-    w = csv.DictWriter(fh, fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
+    w = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\n"); w.writeheader(); w.writerows(rows)
 for r in rows: print(r)

@@ -136,7 +136,7 @@ def main():
         print(f"{name}: wrote source and {len(METHODS)} inputs (single = {single})")
 
     with open(out / "samplesheet.csv", "w", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     (out / "singles.json").write_text(json.dumps(singles, indent=2))

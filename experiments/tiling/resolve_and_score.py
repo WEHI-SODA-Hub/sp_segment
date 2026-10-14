@@ -272,6 +272,6 @@ if (D / "whole" / "whole_region.parquet").exists():   # reference: one Cellpose 
     rows.append(row)
     print(row, flush=True)
 with open(OUT, "w", newline="") as fh:
-    w = csv.DictWriter(fh, fieldnames=list(rows[0]))
+    w = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\n")
     w.writeheader()
     w.writerows(rows)

@@ -51,7 +51,7 @@ def main():
                      "median_cell_area_um2": s.get("median_cell_area_um2", "")})
     rows.sort(key=lambda r: -float(r["shape_mean_iou"] or 0))
     with open(OUT / "overall.csv", "w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0]))
+        w = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\n")
         w.writeheader()
         w.writerows(rows)
     print(f"{'method':38s} {'cells':>6s} {'lowDAPI%':>8s} {'GTin':>6s} {'GTalone':>7s} {'IoU':>6s} {'IoUfnd':>6s} {'recall':>6s} {'prec':>6s} {'area':>6s}")

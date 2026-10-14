@@ -139,7 +139,7 @@ def main():
         print(crop, "done", flush=True)
     for name, rows in (("summary.csv", summary), ("cells.csv", cells_rows)):
         with open(out / name, "w", newline="") as fh:
-            w = csv.DictWriter(fh, fieldnames=list(rows[0]))
+            w = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\n")
             w.writeheader()
             w.writerows(rows)
     # totals over crops for the inputs present in all five

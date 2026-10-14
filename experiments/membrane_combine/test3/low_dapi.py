@@ -25,7 +25,7 @@ for crop in ['b6_immune', 'b6_macro', 'b2_endo', 'b2_vsmc', 'b2_tcell']:
         rows.append({'crop': crop, 'input': name, 'cells': len(v), 'low_dapi': int((v < 0.2 * ref).sum()),
                      'low_dapi_pct': round(100 * float((v < 0.2 * ref).mean()), 1), 'ref_p90': round(float(ref))})
 with open(T + 'membrane_artefacts/out/low_dapi.csv', 'w', newline='') as fh:
-    w = csv.DictWriter(fh, fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
+    w = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\n"); w.writeheader(); w.writerows(rows)
 tot = {}
 for r in rows:
     t = tot.setdefault(r['input'], [0, 0, 0]); t[0] += r['cells']; t[1] += r['low_dapi']; t[2] += 1
