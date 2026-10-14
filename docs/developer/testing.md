@@ -67,17 +67,20 @@ just wrote. Update GPU-dependent snapshots (CellSAM) on a GPU node.
 ### Known state
 
 Last full run: 2026-10-14, nf-test 0.9.5, Nextflow 25.10.0, Apptainer, on a
-WEHI A30 GPU node. 38 tests, 16 failed. The same 16 fail on `dev` at c5f1b8e:
+WEHI A30 GPU node, with a valid `DEEPCELL_ACCESS_TOKEN` secret. 38 tests, 37
+pass. The one failure:
+
+- `segmentationreport - basic functionality`: the report HTML has a different
+  md5 on each run. The HTML contains no render date or time, so the cause is
+  not known. Its snapshot was not updated.
+
+Notes:
 
 - Mesmer and CellSAM tests that run the model (`mesmersegment`,
-  `cellsamsegment`, `mesmer_segment`, `cellsam_segment`,
-  `cellsam_segment_wbacksub`) need a valid `DEEPCELL_ACCESS_TOKEN` Nextflow
-  secret. With an expired token they fail with `API token ... is not valid`.
-- Snapshots that differ and have not been diagnosed: `cellmeasurement - basic
-  functionality` and `- stub`, `segmentationreport - basic functionality`,
-  `sopa_segment - tiff`, `sopa_segment_compartment - tiff - whole-cell` and
-  `- nuclear`, and `sopa_segment_wbacksub - tiff`. Quarto may write the render
-  date into the report HTML (not confirmed).
+  `cellsamsegment`, `mesmer_segment`, `mesmer_segment_wbacksub`,
+  `cellsam_segment`, `cellsam_segment_wbacksub`) need a valid
+  `DEEPCELL_ACCESS_TOKEN` Nextflow secret. With an expired token they fail
+  with `API token ... is not valid`.
 - `smoothmasks` has no snapshot of its output masks, and `sopa_cellpose` has no
   test.
 - To update one test, pass its hash: `nf-test test <file>@<hash>`. Only one

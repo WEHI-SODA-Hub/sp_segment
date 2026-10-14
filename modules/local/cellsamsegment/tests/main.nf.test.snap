@@ -7,29 +7,29 @@
                         {
                             "id": "test_whole_cell"
                         },
-                        "test_whole_cell_whole-cell.tiff:md5,6d2f15cac3f91e683f722ad612b89e03"
+                        "test_whole_cell_whole-cell.tiff:md5,28e87faff26ee9efa399e1bd3fb10837"
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,9584c8e6a2d6da91adfbca7fe2630c9e"
+                    "versions.yml:md5,94a6ec2dc3ebd6c3a8845229e3a809bc"
                 ],
                 "segmentation_mask": [
                     [
                         {
                             "id": "test_whole_cell"
                         },
-                        "test_whole_cell_whole-cell.tiff:md5,6d2f15cac3f91e683f722ad612b89e03"
+                        "test_whole_cell_whole-cell.tiff:md5,28e87faff26ee9efa399e1bd3fb10837"
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,9584c8e6a2d6da91adfbca7fe2630c9e"
+                    "versions.yml:md5,94a6ec2dc3ebd6c3a8845229e3a809bc"
                 ]
             }
         ],
-        "timestamp": "2026-05-20T15:02:50.764164237",
+        "timestamp": "2026-10-14T14:53:23.659365953",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.4"
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.0"
         }
     },
     "cellsamsegment - stub": {
@@ -73,29 +73,29 @@
                         {
                             "id": "test_nuclear"
                         },
-                        "test_nuclear_nuclear.tiff:md5,262c8318f9c63788cc9ac243535b0130"
+                        "test_nuclear_nuclear.tiff:md5,dafc4f3bb65f2f22bc25929a1c4eb7af"
                     ]
                 ],
                 "1": [
-                    "versions.yml:md5,9584c8e6a2d6da91adfbca7fe2630c9e"
+                    "versions.yml:md5,94a6ec2dc3ebd6c3a8845229e3a809bc"
                 ],
                 "segmentation_mask": [
                     [
                         {
                             "id": "test_nuclear"
                         },
-                        "test_nuclear_nuclear.tiff:md5,262c8318f9c63788cc9ac243535b0130"
+                        "test_nuclear_nuclear.tiff:md5,dafc4f3bb65f2f22bc25929a1c4eb7af"
                     ]
                 ],
                 "versions": [
-                    "versions.yml:md5,9584c8e6a2d6da91adfbca7fe2630c9e"
+                    "versions.yml:md5,94a6ec2dc3ebd6c3a8845229e3a809bc"
                 ]
             }
         ],
-        "timestamp": "2026-05-20T15:01:51.646029849",
+        "timestamp": "2026-10-14T14:50:59.865041493",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.4"
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.0"
         }
     }
 }

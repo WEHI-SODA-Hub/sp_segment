@@ -72,6 +72,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   now keep their model files in the task directory in that case.
 - `deepcell_cache_dir` is created if it does not exist. Previously every
   Mesmer and CellSAM task failed to start until it was created by hand.
+- nf-test snapshots updated for Mesmer, CellSAM, Cellpose, cell measurement
+  and their subworkflows. 37 of 38 tests pass. Snapshot entries for tests that
+  no longer exist were removed.
 
 ### Documentation
 
