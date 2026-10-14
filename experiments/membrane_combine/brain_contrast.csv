@@ -1,0 +1,6 @@
+region,marker,pixels,raw_max,norm_max,norm_mean,single,marker_alone
+brain,VCW_CD45,1378,0.5,11.59,9.06,0.55,7.31
+brain,VCW_MHCII,439,1.42,9.75,9.22,1.93,10.67
+brain,VCW_Iba1_AIF1,490,3.6,9.7,8.87,1.52,11.4
+brain,VCW_GFAP_diluted,4576,25.56,10.79,8.06,0.56,21.28
+brain,VCW_Integrin_b1,6501,100.7,10.12,6.85,215.26,215.26

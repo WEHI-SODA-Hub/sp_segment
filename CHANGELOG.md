@@ -84,6 +84,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   by `docs/scripts/generate_reference.py`.
 - `nextflow_schema.json` now lists the default of every parameter that has one
   in `nextflow.config`, and its help text is corrected.
+- Added `docs/background/membrane-channels.md`: how membrane channels are
+  combined, and two tests (a brain crop and five atherosclerosis crops with
+  labelled cells) of rescaling each channel before combining. The scripts and
+  results are in `experiments/membrane_combine/`.
 - Removed the KRONOS2 migration working notes and the unused
   `docs/examples/additional_markers.csv`.
 

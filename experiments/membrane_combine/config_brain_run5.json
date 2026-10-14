@@ -1,0 +1,7 @@
+{
+    "nuclear": "DAPI",
+    "markers": ["VCW_CD45", "VCW_MHCII", "VCW_Iba1_AIF1", "VCW_GFAP_diluted", "VCW_Integrin_b1"],
+    "single": "VCW_Integrin_b1",
+    "segmenters": ["cellpose", "mesmer", "cellsam"],
+    "regions": [{ "name": "brain", "tiff": "/vast/scratch/users/mckay.m/comet_container_test/out/run5_crop.ome.tif" }]
+}

@@ -1,0 +1,13 @@
+region,method,segmenter,cells,median_um2,nuclei,nuclei_in_cell
+brain,raw_max,cellpose,92,61.0,153,60.8
+brain,raw_max,mesmer,104,141.4,153,66.0
+brain,raw_max,cellsam,92,107.5,153,64.1
+brain,norm_max,cellpose,81,56.1,153,55.6
+brain,norm_max,mesmer,125,130.3,153,76.5
+brain,norm_max,cellsam,75,143.3,153,63.4
+brain,norm_mean,cellpose,77,56.8,153,49.7
+brain,norm_mean,mesmer,114,142.2,153,75.2
+brain,norm_mean,cellsam,72,155.2,153,64.1
+brain,single,cellpose,89,64.7,153,58.8
+brain,single,mesmer,94,140.9,153,66.0
+brain,single,cellsam,95,84.8,153,66.7

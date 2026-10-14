@@ -1,0 +1,57 @@
+{
+    "nuclear": "R1_DAPI",
+    "markers": [
+        "R2_CSL_CD11c",
+        "R2_CSL_VECadherin",
+        "R1_CSL_aSMA",
+        "R2_CSL_Adipophilin",
+        "R1_CSL_S100A9",
+        "R1_CSL_FAP",
+        "R1_CSL_MMP9",
+        "R1_CSL_CD45",
+        "R1_CSL_MPO",
+        "R1_CSL_HistoneH3",
+        "R1_CSL_CD3",
+        "R2_CSL_CD68"
+    ],
+    "single": "auto",
+    "segmenters": ["cellpose", "mesmer", "cellsam"],
+    "ground_truth": "/vast/projects/CSL_COMET/csl_artherosclerosis/ground_truth_8_10_25.csv",
+    "regions": [
+        {
+            "name": "b6_immune",
+            "tiff": "/vast/projects/CSL_COMET/csl_artherosclerosis/ExportedAnnotations/20260826_163033_3_k1ghXo_CSL_batch6_cohort_25_1592_1A_26_948_1_Y_Z_33ch_AS_1.ome.tif",
+            "y": 18912,
+            "x": 12668,
+            "size": 2048
+        },
+        {
+            "name": "b6_macro",
+            "tiff": "/vast/projects/CSL_COMET/csl_artherosclerosis/ExportedAnnotations/20260826_163033_3_k1ghXo_CSL_batch6_cohort_25_1592_1A_26_948_1_Y_Z_33ch_AS_1.ome.tif",
+            "y": 14816,
+            "x": 12156,
+            "size": 2048
+        },
+        {
+            "name": "b2_endo",
+            "tiff": "/vast/projects/CSL_COMET/csl_artherosclerosis/ExportedAnnotations/20260704_144559_1_hScla8_CSL_batch2_cohort_24_2721_4A_26_948_1_A_B_34ch_AS_1.ome.tif",
+            "y": 3072,
+            "x": 28272,
+            "size": 2048
+        },
+        {
+            "name": "b2_vsmc",
+            "tiff": "/vast/projects/CSL_COMET/csl_artherosclerosis/ExportedAnnotations/20260704_144559_1_hScla8_CSL_batch2_cohort_24_2721_4A_26_948_1_A_B_34ch_AS_1.ome.tif",
+            "y": 2560,
+            "x": 12656,
+            "size": 2048
+        },
+        {
+            "name": "b2_tcell",
+            "tiff": "/vast/projects/CSL_COMET/csl_artherosclerosis/ExportedAnnotations/20260704_144559_1_hScla8_CSL_batch2_cohort_24_2721_4A_26_948_1_A_B_34ch_AS_1.ome.tif",
+            "y": 9728,
+            "x": 35440,
+            "size": 2048
+        }
+    ]
+}
