@@ -10,14 +10,14 @@ a YAML list. Each row is one image.
 
 | Column | Required | Type | Default | Description |
 | --- | --- | --- | --- | --- |
-| `sample` | yes | string |  | Must match `^\S+$`. |
-| `run_backsub` | no | boolean | `false` |  |
-| `run_mesmer` | no | boolean | `false` |  |
-| `run_cellpose` | no | boolean | `false` |  |
-| `run_cellsam` | no | boolean | `false` |  |
-| `tiff` | yes | string (file-path) |  | Must match `^\S+\.tiff?$`. |
-| `nuclear_channel` | no | string |  | Must match `^[\w-" ]+$`. |
-| `membrane_channels` | no | string |  | Must match `^[\w-" ]+(:[\w-" ]+)*$`. |
+| `sample` | yes | string |  | Sample name. Must be unique in the samplesheet and contain no spaces. Used as the prefix of every output file. Must match `^\S+$`. |
+| `run_backsub` | no | boolean | `false` | Run background subtraction before segmentation. COMET OME-TIFF only. |
+| `run_mesmer` | no | boolean | `false` | Segment with Mesmer. At most one of run_mesmer, run_cellpose and run_cellsam can be true per row. |
+| `run_cellpose` | no | boolean | `false` | Segment with Cellpose (patched, through sopa). At most one of run_mesmer, run_cellpose and run_cellsam can be true per row. |
+| `run_cellsam` | no | boolean | `false` | Segment with CellSAM. At most one of run_mesmer, run_cellpose and run_cellsam can be true per row. |
+| `tiff` | yes | string (file-path) |  | Path to the input image: a COMET OME-TIFF or a multi-channel MIBI TIFF. The path cannot contain spaces. Must match `^\S+\.tiff?$`. |
+| `nuclear_channel` | no | string |  | Name of the nuclear channel, e.g. DAPI. Required when a segmenter is selected. Must match `^[^"':,]+$`. |
+| `membrane_channels` | no | string |  | Names of the membrane channels, separated by ':', e.g. CD45:HLA I. Required when a segmenter is selected. Several channels are combined into one with combine_method. Must match `^[^"':,]+(:[^"':,]+)*$`. |
 
 <!-- END GENERATED: samplesheet -->
 

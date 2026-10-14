@@ -12,9 +12,7 @@
                 "description": "Sample name. Must be unique in the samplesheet and contain no spaces. Used as the prefix of every output file.",
                 "pattern": "^\\S+$",
                 "errorMessage": "Sample name must be provided and cannot contain spaces",
-                "meta": [
-                    "id"
-                ]
+                "meta": ["id"]
             },
             "run_backsub": {
                 "type": "boolean",
@@ -61,9 +59,6 @@
                 "errorMessage": "Membrane channels must be channel names separated by ':'; names cannot contain the characters \" ' ,"
             }
         },
-        "required": [
-            "sample",
-            "tiff"
-        ]
+        "required": ["sample", "tiff"]
     }
 }

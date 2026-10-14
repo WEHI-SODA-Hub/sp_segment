@@ -205,12 +205,17 @@ Parameters used by CellSAM for foundation model cell segmentation.
 | `cellsam_low_contrast_enhancement` | boolean | `false` | Apply contrast enhancement before segmentation, for low-contrast images. |
 | `cellsam_model_path` | string |  | Path to custom CellSAM model weights. If unset, the CellSAM generalist model is used (v1.2 when `DEEPCELL_ACCESS_TOKEN` is set). |
 | [`cellsam_min_area`](#cellsam_min_area) | integer | `200` | Remove cells smaller than this many pixels². `0` keeps every cell. Same default as `cellpose_min_area`. |
+| [`cellsam_remove_border_cells`](#cellsam_remove_border_cells) | boolean | `true` | Remove CellSAM cells that touch the image edge. |
 
 #### `cellsam_min_area`
 
 CellSAM counts each cell's pixels and applies the filter once, after the tiles are merged. The unit is pixels², not µm². At 0.28 µm/pixel, 200 pixels² is 15.7 µm². Cells with an area equal to the threshold are kept.
 
 `cellpose_min_area` measures the area of the cell polygon instead. On test cells the polygon area was 0.93-1.00 times the pixel count (median 0.99), so the two filters remove almost the same cells.
+
+#### `cellsam_remove_border_cells`
+
+Cells cut by the image edge are incomplete, so they are removed by default. Set to `false` to keep them.
 
 ## KRONOS2 embedding options
 
