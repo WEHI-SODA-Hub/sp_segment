@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **:warning: `use_whole_cell_only` now defaults to `true`.** Nuclei are not
   segmented or measured unless `--use_whole_cell_only false` is set. Runs that
   need nuclear masks or nuclear measurements must set it.
+- **:warning: `cellpose_min_area` now defaults to `100` (was `200`).** Cellpose
+  keeps cells from 100 to 199 pixels² that were removed before. Set
+  `--cellpose_min_area 200` to match earlier results. `cellsam_min_area` still
+  defaults to `200`.
 - The **Mask smoothing options** and **Cellpose preprocessing options**
   parameters are hidden in `--help` and the Seqera Platform launch form. Show
   them with `--show_hidden`. They can still be set, and their defaults are

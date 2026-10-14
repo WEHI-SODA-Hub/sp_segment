@@ -12,7 +12,7 @@ Choose the method per sample with the `run_cellpose`, `run_mesmer` or
 | How it runs     | sopa splits the image into patches; one GPU task per patch | one task per mask                                      | one GPU task per mask, tiled inside the task   |
 | Default model   | `cpsam_v2` (Cellpose-SAM)                                  | Mesmer (DeepCell)                                      | CellSAM generalist                             |
 | Token           | none                                                       | `DEEPCELL_ACCESS_TOKEN` required                       | `DEEPCELL_ACCESS_TOKEN` optional               |
-| Size filter     | `cellpose_min_area` (200 pixels²)                          | `mesmer_min_nuclei_area` (40 pixels², nuclei)          | `cellsam_min_area` (200 pixels²)               |
+| Size filter     | `cellpose_min_area` (100 pixels²)                          | `mesmer_min_nuclei_area` (40 pixels², nuclei)          | `cellsam_min_area` (200 pixels²)               |
 | Edge cells      | kept                                                       | removed (`mesmer_remove_border_cells`)                 | removed (`cellsam_remove_border_cells`)        |
 | Main parameters | `cellpose_pretrained_model`, `patch_width_pixel`           | `mesmer_maxima_threshold`, `mesmer_interior_threshold` | `cellsam_bbox_threshold`, `cellsam_block_size` |
 

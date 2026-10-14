@@ -126,9 +126,9 @@
                 "cellpose_min_area": {
                     "type": "number",
                     "description": "Discard cells smaller than this many square pixels. Higher keeps fewer cells; 0 keeps every mask.",
-                    "help_text": "Applied by sopa to each patch during segmentation. The unit is pixels², not µm², so it does not change with `pixel_size_microns`. At 0.28 µm/pixel (COMET), 200 pixels² is 15.7 µm², about a 4.5 µm diameter disc.\n\n`cellsam_min_area` has the same default and the same unit. `mesmer_min_nuclei_area` is a separate filter on nuclei.",
+                    "help_text": "Applied by sopa to each patch during segmentation. The unit is pixels², not µm², so it does not change with `pixel_size_microns`. At 0.28 µm/pixel (COMET), 100 pixels² is 7.8 µm², about a 3.2 µm diameter disc.\n\n`cellsam_min_area` uses the same unit and defaults to 200. `mesmer_min_nuclei_area` is a separate filter on nuclei.",
                     "fa_icon": "fas fa-arrows-alt",
-                    "default": 200
+                    "default": 100
                 },
                 "cellpose_flow_threshold": {
                     "type": "number",
@@ -352,8 +352,8 @@
                 "cellsam_min_area": {
                     "type": "integer",
                     "default": 200,
-                    "description": "Remove cells smaller than this many pixels². `0` keeps every cell. Same default as `cellpose_min_area`.",
-                    "help_text": "CellSAM counts each cell's pixels and applies the filter once, after the tiles are merged. The unit is pixels², not µm². At 0.28 µm/pixel, 200 pixels² is 15.7 µm². Cells with an area equal to the threshold are kept.\n\n`cellpose_min_area` measures the area of the cell polygon instead. On test cells the polygon area was 0.93-1.00 times the pixel count (median 0.99), so the two filters remove almost the same cells.",
+                    "description": "Remove cells smaller than this many pixels². `0` keeps every cell.",
+                    "help_text": "CellSAM counts each cell's pixels and applies the filter once, after the tiles are merged. The unit is pixels², not µm². At 0.28 µm/pixel, 200 pixels² is 15.7 µm². Cells with an area equal to the threshold are kept.\n\n`cellpose_min_area` measures the area of the cell polygon instead. On test cells the polygon area was 0.93-1.00 times the pixel count (median 0.99), so at the same value the two filters remove almost the same cells. `cellpose_min_area` defaults to 100.",
                     "fa_icon": "fas fa-compress-arrows-alt"
                 },
                 "cellsam_remove_border_cells": {

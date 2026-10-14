@@ -51,7 +51,7 @@ container profile, for example `-profile test,singularity`.
 | `test_no_backsub`         | Cellpose            | no                     |                                                                   |
 | `test_multisample`        | Cellpose and Mesmer | Mesmer sample only     | Three samples: two Cellpose, one Mesmer.                          |
 | `test_mesmer`             | Mesmer              | yes                    | Needs `DEEPCELL_ACCESS_TOKEN`.                                    |
-| `test_mesmer_no_backsub`  | Mesmer              | no                     | Needs `DEEPCELL_ACCESS_TOKEN`.                                    |
+| `test_mesmer_no_backsub`  | Mesmer              | no                     | Needs `DEEPCELL_ACCESS_TOKEN`. Currently fails: see below.        |
 | `test_mesmer_kronos2`     | Mesmer              | yes                    | Also runs KRONOS2. Set `KRONOS2_MODEL_DIR` to a KRONOS2 snapshot. |
 | `test_cellsam`            | CellSAM             | yes                    |                                                                   |
 | `test_cellsam_no_backsub` | CellSAM             | no                     |                                                                   |
@@ -66,6 +66,10 @@ nextflow run . -profile test_cellsam,singularity --outdir results
 ```
 
 The test profiles limit each task to 4 CPUs, 15 GB of memory and 1 hour.
+
+`test_mesmer_no_backsub` fails with `PhysicalSizeX or PhysicalSizeY not found
+in the XML`. Mesmer needs the pixel size in the OME-XML, and the synthetic test
+image has none. Background subtraction adds it, so `test_mesmer` passes.
 
 ## First run on your data
 

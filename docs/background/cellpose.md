@@ -17,7 +17,7 @@ else.
 | `cellpose_diameter`            | 30         | Only if cells are outside 7.5-120 pixels.                                                                        |
 | `cellpose_flow_threshold`      | 0.4        | Only if masks are visibly missing or ragged.                                                                     |
 | `cellpose_cellprob_threshold`  | 0.0        | Only if faint cells are missed or background is segmented.                                                       |
-| `cellpose_min_area`            | 200        | Set it for your cell type and pixel size. See [Minimum cell area](min-area.md).                                  |
+| `cellpose_min_area`            | 100        | Set it for your cell type and pixel size. See [Minimum cell area](min-area.md).                                  |
 | `cellpose_gaussian_sigma`      | 0          | No. See [Preprocessing](#preprocessing).                                                                         |
 | `cellpose_clip_limit`          | 0          | No. See [Preprocessing](#preprocessing).                                                                         |
 | `cellpose_clahe_kernel_size`   | not set    | No effect while `cellpose_clip_limit` is 0.                                                                      |

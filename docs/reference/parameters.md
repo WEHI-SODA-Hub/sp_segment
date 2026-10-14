@@ -80,7 +80,7 @@ Parameters used by Cellpose for the cell segmentation.
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | [`cellpose_diameter`](#cellpose_diameter) | integer | `30` | Expected cell diameter in pixels. Cellpose resizes the image by 30 / diameter before segmentation. |
-| [`cellpose_min_area`](#cellpose_min_area) | number | `200` | Discard cells smaller than this many square pixels. Higher keeps fewer cells; 0 keeps every mask. |
+| [`cellpose_min_area`](#cellpose_min_area) | number | `100` | Discard cells smaller than this many square pixels. Higher keeps fewer cells; 0 keeps every mask. |
 | [`cellpose_flow_threshold`](#cellpose_flow_threshold) | number | `0.4` | Maximum flow error allowed for a mask to be kept. Higher finds more cells, including ill-shaped ones; lower keeps fewer, better-formed ones. |
 | [`cellpose_cellprob_threshold`](#cellpose_cellprob_threshold) | number | `0.0` | Cutoff on Cellpose's per-pixel cell probability. Lower finds more and larger cells; higher finds fewer and smaller ones. |
 | [`cellpose_model_type`](#cellpose_model_type) (hidden) | string |  | Retired. Cellpose 4 ignores --model-type; use cellpose_pretrained_model instead. |
@@ -98,9 +98,9 @@ This parameter does not remove any cells. Use `cellpose_min_area` to remove smal
 
 #### `cellpose_min_area`
 
-Applied by sopa to each patch during segmentation. The unit is pixels², not µm², so it does not change with `pixel_size_microns`. At 0.28 µm/pixel (COMET), 200 pixels² is 15.7 µm², about a 4.5 µm diameter disc.
+Applied by sopa to each patch during segmentation. The unit is pixels², not µm², so it does not change with `pixel_size_microns`. At 0.28 µm/pixel (COMET), 100 pixels² is 7.8 µm², about a 3.2 µm diameter disc.
 
-`cellsam_min_area` has the same default and the same unit. `mesmer_min_nuclei_area` is a separate filter on nuclei.
+`cellsam_min_area` uses the same unit and defaults to 200. `mesmer_min_nuclei_area` is a separate filter on nuclei.
 
 #### `cellpose_flow_threshold`
 
@@ -204,14 +204,14 @@ Parameters used by CellSAM for foundation model cell segmentation.
 | `cellsam_gauge_cell_size` | boolean | `false` | Run a first CellSAM pass to estimate cell size before segmentation. |
 | `cellsam_low_contrast_enhancement` | boolean | `false` | Apply contrast enhancement before segmentation, for low-contrast images. |
 | `cellsam_model_path` | string |  | Path to custom CellSAM model weights. If unset, the CellSAM generalist model is used (v1.2 when `DEEPCELL_ACCESS_TOKEN` is set). |
-| [`cellsam_min_area`](#cellsam_min_area) | integer | `200` | Remove cells smaller than this many pixels². `0` keeps every cell. Same default as `cellpose_min_area`. |
+| [`cellsam_min_area`](#cellsam_min_area) | integer | `200` | Remove cells smaller than this many pixels². `0` keeps every cell. |
 | [`cellsam_remove_border_cells`](#cellsam_remove_border_cells) | boolean | `true` | Remove CellSAM cells that touch the image edge. |
 
 #### `cellsam_min_area`
 
 CellSAM counts each cell's pixels and applies the filter once, after the tiles are merged. The unit is pixels², not µm². At 0.28 µm/pixel, 200 pixels² is 15.7 µm². Cells with an area equal to the threshold are kept.
 
-`cellpose_min_area` measures the area of the cell polygon instead. On test cells the polygon area was 0.93-1.00 times the pixel count (median 0.99), so the two filters remove almost the same cells.
+`cellpose_min_area` measures the area of the cell polygon instead. On test cells the polygon area was 0.93-1.00 times the pixel count (median 0.99), so at the same value the two filters remove almost the same cells. `cellpose_min_area` defaults to 100.
 
 #### `cellsam_remove_border_cells`
 
