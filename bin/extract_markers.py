@@ -21,6 +21,51 @@ from typing import Annotated, List
 from tifffile import TiffFile
 
 
+def _local_tag_name(tag: str) -> str:
+    """XML tag name without its namespace."""
+    return tag.split('}', 1)[-1]
+
+
+def ome_channel_meta(ome_xml: str) -> List[dict]:
+    """
+    Marker name, exposure time and background channel for every OME Channel.
+
+    Channels are numbered across all Image/Pixels elements in document order,
+    so a file that stores one channel per Image (TheC is 0 in each) still gets
+    each exposure on its own channel. Background channels are matched to
+    channels by ID, not by position.
+    """
+    root = ET.fromstring(ome_xml)
+    channel_meta: List[dict] = []
+    by_id = {}
+
+    for pixels in (e for e in root.iter() if _local_tag_name(e.tag) == 'Pixels'):
+        offset = len(channel_meta)
+        for ch in (e for e in pixels if _local_tag_name(e.tag) == 'Channel'):
+            cm = {'index': ch.attrib.get('ID'), 'marker_name': ch.attrib.get('Name')}
+            channel_meta.append(cm)
+            if cm['index'] is not None:
+                by_id[cm['index']] = cm
+        n_here = len(channel_meta) - offset
+        for plane in (e for e in pixels if _local_tag_name(e.tag) == 'Plane'):
+            exposure_time = plane.attrib.get('ExposureTime')
+            the_c = int(plane.attrib.get('TheC', 0))
+            if exposure_time is not None and the_c < n_here:
+                channel_meta[offset + the_c]['exposure'] = float(exposure_time)
+
+    # COMET writes background channels as ChannelPriv elements (custom
+    # annotations) whose ID is the Channel ID.
+    for priv in (e for e in root.iter() if _local_tag_name(e.tag) == 'ChannelPriv'):
+        cm = by_id.get(priv.attrib.get('ID'))
+        if cm is None:
+            continue
+        background = priv.attrib.get('FluorescenceChannel')
+        cm['background'] = "" if background == cm['marker_name'] else background
+
+    return channel_meta
+
+
+
 def main(
     tiff_path: Annotated[Path, typer.Argument(
         help="Path to the TIFF input file."
@@ -43,37 +88,7 @@ def main(
 
     if ome_metadata:
         try:
-            root = ET.fromstring(ome_metadata)
-            ns = {'ome': 'http://www.openmicroscopy.org/Schemas/OME/2016-06'}
-
-            # Extract channel name and index
-            channels = root.findall('.//ome:Channel', ns)
-            for ch in channels:
-                name = ch.attrib.get('Name')
-                channel_index = ch.attrib.get('ID')
-                channel_meta.append({'index': channel_index, 'marker_name': name})
-
-            # Extract exposure times
-            planes = root.findall('.//ome:Plane', ns)
-            for pl in planes:
-                c_index = int(pl.attrib.get('TheC'))
-                exposure_time = pl.attrib.get('ExposureTime')
-                if exposure_time is not None:
-                    # planes are in channel order
-                    channel_meta[c_index]['exposure'] = float(exposure_time)
-
-            # Extract background channels
-            channel_privs = root.findall('.//ome:ChannelPriv', ns)
-            for idx, priv in enumerate(channel_privs):
-                channel_id = priv.attrib.get('ID')
-                for cm in channel_meta:
-                    if cm['index'] == channel_id:
-                        background = priv.attrib.get('FluorescenceChannel')
-                        if background == cm['marker_name']:
-                            channel_meta[idx]['background'] = ""
-                        else:
-                            channel_meta[idx]['background'] = background
-                        break
+            channel_meta = ome_channel_meta(ome_metadata)
         except ET.ParseError:
             channel_meta = []
 

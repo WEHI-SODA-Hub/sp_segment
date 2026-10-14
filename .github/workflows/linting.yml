@@ -43,7 +43,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install test dependencies
-        run: pip install pytest numpy tifffile rasterio shapely pyarrow typer
+        run: pip install pytest numpy pandas tifffile rasterio shapely pyarrow typer
 
       - name: Run pytest
         run: pytest tests/python -q
