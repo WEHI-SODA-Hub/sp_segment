@@ -22,7 +22,7 @@ process MESMERSEGMENT {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def membrane_channel_args = membrane_channels != '' && membrane_channels != [] ?
         membrane_channels.split(":").collect { channel ->
-            "--membrane-channel \"${channel}\""
+            "--membrane-channel '${channel}'"
         }.join(' ') : ''
     """
     # Phase 1: Serialize model download — first task downloads, others wait
@@ -47,14 +47,15 @@ process MESMERSEGMENT {
     mesmer-segment \\
         "${tiff}" \\
         --compartment ${compartment} \\
-        --nuclear-channel ${nuclear_channel} \\
+        --nuclear-channel '${nuclear_channel}' \\
         ${membrane_channel_args} \\
         ${args} \\
         > "${prefix}_${compartment}.tiff"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        mesmersegmentation: v0.1.0
+        mesmersegmentation: \$(python -c "import importlib.metadata as m; print(m.version('mesmer_segment'))")
+        deepcell: \$(python -c "import importlib.metadata as m; print(m.version('DeepCell'))")
     END_VERSIONS
     """
 
@@ -65,7 +66,8 @@ process MESMERSEGMENT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        mesmersegmentation: v0.1.0
+        mesmersegmentation: \$(python -c "import importlib.metadata as m; print(m.version('mesmer_segment'))")
+        deepcell: \$(python -c "import importlib.metadata as m; print(m.version('DeepCell'))")
     END_VERSIONS
     """
 }

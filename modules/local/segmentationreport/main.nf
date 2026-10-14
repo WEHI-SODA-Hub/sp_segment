@@ -43,8 +43,8 @@ process SEGMENTATIONREPORT {
         ${args} \\
         -P geojson_file:${annotations} \\
         -P sample_name:${meta.id} \\
-        -P nuclear_channel:${nuclear_channel} \\
-        -P membrane_channels:"${membrane_channels}" \\
+        -P 'nuclear_channel:${nuclear_channel}' \\
+        -P 'membrane_channels:${membrane_channels}' \\
         -P image_file:"${image_file}" \\
         -P run_cellpose:${run_cellpose} \\
         -P run_mesmer:${run_mesmer} \\

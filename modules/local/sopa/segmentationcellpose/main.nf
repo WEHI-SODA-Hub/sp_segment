@@ -24,7 +24,7 @@ process SOPA_SEGMENTATIONCELLPOSE {
 
     script:
     def args = task.ext.args ?: ''
-    def membrane_channel_arg = (membrane_channel && membrane_channel != "[]") ? "--channels \"${membrane_channel}\"" : ""
+    def membrane_channel_arg = (membrane_channel && membrane_channel != "[]") ? "--channels '${membrane_channel}'" : ""
     """
     export NUMBA_CACHE_DIR=\$PWD/.numba_cache
 
@@ -47,7 +47,7 @@ process SOPA_SEGMENTATIONCELLPOSE {
         ${args} \\
         --patch-index ${index} \\
         ${membrane_channel_arg} \\
-        --channels "${nuclear_channel}" \\
+        --channels '${nuclear_channel}' \\
         --diameter ${params.cellpose_diameter} \\
         --min-area ${params.cellpose_min_area} \\
         ${zarr}

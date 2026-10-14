@@ -21,12 +21,12 @@ process COMBINECHANNELS {
 
     def membrane_channel_args = membrane_channels != '' && membrane_channels != [] ?
         membrane_channels.split(":").collect { channel ->
-            "--membrane-channel \"${channel}\""
+            "--membrane-channel '${channel}'"
         }.join(' ') : ''
     """
     combine_channels.py \\
         $args \\
-        --nuclear-channel "${nuclear_channel}" \\
+        --nuclear-channel '${nuclear_channel}' \\
         ${membrane_channel_args} \\
         $tiff > ${prefix}_combined_channels.tiff
 
