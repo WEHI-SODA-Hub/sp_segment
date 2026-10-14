@@ -9,32 +9,40 @@
         "properties": {
             "sample": {
                 "type": "string",
+                "description": "Sample name. Must be unique in the samplesheet and contain no spaces. Used as the prefix of every output file.",
                 "pattern": "^\\S+$",
                 "errorMessage": "Sample name must be provided and cannot contain spaces",
-                "meta": ["id"]
+                "meta": [
+                    "id"
+                ]
             },
             "run_backsub": {
                 "type": "boolean",
+                "description": "Run background subtraction before segmentation. COMET OME-TIFF only.",
                 "default": false,
                 "errorMessage": "Run backsub must be a boolean"
             },
             "run_mesmer": {
                 "type": "boolean",
+                "description": "Segment with Mesmer. At most one of run_mesmer, run_cellpose and run_cellsam can be true per row.",
                 "default": false,
                 "errorMessage": "Run mesmer must be a boolean"
             },
             "run_cellpose": {
                 "type": "boolean",
+                "description": "Segment with Cellpose (patched, through sopa). At most one of run_mesmer, run_cellpose and run_cellsam can be true per row.",
                 "default": false,
                 "errorMessage": "Run cellpose must be a boolean"
             },
             "run_cellsam": {
                 "type": "boolean",
+                "description": "Segment with CellSAM. At most one of run_mesmer, run_cellpose and run_cellsam can be true per row.",
                 "default": false,
                 "errorMessage": "Run cellsam must be a boolean"
             },
             "tiff": {
                 "type": "string",
+                "description": "Path to the input image: a COMET OME-TIFF or a multi-channel MIBI TIFF. The path cannot contain spaces.",
                 "format": "file-path",
                 "exists": true,
                 "pattern": "^\\S+\\.tiff?$",
@@ -42,15 +50,20 @@
             },
             "nuclear_channel": {
                 "type": "string",
-                "pattern": "^[\\w-\" ]+$",
-                "errorMessage": "Nuclear channel must be provided as a single word"
+                "description": "Name of the nuclear channel, e.g. DAPI. Required when a segmenter is selected.",
+                "pattern": "^[^\"':,]+$",
+                "errorMessage": "Nuclear channel must be one channel name; it cannot contain the characters \" ' : ,"
             },
             "membrane_channels": {
                 "type": "string",
-                "pattern": "^[\\w-\" ]+(:[\\w-\" ]+)*$",
-                "errorMessage": "Membrane channels must be provided as a colon-separated list"
+                "description": "Names of the membrane channels, separated by ':', e.g. CD45:HLA I. Required when a segmenter is selected. Several channels are combined into one with combine_method.",
+                "pattern": "^[^\"':,]+(:[^\"':,]+)*$",
+                "errorMessage": "Membrane channels must be channel names separated by ':'; names cannot contain the characters \" ' ,"
             }
         },
-        "required": ["sample", "tiff"]
+        "required": [
+            "sample",
+            "tiff"
+        ]
     }
 }

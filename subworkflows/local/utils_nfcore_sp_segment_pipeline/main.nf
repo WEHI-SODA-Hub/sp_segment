@@ -175,13 +175,28 @@ workflow PIPELINE_INITIALISATION {
     }
 
     //
+    // KRONOS2 inputs are checked up front so a typo fails here rather than
+    // after segmentation and measurement have run.
+    //
+    if (params.enable_kronos) {
+        if (!params.kronos_model_path) {
+            error("enable_kronos is true but kronos_model_path is not set. " +
+                "Set --kronos_model_path to a full KRONOS2 snapshot directory.")
+        }
+        def mapping = params.kronos_marker_mapping?.toString()?.trim()
+        if (mapping && !mapping.startsWith('{') && !file(mapping).exists()) {
+            error("kronos_marker_mapping is neither inline JSON nor an existing file: ${params.kronos_marker_mapping}")
+        }
+    }
+
+    //
     // Create channel from input file provided through params.input
     //
+    def samplesheet_rows = samplesheetToList(params.input, "${projectDir}/assets/schema_input.json")
+    validateInputSamplesheet(samplesheet_rows)
+
     Channel
-        .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
-        .map { samplesheet ->
-            validateInputSamplesheet(samplesheet)
-        }
+        .fromList(samplesheet_rows)
         .set { ch_samplesheet }
 
     emit:
@@ -245,9 +260,50 @@ workflow PIPELINE_COMPLETION {
 //
 // Validate channels from input samplesheet
 //
-def validateInputSamplesheet(input) {
+// Each row is [ meta, run_backsub, run_mesmer, run_cellpose, run_cellsam,
+// tiff, nuclear_channel, membrane_channels ]. The schema checks each value on
+// its own; these rules span columns or rows, so they are checked here, before
+// any task starts. Every problem is reported at once.
+//
+def validateInputSamplesheet(rows) {
+    def errors = []
 
-    return input
+    // Outputs are published as <sample>.<ext> and channels are joined on the
+    // sample, so a repeated name overwrites results and drops samples.
+    rows.collect { row -> row[0].id }
+        .countBy { id -> id }
+        .findAll { _id, count -> count > 1 }
+        .each { id, count ->
+            errors << "Sample '${id}' appears ${count} times. Each row needs a unique sample name; " +
+                "to run several segmenters on one image, use one row per segmenter with different sample names."
+        }
+
+    rows.each { row ->
+        def (meta, run_backsub, run_mesmer, run_cellpose, run_cellsam, _tiff, nuclear_channel, membrane_channels) = row
+        def segmenters = [ mesmer: run_mesmer, cellpose: run_cellpose, cellsam: run_cellsam ]
+            .findAll { _name, enabled -> enabled }
+            .keySet()
+
+        if (segmenters.size() > 1) {
+            errors << "Sample '${meta.id}' enables more than one segmenter (${segmenters.join(', ')}). " +
+                "Set at most one of run_mesmer, run_cellpose and run_cellsam per row."
+        }
+        if (!run_backsub && segmenters.isEmpty()) {
+            errors << "Sample '${meta.id}' has nothing to run: run_backsub, run_mesmer, run_cellpose and run_cellsam are all false."
+        }
+        if (!segmenters.isEmpty()) {
+            if (!nuclear_channel) {
+                errors << "Sample '${meta.id}' runs ${segmenters.join(', ')} but has no nuclear_channel."
+            }
+            if (!membrane_channels) {
+                errors << "Sample '${meta.id}' runs ${segmenters.join(', ')} but has no membrane_channels."
+            }
+        }
+    }
+
+    if (errors) {
+        error("Invalid samplesheet ${params.input}:\n  - " + errors.join("\n  - "))
+    }
 }
 //
 // Generate methods description for MultiQC
