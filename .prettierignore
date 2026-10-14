@@ -11,3 +11,5 @@ testing*
 *.pyc
 bin/
 .venv/
+docs/reference/parameters.md
+docs/reference/samplesheet.md
