@@ -28,7 +28,7 @@ workflow CELLSAM_SEGMENT_WBACKSUB {
             ]
         }
     )
-    ch_versions = ch_versions.mix(BACKGROUNDSUBTRACT.out.versions.first())
+    ch_versions = ch_versions.mix(BACKGROUNDSUBTRACT.out.versions)
 
 
     // Replace tiff with backsub_tif
@@ -58,7 +58,7 @@ workflow CELLSAM_SEGMENT_WBACKSUB {
     CELLSAM_SEGMENT(
         ch_cellsam
     )
-    ch_versions = ch_versions.mix(CELLSAM_SEGMENT.out.versions.first())
+    ch_versions = ch_versions.mix(CELLSAM_SEGMENT.out.versions)
 
     emit:
     nuclear_segmentation_mask    = CELLSAM_SEGMENT.out.nuclear_segmentation_mask    // channel: [ val(meta), *.tiff ]

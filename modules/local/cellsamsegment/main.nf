@@ -39,7 +39,9 @@ process CELLSAMSEGMENT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        cellsam: 0.1.0
+        cellsam: \$(python -c "import importlib.metadata as m; print(m.version('cellSAM'))")
+        segment-anything: \$(python -c "import importlib.metadata as m; print(m.version('segment-anything'))")
+        torch: \$(python -c "import torch; print(torch.__version__)")
     END_VERSIONS
     """
 
@@ -50,7 +52,9 @@ process CELLSAMSEGMENT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        cellsam: 0.1.0
+        cellsam: \$(python -c "import importlib.metadata as m; print(m.version('cellSAM'))")
+        segment-anything: \$(python -c "import importlib.metadata as m; print(m.version('segment-anything'))")
+        torch: \$(python -c "import torch; print(torch.__version__)")
     END_VERSIONS
     """
 }

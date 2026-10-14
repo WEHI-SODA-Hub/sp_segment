@@ -28,7 +28,7 @@ workflow MESMER_SEGMENT_WBACKSUB {
             ]
         }
     )
-    ch_versions = ch_versions.mix(BACKGROUNDSUBTRACT.out.versions.first())
+    ch_versions = ch_versions.mix(BACKGROUNDSUBTRACT.out.versions)
 
 
     // Replace tiff with backsub_tif
@@ -58,7 +58,7 @@ workflow MESMER_SEGMENT_WBACKSUB {
     MESMER_SEGMENT(
         ch_mesmer
     )
-    ch_versions = ch_versions.mix(MESMER_SEGMENT.out.versions.first())
+    ch_versions = ch_versions.mix(MESMER_SEGMENT.out.versions)
 
     emit:
     annotations      = MESMER_SEGMENT.out.annotations       // channel: [ val(meta), *.geojson ]
