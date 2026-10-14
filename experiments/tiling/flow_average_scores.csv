@@ -1,0 +1,7 @@
+crop,method,cells,cells_with_straight_edge,same_as_base_pct,gt_n,gt_in_cell_pct,gt_alone_pct,median_area_um2
+b6_immune,base,1258,108,100.0,146,87.0,87.0,38.8
+b6_immune,consensus,1192,113,86.7,146,87.0,85.6,40.6
+b6_macro,base,526,77,100.0,140,99.3,99.3,71.4
+b6_macro,consensus,525,75,93.5,140,99.3,99.3,72.8
+b2_vsmc,base,239,56,100.0,44,100.0,100.0,25.4
+b2_vsmc,consensus,234,47,93.7,44,100.0,100.0,25.5

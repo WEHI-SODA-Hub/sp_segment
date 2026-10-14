@@ -1,0 +1,7 @@
+crop,method,cells,cells_with_straight_edge,same_as_base_pct,gt_n,gt_in_cell_pct,gt_alone_pct,median_area_um2
+b6_immune,cellpose,1258,108,100.0,146,87.0,87.0,38.8
+b6_immune,ws,1257,108,99.8,146,86.3,86.3,38.8
+b6_macro,cellpose,526,77,100.0,140,99.3,99.3,71.4
+b6_macro,ws,526,77,100.0,140,99.3,99.3,71.4
+b2_vsmc,cellpose,239,56,100.0,44,100.0,100.0,25.4
+b2_vsmc,ws,239,56,100.0,44,100.0,100.0,25.4

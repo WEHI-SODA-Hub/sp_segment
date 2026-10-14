@@ -1,0 +1,22 @@
+crop,variant,cells,straight_cell_cell_15px,straight_cell_background_15px,same_as_default_pct
+b6_immune,default,1283,8,90,100.0
+b6_immune,niter 1000,1279,8,89,99.2
+b6_immune,niter 2000,1279,8,89,99.2
+b6_immune,augment (flips),1217,6,97,79.5
+b6_immune,rotated 45 degrees,1199,1,12,71.4
+b6_immune,tile_overlap 0.1,1283,8,90,100.0
+b6_immune,tile_overlap 0.5,1209,5,99,79.6
+b6_macro,default,530,10,56,100.0
+b6_macro,niter 1000,530,10,56,100.0
+b6_macro,niter 2000,530,10,56,100.0
+b6_macro,augment (flips),514,10,64,83.2
+b6_macro,rotated 45 degrees,527,2,13,77.5
+b6_macro,tile_overlap 0.1,530,10,56,100.0
+b6_macro,tile_overlap 0.5,515,12,56,85.8
+b2_vsmc,default,248,0,81,100.0
+b2_vsmc,niter 1000,248,0,81,100.0
+b2_vsmc,niter 2000,248,0,81,100.0
+b2_vsmc,augment (flips),245,0,82,91.9
+b2_vsmc,rotated 45 degrees,240,0,14,82.7
+b2_vsmc,tile_overlap 0.1,248,0,81,100.0
+b2_vsmc,tile_overlap 0.5,246,0,70,92.3

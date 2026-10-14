@@ -88,6 +88,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   combined, and two tests (a brain crop and five atherosclerosis crops with
   labelled cells) of rescaling each channel before combining. The scripts and
   results are in `experiments/membrane_combine/`.
+- Added `docs/background/tiling-and-straight-edges.md`: where straight cell
+  edges come from (CellSAM block stitching, sopa patch stitching, the
+  Cellpose-SAM network output) and the tests of fixes. The scripts and results
+  are in `experiments/tiling/`.
 - Removed the KRONOS2 migration working notes and the unused
   `docs/examples/additional_markers.csv`.
 

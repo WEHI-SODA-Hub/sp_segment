@@ -101,6 +101,7 @@ nav:
       - Cellpose settings: background/cellpose.md
       - Minimum cell area: background/min-area.md
       - Combining membrane channels: background/membrane-channels.md
+      - Tiling and straight cell edges: background/tiling-and-straight-edges.md
       - KRONOS2 marker handling: background/kronos2.md
   - Troubleshooting: troubleshooting.md
   - Release notes: changelog.md

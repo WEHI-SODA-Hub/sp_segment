@@ -1,0 +1,10 @@
+norm,stitch,cells,overlapping_pairs,straight_edges,straight_on_patch_edge,cells_with_straight_edge_pct,gt_seam_n,gt_seam_in_cell,gt_seam_alone,gt_interior_n,gt_interior_in_cell,gt_interior_alone,strip_cells,strip_same_pct,strip_differs_pct,strip_conflict_pct
+patch,sopa,12390,943,208,1,1.61,137,100.0,79.6,619,99.5,94.7,1472,84.0,7.4,8.6
+patch,owner,12209,0,214,0,1.69,137,97.1,76.6,619,99.5,94.7,1472,84.0,7.4,8.6
+patch,match_context,12390,0,214,0,1.66,137,100.0,79.6,619,99.5,94.7,1472,84.0,7.4,8.6
+patch,match_cellprob,12390,0,220,4,1.71,137,99.3,78.8,619,99.5,94.7,1472,84.0,7.4,8.6
+global,sopa,12330,952,196,2,1.51,137,100.0,79.6,619,97.6,92.7,1425,89.5,5.0,5.5
+global,owner,12186,0,201,0,1.58,137,92.7,73.7,619,97.6,92.7,1425,89.5,5.0,5.5
+global,match_context,12330,0,204,1,1.58,137,100.0,79.6,619,97.6,92.7,1425,89.5,5.0,5.5
+global,match_cellprob,12330,0,217,7,1.69,137,99.3,78.8,619,97.6,92.7,1425,89.5,5.0,5.5
+whole region,none,12188,746,236,2,1.9,137,90.5,70.1,619,95.6,90.8,,,,
