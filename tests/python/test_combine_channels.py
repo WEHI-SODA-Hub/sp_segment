@@ -124,6 +124,16 @@ def test_mibi_names(mibi_tiff):
     assert get_channel_names(mibi_tiff) == NAMES
 
 
+def test_mibi_series_with_singleton_axis():
+    # The repository's MIBI test image reads as one (1, Y, X) series per page.
+    path = Path(__file__).resolve().parents[1] / "data" / "mesmer" / "test_data.tiff"
+    with tifffile.TiffFile(path) as tif:
+        assert [s.shape for s in tif.series] == [(1, 512, 512), (1, 512, 512)]
+        assert channel_layout(tif) == ("split", 2)
+    assert get_channel_names(path) == ["nuclear", "membrane"]
+    assert read_channels(path, [1, 0]).shape == (2, 512, 512)
+
+
 def test_plain_json_description_is_not_mibi(tmp_path):
     # tifffile's default description is {"shape": [...]}, which parses as JSON.
     path = tmp_path / "plain.tif"

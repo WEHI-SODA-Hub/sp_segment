@@ -17,10 +17,12 @@ nextflow_workflow {
             }
             workflow {
                 """
-                input[0] = [
+                // A queue channel, as in the pipeline: the subworkflow joins
+                // each image with its markers file on meta.
+                input[0] = Channel.of([
                     [ id:'test' ], // meta map
                     file('${projectDir}/tests/data/comet/synthetic_multichannel.tif', checkIfExists: true)
-                ]
+                ])
                 """
             }
         }

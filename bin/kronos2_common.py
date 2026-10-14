@@ -357,9 +357,9 @@ class ChannelReader:
             if self.layout == "split":
                 # imread() would hand back series[0] alone, so name the series.
                 with tifffile.TiffFile(self.path) as tif:
-                    self._eager = np.stack(
-                        [tif.series[index].asarray() for index in self.channels]
-                    )
+                    planes = [tif.series[index].asarray() for index in self.channels]
+                    # A series can read as (1, Y, X); keep the plane.
+                    self._eager = np.stack([p.reshape(p.shape[-2:]) for p in planes])
             else:
                 arr = tifffile.imread(self.path)
                 if arr.ndim == 2:
@@ -396,9 +396,9 @@ class ChannelReader:
         if self._eager is not None:
             return self._eager[:, y0:y1, x0:x1]
         if self._zarrs is not None:
-            return np.stack(
-                [np.asarray(arr[y0:y1, x0:x1]) for arr in self._zarrs], axis=0
-            )
+            # Index the last two axes: a split-layout series can be (1, Y, X).
+            planes = [np.asarray(arr[..., y0:y1, x0:x1]) for arr in self._zarrs]
+            return np.stack([p.reshape(p.shape[-2:]) for p in planes], axis=0)
         arr = self._zarr
         if arr.ndim == 2:
             return np.asarray(arr[y0:y1, x0:x1])[np.newaxis]

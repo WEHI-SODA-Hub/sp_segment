@@ -25,13 +25,18 @@ def _local_tag_name(tag):
     return tag.split("}", 1)[-1]
 
 
+def _plane_shape(series):
+    """Series shape without singleton axes; MIBI pages read as ``(1, Y, X)``."""
+    return tuple(d for d in series.shape if d != 1)
+
+
 def channel_layout(tif):
     """How a TIFF stores its channels: ``("stacked" | "split", n_channels)``."""
     series = list(getattr(tif, "series", None) or [])
     if (
         len(series) > 1
-        and all(len(s.shape) == 2 for s in series)
-        and len({tuple(s.shape) for s in series}) == 1
+        and all(len(_plane_shape(s)) == 2 for s in series)
+        and len({_plane_shape(s) for s in series}) == 1
     ):
         return "split", len(series)
     if series:
@@ -148,7 +153,8 @@ def read_channels(tiff_path, indices):
             raise IndexError(f"channel indices {bad} out of range for {n_channels} channels")
 
         if layout == "split":
-            return np.stack([tif.series[i].asarray() for i in indices])
+            planes = [tif.series[i].asarray() for i in indices]
+            return np.stack([p.reshape(p.shape[-2:]) for p in planes])
 
         series = tif.series[0]
         pages = series.pages
