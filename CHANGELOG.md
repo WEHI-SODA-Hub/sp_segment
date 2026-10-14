@@ -15,6 +15,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   them with `--show_hidden`. They can still be set, and their defaults are
   unchanged.
 
+### Added
+
+- `cellsam_remove_border_cells` (default `true`). Set it to `false` to keep
+  CellSAM cells that touch the image edge. Border cells were previously always
+  removed.
+
+### Fixed
+
+- **:warning: Background subtraction could use another sample's markers
+  file.** With two or more `run_backsub` samples in one run, an image could be
+  corrected with another slide's exposure times and background channels.
+  **Re-run background subtraction for runs with more than one backsub
+  sample.**
+- **:warning: `--combine_method prod` saturated the combined membrane
+  channel.** Every pixel whose product exceeded 65535 was set to 65535. The
+  product is now rescaled so its maximum is 65535. The default, `max`, was not
+  affected.
+- `extract_markers` could give a marker another channel's background channel
+  or exposure time when the OME-XML lists ChannelPriv elements in a different
+  order from the channels, or stores one channel per Image. Output for
+  standard COMET files is unchanged.
+- The samplesheet is checked before any task runs. Sample names must be
+  unique; a row can set at most one of `run_mesmer`, `run_cellpose` and
+  `run_cellsam`; a row must run something; segmentation rows need
+  `nuclear_channel` and `membrane_channels`. These cases previously overwrote
+  outputs, dropped samples or crashed.
+- Channel names can contain any character except `"`, `'`, `:` and `,`, and
+  names with spaces are passed correctly to every tool.
+- `combine_channels` reads images that store one channel per OME Image (COMET
+  `_fixed` exports), panels with a repeated channel name, and TIFFs with a
+  plain JSON description. It reads only the nuclear and membrane channels and
+  writes valid OME-XML.
+- CellSAM fails when it finds no cells instead of writing an empty mask. The
+  whole-cell and nuclear tasks no longer race on the shared model download.
+- An invalid `kronos_marker_mapping` (not an existing file and not valid JSON)
+  fails the run. A mapping file is staged into the container, so relative
+  paths work. Mapping entries that match no channel are listed in the marker
+  report. `enable_kronos` without `kronos_model_path` fails at startup.
+- `software_versions.yml` lists every tool. CellSAM and Mesmer versions are
+  read from the installed packages instead of being hardcoded.
+- Cellpose resolve and measurement for a sample start when that sample's
+  patches finish, instead of after every sample's patches.
+- GPU tasks get `--nv` under Apptainer or Singularity with any profile. sopa
+  Cellpose previously ran on CPU unless a `small`, `medium`, `large` or
+  `wehi_*` profile was used.
+- The test profiles read their samplesheets from the pipeline directory.
+
 ### Documentation
 
 - Added a documentation site built with MkDocs Material, deployed to GitHub

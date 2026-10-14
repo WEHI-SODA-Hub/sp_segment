@@ -43,6 +43,8 @@ Rules:
   [Run several methods on one image](how-to/multiple-methods.md).
 - A row must have at least one `run_*` column set to `true`. A row with only
   `run_backsub` set runs background subtraction and nothing else.
+- A row that runs a segmentation method needs `nuclear_channel` and
+  `membrane_channels`.
 - Channel names are written without quotes. Separate membrane channels with
   `:`. Channel names can contain spaces but not `"`, `'`, `:` or `,`.
 - Paths must not contain spaces.
