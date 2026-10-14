@@ -104,7 +104,8 @@ When `enable_kronos = true`:
   `kronos_emb_*` values.
 - `kronos2embeddings/<sample>_marker_report.txt` lists, for each channel, the
   name given to KRONOS2, any mapping applied, any channel left out with
-  `kronos_exclude_markers`, and any name not in the KRONOS2 vocabulary. The
+  `kronos_exclude_markers`, any name not in the KRONOS2 vocabulary, and any
+  `kronos_marker_mapping` entry that matches no channel. The
   first line gives the number of channels KRONOS2 used. The report is written
   even when the run fails on an unmatched marker.
 
