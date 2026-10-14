@@ -75,11 +75,11 @@
             "properties": {
                 "combine_method": {
                     "type": "string",
-                    "description": "How to combine several membrane channels into one: `max` (per-pixel maximum) or `prod` (per-pixel product, rescaled so the maximum is 65535).",
+                    "description": "How to combine several membrane channels into one. `max`: the per-pixel maximum.",
                     "fa_icon": "fas fa-compress-arrows-alt",
-                    "enum": ["max", "prod"],
+                    "enum": ["max"],
                     "default": "max",
-                    "help_text": "Used by Mesmer, Cellpose and CellSAM when `membrane_channels` lists more than one channel. `prod` holds every selected channel in memory as float64, so it uses much more memory than `max` on large images with many channels."
+                    "help_text": "Used by Mesmer, Cellpose and CellSAM when `membrane_channels` lists more than one channel. `max` is the only method."
                 }
             }
         },

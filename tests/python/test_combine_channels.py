@@ -1,7 +1,7 @@
 """
 Tests for bin/combine_channels.py and bin/tiff_channels.py.
 
-Covers the product scaling, both channel layouts (one CYX series, and one 2D
+Covers the max combination, both channel layouts (one CYX series, and one 2D
 series per channel as in the COMET _fixed export), MIBI detection, and the
 OME-XML written for the 2-channel output.
 """
@@ -61,31 +61,6 @@ def mibi_tiff(tmp_path):
 # ---------------------------------------------------------------------------
 # combine()
 # ---------------------------------------------------------------------------
-
-
-def test_prod_rescales_instead_of_saturating():
-    planes = np.stack([
-        np.array([[1000, 10]], dtype=np.uint16),
-        np.array([[2000, 10]], dtype=np.uint16),
-    ])
-    out = combine(planes, CombineMethod.PROD)
-    # 2,000,000 is the peak and maps to 65535; 100 scales by the same factor.
-    assert out.dtype == np.uint16
-    assert out[0, 0] == 65535
-    assert out[0, 1] == round(100 * 65535 / 2_000_000)
-
-
-def test_prod_does_not_wrap_with_many_channels():
-    # 60000**5 overflows uint64; the float64 product must stay ordered.
-    planes = np.stack([np.array([[60000, 30000]], dtype=np.uint16)] * 5)
-    out = combine(planes, CombineMethod.PROD)
-    assert out[0, 0] == 65535
-    assert 0 < out[0, 1] < out[0, 0]
-
-
-def test_prod_within_range_is_unchanged():
-    planes = np.stack([np.array([[10, 20]], dtype=np.uint16)] * 2)
-    assert combine(planes, CombineMethod.PROD).tolist() == [[100, 400]]
 
 
 def test_max():
@@ -190,6 +165,13 @@ def test_cli_single_membrane_keeps_its_name(stacked_tiff, tmp_path):
     result = _run(stacked_tiff, out, "--nuclear-channel", "DAPI", "--membrane-channel", "Pan CK")
     assert result.returncode == 0, result.stderr
     assert get_channel_names(out) == ["DAPI", "Pan CK"]
+
+
+def test_cli_rejects_prod(stacked_tiff, tmp_path):
+    result = _run(stacked_tiff, tmp_path / "x.tiff", "--nuclear-channel", "DAPI",
+                  "--membrane-channel", "CD45", "--membrane-channel", "Pan CK",
+                  "--combine-method", "prod")
+    assert result.returncode != 0
 
 
 def test_cli_unknown_channel_lists_available(stacked_tiff, tmp_path):

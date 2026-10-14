@@ -25,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   CellSAM cells that touch the image edge. Border cells were previously always
   removed.
 
+### Removed
+
+- `combine_method prod`. `max` is the only method for combining membrane
+  channels. Setting `--combine_method prod` fails at startup.
+
 ### Fixed
 
 - **:warning: Background subtraction could use another sample's markers
@@ -32,10 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   corrected with another slide's exposure times and background channels.
   **Re-run background subtraction for runs with more than one backsub
   sample.**
-- **:warning: `--combine_method prod` saturated the combined membrane
-  channel.** Every pixel whose product exceeded 65535 was set to 65535. The
-  product is now rescaled so its maximum is 65535. The default, `max`, was not
-  affected.
 - `extract_markers` could give a marker another channel's background channel
   or exposure time when the OME-XML lists ChannelPriv elements in a different
   order from the channels, or stores one channel per Image. Output for

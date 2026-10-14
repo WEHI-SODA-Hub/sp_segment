@@ -4,8 +4,7 @@ Module      : combine_channels
 Description : Takes a multichannel TIFF (OME-TIFF including OPAL OME/QPTIFF,
               MIBI TIFF, or ImageJ TIFF) and writes a 2-channel OME-TIFF to
               stdout: the nuclear channel, and a membrane channel that is
-              either one input channel or several combined with max or
-              product.
+              either one input channel or the per-pixel maximum of several.
 Copyright   : (c) WEHI SODA Hub, 2025
 License     : MIT
 Maintainer  : Marek Cmero (@mcmero)
@@ -32,7 +31,6 @@ COMBINED_MEMBRANE = "combined_membrane"
 
 
 class CombineMethod(str, Enum):
-    PROD = "prod"
     MAX = "max"
 
 
@@ -53,18 +51,11 @@ def combine(planes: np.ndarray, method: CombineMethod) -> np.ndarray:
     '''
     Combine a (C, Y, X) stack into one uint16 (Y, X) plane.
 
-    max keeps the input scale. prod is computed in float64, which cannot wrap
-    the way an integer product does, and is then rescaled linearly so its
-    maximum is 65535 when it exceeds the uint16 range.
+    max takes the per-pixel maximum and keeps the input scale.
     '''
     if method == CombineMethod.MAX:
         return to_uint16(np.max(planes, axis=0))
-
-    combined = np.prod(planes.astype(np.float64), axis=0)
-    peak = float(combined.max()) if combined.size else 0.0
-    if peak > UINT16_MAX:
-        combined *= UINT16_MAX / peak
-    return to_uint16(combined)
+    raise ValueError(f"unknown combine method: {method}")
 
 
 def channel_index(name: str, channel_names: List[str]) -> int:
@@ -162,7 +153,7 @@ def main(
         help="Name of a membrane channel. Repeat for several channels.")
     ],
     combine_method: Annotated[CombineMethod, typer.Option(
-        help="Method to use for combining channels (prod or max).")
+        help="Method used to combine several membrane channels (max).")
     ] = CombineMethod.MAX,
     pixel_size_microns: Annotated[Optional[float], typer.Option(
         help="Pixel size in microns. Written to OME-XML PhysicalSizeX/Y when "

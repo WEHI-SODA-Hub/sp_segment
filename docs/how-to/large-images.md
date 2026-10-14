@@ -19,8 +19,6 @@ config file. See [Changing resources](../usage.md#changing-resources).
 
 ## Reduce memory
 
-- Use `combine_method max` (the default). `prod` holds every membrane channel in
-  memory as float64.
 - List only the membrane channels you need in `membrane_channels`.
 - Keep `gzip_geojson = true` (the default). Uncompressed GeoJSON for a whole
   slide can exceed 100 GB.

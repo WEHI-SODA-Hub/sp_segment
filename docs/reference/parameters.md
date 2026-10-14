@@ -45,11 +45,11 @@ Parameters used for combining membrane channels.
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
-| [`combine_method`](#combine_method) | string: `max`, `prod` | `max` | How to combine several membrane channels into one: `max` (per-pixel maximum) or `prod` (per-pixel product, rescaled so the maximum is 65535). |
+| [`combine_method`](#combine_method) | string: `max` | `max` | How to combine several membrane channels into one. `max`: the per-pixel maximum. |
 
 #### `combine_method`
 
-Used by Mesmer, Cellpose and CellSAM when `membrane_channels` lists more than one channel. `prod` holds every selected channel in memory as float64, so it uses much more memory than `max` on large images with many channels.
+Used by Mesmer, Cellpose and CellSAM when `membrane_channels` lists more than one channel. `max` is the only method.
 
 ## Cell processing options
 
