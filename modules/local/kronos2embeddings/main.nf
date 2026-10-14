@@ -15,6 +15,7 @@ process KRONOS2EMBEDDINGS {
     input:
     tuple val(meta), path(tiff), path(geojson, stageAs: 'cellmeas_input/*'), val(nuclear_channel)
     path(kronos2_model)
+    path(marker_mapping)  // JSON file, or [] when kronos_marker_mapping is unset or inline JSON
 
     output:
     tuple val(meta), path("*.geojson{,.gz}")     , emit: annotations
@@ -33,6 +34,7 @@ process KRONOS2EMBEDDINGS {
     // The global param overrides the samplesheet's per-sample nuclear channel.
     def nuclear = params.kronos_nuclear_marker ?: nuclear_channel
     def nuclear_arg = nuclear ? "--nuclear-marker '${nuclear}'" : ''
+    def mapping_arg = marker_mapping ? "--marker-mapping ${marker_mapping}" : ''
     """
     kronos2_embeddings.py \\
         --tiff ${tiff} \\
@@ -41,6 +43,7 @@ process KRONOS2EMBEDDINGS {
         --output-geojson ${prefix}${geojson_ext} \\
         --marker-report ${prefix}_marker_report.txt \\
         ${nuclear_arg} \\
+        ${mapping_arg} \\
         ${args}
 
     cat <<-END_VERSIONS > versions.yml

@@ -241,10 +241,23 @@ def main():
     if len(kept_names) == 1:
         log("WARNING: only 1 channel left to embed")
 
-    mapping = load_marker_mapping(args.marker_mapping)
+    try:
+        mapping = load_marker_mapping(args.marker_mapping)
+    except ValueError as exc:
+        log(f"ERROR: {exc}")
+        sys.exit(1)
     markers, applied = apply_marker_mapping(kept_names, mapping)
     if applied:
         log(f"  applied {len(applied)} marker mapping(s)")
+    # A mapping file is often shared across panels, so an entry that matches
+    # no channel is reported rather than treated as an error.
+    unused_mappings = sorted(set(mapping) - set(channel_names))
+    if unused_mappings:
+        log(f"  {len(unused_mappings)} mapping entr(y/ies) match no channel: {unused_mappings}")
+    # preferred_dapi must name a marker in the list handed to the model, so it
+    # follows the mapping when the nuclear channel itself is mapped.
+    if args.nuclear_marker in mapping:
+        args.nuclear_marker = mapping[args.nuclear_marker]
     log(f"  markers given to KRONOS2: {markers}")
 
     # --- cells -------------------------------------------------------------
@@ -273,6 +286,10 @@ def main():
 
     unseen = novel_markers(model, markers, args.nuclear_marker)
     report_extra = []
+    if unused_mappings:
+        report_extra.append(
+            "Mapping entries that match no channel:\n  " + "\n  ".join(unused_mappings)
+        )
     if unseen:
         msg = (
             f"{len(unseen)} of {len(markers)} markers are outside KRONOS2's "

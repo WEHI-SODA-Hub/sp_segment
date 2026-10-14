@@ -165,19 +165,36 @@ def load_marker_mapping(arg):
 
     Keys beginning with ``_`` are treated as comments and dropped, so the
     shipped example file can document itself.
+
+    A value that is neither a readable JSON file nor inline JSON raises
+    ``ValueError``: falling back to no mapping would hand the model the raw
+    channel names, which is the silent failure the mapping exists to prevent.
     """
     if not arg:
         return {}
     if os.path.isfile(arg):
-        with open(arg) as fh:
-            raw = json.load(fh)
+        try:
+            with open(arg) as fh:
+                raw = json.load(fh)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"--marker-mapping file {arg} is not valid JSON: {exc}") from exc
     else:
         try:
             raw = json.loads(arg)
-        except json.JSONDecodeError:
-            log(f"WARNING: --marker-mapping is neither a file nor valid JSON: {arg}")
-            return {}
-    return {k: v for k, v in raw.items() if not k.startswith("_")}
+        except json.JSONDecodeError as exc:
+            raise ValueError(
+                f"--marker-mapping is neither an existing file nor valid JSON: {arg}"
+            ) from exc
+    if not isinstance(raw, dict):
+        raise ValueError(
+            "--marker-mapping must be a JSON object mapping channel names to "
+            f"KRONOS2 marker names, got: {arg}"
+        )
+    mapping = {k: v for k, v in raw.items() if not k.startswith("_")}
+    bad = [k for k, v in mapping.items() if not isinstance(v, str)]
+    if bad:
+        raise ValueError(f"--marker-mapping values must be strings; not for: {bad}")
+    return mapping
 
 
 def apply_marker_mapping(names, mapping):
