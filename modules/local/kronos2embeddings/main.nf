@@ -36,6 +36,11 @@ process KRONOS2EMBEDDINGS {
     def nuclear_arg = nuclear ? "--nuclear-marker '${nuclear}'" : ''
     def mapping_arg = marker_mapping ? "--marker-mapping ${marker_mapping}" : ''
     """
+    # transformers writes the model's remote code to \$HF_HOME/modules, which
+    # defaults to the home directory. \$HOME is often not mounted or not
+    # writable inside the container, so keep the cache in the task directory.
+    export HF_HOME="\$PWD/.hf_home"
+
     kronos2_embeddings.py \\
         --tiff ${tiff} \\
         --geojson ${geojson} \\
