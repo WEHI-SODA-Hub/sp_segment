@@ -23,6 +23,9 @@ The method, results and conclusion are in
 - `csl_scores.csv`, `csl_contrast.csv`, `csl_gt_by_type.csv`: `analyse.py`
   output for test 2 (2026-10-14).
 
+- `test3/`: test 3 (objects without a nucleus, missed cells and outlines,
+  with Cellpose setting variants) on the test 2 crops; see `test3/README.md`.
+
 Usage:
 
 ```bash

@@ -2,14 +2,23 @@
 
 When `membrane_channels` lists more than one channel, the pipeline combines
 them into one membrane channel before segmentation. This page describes how,
-and records two tests of whether rescaling each channel before combining gives
-better segmentation.
+and records three tests of whether rescaling each channel before combining
+gives better segmentation.
 
 ## What the pipeline does
 
-`COMBINECHANNELS` takes the per-pixel maximum of the listed channels, using
-their raw intensities. Cellpose and CellSAM receive this combined channel.
-Mesmer combines the channels the same way inside `mesmer-segment`.
+`combine_method` sets how the channels are combined:
+
+- `max` (default): the per-pixel maximum of the raw intensities.
+- `norm_mean`: each channel is rescaled so its 50th percentile is 0 and its
+  99.5th percentile is 1 (values below 0 are set to 0), then the per-pixel mean
+  is taken and mapped linearly so its maximum is 65535. This is the rescaled
+  mean tested below.
+
+`COMBINECHANNELS` does the combination, and Cellpose and CellSAM receive the
+combined channel. Mesmer combines the channels inside `mesmer-segment`, which
+has only `max`. A sample that runs Mesmer with `norm_mean` and more than one
+membrane channel stops the run at startup.
 
 Each segmenter then rescales the channel it receives. Cellpose rescales to the
 1st and 99th percentiles; Mesmer and CellSAM also apply contrast enhancement
@@ -47,7 +56,7 @@ of the brightest markers.
 | ------------- | ------------------------------------------------------------------------------------------------ |
 | Raw max       | per-pixel maximum of the raw channels (the pipeline's method)                                    |
 | Rescaled max  | each channel rescaled (median → 0, 99.5th percentile → 1, values below 0 set to 0), then maximum |
-| Rescaled mean | the same rescaling, then the per-pixel mean                                                      |
+| Rescaled mean | the same rescaling, then the per-pixel mean (`combine_method norm_mean`)                         |
 | Single        | one marker on its own                                                                            |
 
 Each input was segmented by Cellpose (`cpsam_v2`), Mesmer and CellSAM with the
@@ -225,6 +234,61 @@ Ground truth alone, by cell type (number of labelled cells in brackets):
 - Mesmer gave the largest cells (median 65.9–139.9 µm²) and the most nuclei
   inside a cell (88.7–91.4%) with every input.
 
+## Test 3: objects without a nucleus, missed cells and outlines
+
+Test 3 used the Cellpose masks of test 2 and asked what the ground-truth
+centroids do not show: objects that are not cells, cells that are missed, and
+whether outlines follow the cell. Scores are over the five crops.
+
+Objects without a nucleus. A cell counts as low-DAPI when the 90th percentile
+of DAPI inside it is below 0.2 times the median of the production cells in the
+same crop:
+
+| Input         | Cells | Low-DAPI cells |
+| ------------- | ----- | -------------- |
+| Raw max       | 3834  | 147 (3.8%)     |
+| Rescaled max  | 3597  | 90 (2.5%)      |
+| Rescaled mean | 3480  | 71 (2.0%)      |
+| Single        | 3689  | 42 (1.1%)      |
+
+Most low-DAPI raw-max cells are small, bright membrane specks and fragments of
+fibres in b6_immune. The single marker had the fewest, but in b6_macro it
+outlined a few large, smooth objects in diffuse background, which have faint
+DAPI and are not counted here.
+
+Missed cells. In b6_immune, 227 raw-max cells with clear DAPI (90th percentile
+at least 0.5 times the median production cell) have no matching cell (IoU 0.3
+or higher) in the rescaled mean; at 200 of them the rescaled mean has no cell
+at all. They are in the dense immune region, where rescaling lifts several dim
+markers into an even haze with no edges between cells. In the other four crops
+the rescaled mean lacks 1 to 33 such cells. Ground truth inside a cell in
+b6_immune: raw max 87.0%, rescaled max 78.1%, rescaled mean 66.4%.
+
+Outlines. For 118 labelled cells (macrophages, T cells, endothelial cells,
+fibroblasts, monocytes and 37 of 135 neutrophils), a reference outline was
+built from the cell's own marker (CD68, CD3, VE-cadherin, FAP, CD45, S100A9)
+and its nucleus, cut at the midline to neighbouring nuclei and at 12 µm from
+the centroid. VSMCs were left out: aSMA is a continuous sheet and gives no cell
+edge. Mean IoU with the reference, paired over the same cells:
+
+| Comparison                     | Difference in IoU | 95% interval   |
+| ------------------------------ | ----------------- | -------------- |
+| Rescaled mean − raw max        | −0.006            | −0.029, +0.019 |
+| Rescaled max − raw max         | −0.007            | −0.028, +0.016 |
+
+The membrane input did not change the outlines. With every input, Cellpose
+outlines lie inside the reference (98% or more of each outline is on it) and
+cover 52% to 59% of it, so they are close to nucleus-sized.
+
+Cellpose settings tested on the same crops, with Cellpose run directly on
+each crop (default settings: IoU 0.51, 3849 cells), did not give a better
+default: `cellpose_cellprob_threshold` −1 raised the IoU to 0.57; a flow
+threshold of 2 with cell probability threshold −2 raised it to 0.62 but added
+many objects without a nucleus (6117 cells); sopa's own
+preprocessing (Gaussian sigma 1 and CLAHE clip limit 0.2) with its defaults
+(flow threshold 2, cell probability threshold −6) gave 14594 cells, 69% of
+them low-DAPI.
+
 ## Conclusion
 
 Rescaling each channel before combining helped some segmenters and made others
@@ -237,12 +301,20 @@ worse:
 | CellSAM   | 64.1% → 63.4%                                       | 86.0% → 88.8%                                               |
 
 No input was better than the raw maximum for all three segmenters on both
-datasets, so the pipeline keeps the raw per-pixel maximum. For Cellpose, the
-raw maximum gave the best scores of the four inputs on both datasets.
+datasets, so `max` stays the default. For Cellpose, the raw maximum gave the
+best ground-truth scores of the four inputs on both datasets.
+
+`norm_mean` is available for Cellpose and CellSAM. In test 3 it gave about half
+as many objects without a nucleus as `max` and the same outlines, but missed
+nucleated cells where several dim markers overlap in dense tissue. Use it when
+`max` outlines non-cell objects that a bright marker creates, and check dense
+regions for missed cells.
 
 Limitations:
 
 - Two tissues: one brain crop, and five crops from two atherosclerosis images.
+- The test 3 outlines are a marker-based reference, not hand-drawn outlines,
+  and cover 118 cells of six types.
 - No ground-truth outlines. The atherosclerosis ground truth is cell centroids,
   so it measures whether cells are found and kept apart, not whether their
   outlines are correct.
@@ -282,3 +354,7 @@ a JSON config: `config_brain_run5.json` (test 1) and `config_csl.json`
 
 For another image or panel, write a new config. The keys are described at the
 top of `make_inputs.py`.
+
+Test 3 scripts and result tables are in `experiments/membrane_combine/test3/`;
+see its `README.md`. They read the test 2 inputs and pipeline results from
+WEHI paths.

@@ -65,6 +65,39 @@
             "nextflow": "25.10.0"
         }
     },
+    "combinechannels - two membrane channels, norm_mean": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_combined_channels.tiff:md5,838336218bb8703aaa3ecec73d4ad6b6"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,338938a53c7b3f9fb82462bfe80ec358"
+                ],
+                "combined_tiff": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_combined_channels.tiff:md5,838336218bb8703aaa3ecec73d4ad6b6"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,338938a53c7b3f9fb82462bfe80ec358"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-15T10:43:40.844380447",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.0"
+        }
+    },
     "combinechannels - multi-membrane combine": {
         "content": [
             {

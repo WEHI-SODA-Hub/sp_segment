@@ -45,11 +45,11 @@ Parameters used for combining membrane channels.
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
-| [`combine_method`](#combine_method) | string: `max` | `max` | How to combine several membrane channels into one. `max`: the per-pixel maximum. |
+| [`combine_method`](#combine_method) | string: `max`, `norm_mean` | `max` | How to combine several membrane channels into one. `max`: the per-pixel maximum. `norm_mean`: the mean of the channels after rescaling each to its own 50th-99.5th percentile. |
 
 #### `combine_method`
 
-Used by Mesmer, Cellpose and CellSAM when `membrane_channels` lists more than one channel. `max` is the only method.
+Used when `membrane_channels` lists more than one channel. `max` is used by Mesmer, Cellpose and CellSAM. `norm_mean` is used by Cellpose and CellSAM only; a sample that runs Mesmer with `norm_mean` and more than one membrane channel stops the run at startup. With `max`, a dim marker is hidden wherever a brighter marker has signal; `norm_mean` puts every marker on the same scale. See [Combining membrane channels](https://wehi-soda-hub.github.io/sp_segment/background/membrane-channels/).
 
 ## Cell processing options
 

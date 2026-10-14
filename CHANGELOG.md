@@ -21,14 +21,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `combine_method norm_mean` for Cellpose and CellSAM. Each membrane channel is
+  rescaled to its own 50th–99.5th percentile, then the channels are averaged,
+  so a dim marker is not hidden by a bright one. `max` stays the default. A
+  sample that runs Mesmer with `norm_mean` and more than one membrane channel
+  stops the run at startup, because `mesmer-segment` has only `max`.
 - `cellsam_remove_border_cells` (default `true`). Set it to `false` to keep
   CellSAM cells that touch the image edge. Border cells were previously always
   removed.
 
 ### Removed
 
-- `combine_method prod`. `max` is the only method for combining membrane
-  channels. Setting `--combine_method prod` fails at startup.
+- `combine_method prod`. Setting `--combine_method prod` fails at startup.
 
 ### Fixed
 
@@ -85,9 +89,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `nextflow_schema.json` now lists the default of every parameter that has one
   in `nextflow.config`, and its help text is corrected.
 - Added `docs/background/membrane-channels.md`: how membrane channels are
-  combined, and two tests (a brain crop and five atherosclerosis crops with
-  labelled cells) of rescaling each channel before combining. The scripts and
-  results are in `experiments/membrane_combine/`.
+  combined, and three tests of rescaling each channel before combining: a
+  brain crop, five atherosclerosis crops with labelled cells, and on the same
+  crops objects without a nucleus, missed cells and cell outlines. The scripts
+  and results are in `experiments/membrane_combine/`.
 - Added `docs/background/tiling-and-straight-edges.md`: where straight cell
   edges come from (CellSAM block stitching, sopa patch stitching, the
   Cellpose-SAM network output) and the tests of fixes. The scripts and results

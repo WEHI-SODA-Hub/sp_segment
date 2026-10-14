@@ -313,6 +313,11 @@ def validateInputSamplesheet(rows) {
                 errors << "Sample '${meta.id}' runs ${segmenters.join(', ')} but has no membrane_channels."
             }
         }
+        // mesmer-segment combines the membrane channels itself and only has max.
+        if (run_mesmer && params.combine_method == 'norm_mean' && membrane_channels && membrane_channels.split(':').size() > 1) {
+            errors << "Sample '${meta.id}' runs Mesmer with several membrane channels, but combine_method " +
+                "norm_mean is only available for Cellpose and CellSAM. Use combine_method max for Mesmer samples."
+        }
     }
 
     if (errors) {

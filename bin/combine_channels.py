@@ -4,7 +4,8 @@ Module      : combine_channels
 Description : Takes a multichannel TIFF (OME-TIFF including OPAL OME/QPTIFF,
               MIBI TIFF, or ImageJ TIFF) and writes a 2-channel OME-TIFF to
               stdout: the nuclear channel, and a membrane channel that is
-              either one input channel or the per-pixel maximum of several.
+              either one input channel or a combination of several (the
+              per-pixel maximum, or the mean of percentile-rescaled channels).
 Copyright   : (c) WEHI SODA Hub, 2025
 License     : MIT
 Maintainer  : Marek Cmero (@mcmero)
@@ -32,6 +33,13 @@ COMBINED_MEMBRANE = "combined_membrane"
 
 class CombineMethod(str, Enum):
     MAX = "max"
+    NORM_MEAN = "norm_mean"
+
+
+# norm_mean rescales each channel so this percentile maps to 0 and
+# NORM_HIGH_PERCENTILE maps to 1, before averaging.
+NORM_LOW_PERCENTILE = 50
+NORM_HIGH_PERCENTILE = 99.5
 
 
 def to_uint16(data: np.ndarray) -> np.ndarray:
@@ -52,9 +60,30 @@ def combine(planes: np.ndarray, method: CombineMethod) -> np.ndarray:
     Combine a (C, Y, X) stack into one uint16 (Y, X) plane.
 
     max takes the per-pixel maximum and keeps the input scale.
+
+    norm_mean rescales each channel so that its 50th percentile is 0 and its
+    99.5th percentile is 1 (values below 0 set to 0, values above 1 kept),
+    takes the per-pixel mean, and maps the result linearly so its maximum is
+    65535. Each channel then contributes on the same scale, so a dim marker is
+    not hidden by a bright one. A channel whose two percentiles are equal
+    contributes 0.
     '''
     if method == CombineMethod.MAX:
         return to_uint16(np.max(planes, axis=0))
+    if method == CombineMethod.NORM_MEAN:
+        total = np.zeros(planes.shape[1:], dtype=np.float32)
+        for plane in planes:
+            low, high = np.percentile(plane, [NORM_LOW_PERCENTILE, NORM_HIGH_PERCENTILE])
+            if high > low:
+                scaled = plane.astype(np.float32)
+                scaled -= np.float32(low)
+                scaled *= np.float32(1.0 / (high - low))
+                np.maximum(scaled, 0, out=scaled)
+                total += scaled
+        peak = float(total.max())
+        if peak > 0:
+            total *= np.float32(UINT16_MAX / peak)
+        return to_uint16(total)
     raise ValueError(f"unknown combine method: {method}")
 
 
@@ -153,7 +182,7 @@ def main(
         help="Name of a membrane channel. Repeat for several channels.")
     ],
     combine_method: Annotated[CombineMethod, typer.Option(
-        help="Method used to combine several membrane channels (max).")
+        help="Method used to combine several membrane channels: max or norm_mean.")
     ] = CombineMethod.MAX,
     pixel_size_microns: Annotated[Optional[float], typer.Option(
         help="Pixel size in microns. Written to OME-XML PhysicalSizeX/Y when "

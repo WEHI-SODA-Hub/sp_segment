@@ -43,7 +43,7 @@ input:
   - combine_method:
       type: string
       description: Method for combining membrane channels
-      pattern: "{prod,max}"
+      pattern: "{max,norm_mean}"
 
 output:
   - combined_tiff:

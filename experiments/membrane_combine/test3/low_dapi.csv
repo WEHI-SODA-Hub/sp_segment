@@ -1,0 +1,35 @@
+crop,input,cells,low_dapi,low_dapi_pct,ref_p90
+b6_immune,raw_max,1253,96,7.7,1173
+b6_immune,norm_max,1058,43,4.1,1173
+b6_immune,norm_mean,996,44,4.4,1173
+b6_immune,single,1102,11,1.0,1173
+b6_immune,FAP+aSMA max,1143,69,6.0,1173
+b6_immune,FAP+aSMA rescaled max,1187,40,3.4,1173
+b6_immune,FAP alone,1019,46,4.5,1173
+b6_immune,production,1101,67,6.1,1173
+b6_macro,raw_max,526,15,2.9,830
+b6_macro,norm_max,511,22,4.3,830
+b6_macro,norm_mean,487,15,3.1,830
+b6_macro,single,552,23,4.2,830
+b6_macro,FAP+aSMA max,488,10,2.0,830
+b6_macro,FAP+aSMA rescaled max,481,13,2.7,830
+b6_macro,FAP alone,479,1,0.2,830
+b6_macro,production,501,12,2.4,830
+b2_endo,raw_max,741,7,0.9,1878
+b2_endo,norm_max,734,11,1.5,1878
+b2_endo,norm_mean,725,3,0.4,1878
+b2_endo,single,742,2,0.3,1878
+b2_endo,production,624,5,0.8,1878
+b2_vsmc,raw_max,239,9,3.8,1617
+b2_vsmc,norm_max,229,2,0.9,1617
+b2_vsmc,norm_mean,227,2,0.9,1617
+b2_vsmc,single,226,2,0.9,1617
+b2_vsmc,FAP+aSMA max,235,4,1.7,1617
+b2_vsmc,FAP+aSMA rescaled max,238,8,3.4,1617
+b2_vsmc,aSMA alone,231,4,1.7,1617
+b2_vsmc,production,183,6,3.3,1617
+b2_tcell,raw_max,1075,20,1.9,1930
+b2_tcell,norm_max,1065,12,1.1,1930
+b2_tcell,norm_mean,1045,7,0.7,1930
+b2_tcell,single,1067,4,0.4,1930
+b2_tcell,production,773,11,1.4,1930
