@@ -45,6 +45,8 @@ Rules:
   `run_backsub` set runs background subtraction and nothing else.
 - A row that runs a segmentation method needs `nuclear_channel` and
   `membrane_channels`.
+- Choose membrane channels that outline most cells. See
+  [Combining membrane channels](background/membrane-channels.md).
 - Channel names are written without quotes. Separate membrane channels with
   `:`. Channel names can contain spaces but not `"`, `'`, `:` or `,`.
 - Paths must not contain spaces.
