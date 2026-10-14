@@ -175,6 +175,20 @@ workflow PIPELINE_INITIALISATION {
     }
 
     //
+    // deepcell_cache_dir is bind-mounted into the Mesmer and CellSAM
+    // containers, and a bind source that does not exist stops the container
+    // from starting ("mount source ... doesn't exist"). The modules create
+    // their subdirectories inside the container, which is too late, so create
+    // the directory here.
+    //
+    if (params.deepcell_cache_dir) {
+        def cache = file(params.deepcell_cache_dir)
+        if (!cache.exists() && !cache.mkdirs()) {
+            error("Could not create deepcell_cache_dir: ${params.deepcell_cache_dir}")
+        }
+    }
+
+    //
     // KRONOS2 inputs are checked up front so a typo fails here rather than
     // after segmentation and measurement have run.
     //

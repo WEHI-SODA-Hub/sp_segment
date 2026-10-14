@@ -166,8 +166,8 @@ Notes:
   to run.
 - With Apptainer or Singularity and the layer cache under `$HOME`, the pipeline
   prints a warning at startup.
-- The pipeline mounts `--deepcell_cache_dir` into the Mesmer and CellSAM
-  containers.
+- The pipeline creates `--deepcell_cache_dir` if it does not exist and mounts
+  it into the Mesmer and CellSAM containers.
 
 ### Cellpose model weights
 
