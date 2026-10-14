@@ -41,6 +41,8 @@ import time
 import numpy as np
 import tifffile
 
+from tiff_channels import channel_layout, get_channel_names, is_channel_last  # noqa: F401
+
 # ----------------------------------------------------------------------------
 # logging
 # ----------------------------------------------------------------------------
@@ -99,65 +101,8 @@ def scaling_factor(dtype):
 # ----------------------------------------------------------------------------
 
 
-def channel_layout(tif):
-    """How a TIFF stores its channels: ``("stacked" | "split", n_channels)``.
-
-    Two layouts occur in practice. The usual one keeps every channel in a single
-    ``CYX`` series. The other gives each channel its own 2D series, which some
-    OME writers produce -- notably the inForm unmixing export behind the COMET
-    ``_fixed`` images. A reader that only consults ``series[0]`` sees the second
-    as a one-channel image, and since the patch buffer is sized from the *marker*
-    list, numpy then broadcasts that single channel's pixels under every marker's
-    name: an embedding of one channel wearing eight labels, with no error. Both
-    the name list and the pixel reader derive the channel count from here so they
-    cannot disagree about what a channel is.
-    """
-    series = list(getattr(tif, "series", None) or [])
-    if (
-        len(series) > 1
-        and all(len(s.shape) == 2 for s in series)
-        and len({tuple(s.shape) for s in series}) == 1
-    ):
-        return "split", len(series)
-    if series:
-        shape = tuple(series[0].shape)
-        return "stacked", (shape[0] if len(shape) >= 3 else 1)
-    return "stacked", (len(tif.pages) if len(tif.pages) > 1 else 1)
-
-
-def get_channel_names(tiff_path):
-    """Channel names from OME-XML, then ImageJ labels, then numbered fallback.
-
-    Reads metadata only -- no pixel decode. The result always holds exactly one
-    entry per image channel: a channel the metadata leaves unnamed gets a
-    synthesised name rather than being dropped. Dropping shortened the list while
-    leaving the image unchanged, sliding every later name onto the wrong channel
-    index -- and those indices are what ``ChannelReader`` reads pixels by.
-    """
-    with tifffile.TiffFile(tiff_path) as tif:
-        _, n_channels = channel_layout(tif)
-
-        names = []
-        if tif.is_ome:
-            try:
-                from xml.etree import ElementTree as ET
-
-                root = ET.fromstring(tif.ome_metadata)
-                ns = {"ome": "http://www.openmicroscopy.org/Schemas/OME/2016-06"}
-                channels = root.findall(".//ome:Channel", ns) or root.findall(
-                    ".//Channel"
-                )
-                names = [c.get("Name") or c.get("ID") for c in channels]
-            except Exception:
-                names = []
-
-        if not names and getattr(tif, "imagej_metadata", None):
-            if "Labels" in tif.imagej_metadata:
-                names = list(tif.imagej_metadata["Labels"])
-
-    names = [name or f"Channel_{i}" for i, name in enumerate(names[:n_channels])]
-    names += [f"Channel_{i}" for i in range(len(names), n_channels)]
-    return names
+# channel_layout and get_channel_names live in tiff_channels so that every
+# bin/ script reads channels the same way; they are re-exported here.
 
 
 def load_marker_mapping(arg):
@@ -376,6 +321,12 @@ class ChannelReader:
         self._eager = None
 
         with tifffile.TiffFile(self.path) as tif:
+            if is_channel_last(tif):
+                # The windowed reads below index the first axis as channels.
+                raise ValueError(
+                    f"{self.path} stores channels last (YXC); convert it to a "
+                    "CYX OME-TIFF before running KRONOS2"
+                )
             self.layout, self.n_channels = channel_layout(tif)
             series = tif.series[0]
             self.shape = tuple(series.shape)
