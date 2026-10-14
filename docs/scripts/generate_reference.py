@@ -1,0 +1,175 @@
+#!/usr/bin/env python3
+"""Generate the parameter and samplesheet reference tables from the JSON schemas.
+
+The tables are written between these markers in each target page:
+
+    <!-- BEGIN GENERATED: <name> -->
+    <!-- END GENERATED: <name> -->
+
+Text outside the markers is written by hand and left unchanged.
+
+Usage (from the repository root):
+
+    python3 docs/scripts/generate_reference.py          # rewrite the pages
+    python3 docs/scripts/generate_reference.py --check  # exit 1 if a page is out of date
+"""
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+PIPELINE_SCHEMA = ROOT / "nextflow_schema.json"
+SAMPLESHEET_SCHEMA = ROOT / "assets" / "schema_input.json"
+PARAMETERS_PAGE = ROOT / "docs" / "reference" / "parameters.md"
+SAMPLESHEET_PAGE = ROOT / "docs" / "reference" / "samplesheet.md"
+
+
+def cell(text):
+    """Make text safe for a single Markdown table cell."""
+    if text is None:
+        return ""
+    text = str(text).replace("\r", "").replace("\n", " ")
+    return re.sub(r"\s+", " ", text).replace("|", "\\|").strip()
+
+
+def code(value):
+    """Format a default or enum value as inline code."""
+    if value is None:
+        return ""
+    if isinstance(value, bool):
+        value = "true" if value else "false"
+    text = str(value)
+    if text == "":
+        return '`""`'
+    return "`" + text.replace("|", "\\|") + "`"
+
+
+def type_text(prop):
+    typ = prop.get("type", "")
+    if isinstance(typ, list):
+        typ = " or ".join(typ)
+    if "enum" in prop:
+        typ = f"{typ}: " + ", ".join(code(v) for v in prop["enum"])
+    return typ
+
+
+def render_parameters(schema):
+    groups = schema.get("$defs") or schema.get("definitions") or {}
+    order = [ref["$ref"].split("/")[-1] for ref in schema.get("allOf", []) if "$ref" in ref]
+    order += [name for name in groups if name not in order]
+
+    out = []
+    for name in order:
+        group = groups[name]
+        props = group.get("properties", {})
+        if not props:
+            continue
+        required = set(group.get("required", []))
+        out.append(f"## {group.get('title', name)}")
+        out.append("")
+        if group.get("description"):
+            out.append(group["description"].strip())
+            out.append("")
+        if group.get("help_text"):
+            out.append(group["help_text"].strip())
+            out.append("")
+        out.append("| Parameter | Type | Default | Description |")
+        out.append("| --- | --- | --- | --- |")
+        details = []
+        for pname, prop in props.items():
+            label = f"`{pname}`"
+            if prop.get("help_text"):
+                label = f"[`{pname}`](#{pname})"
+            flags = []
+            if pname in required:
+                flags.append("required")
+            if prop.get("hidden"):
+                flags.append("hidden")
+            if flags:
+                label += " (" + ", ".join(flags) + ")"
+            out.append(
+                f"| {label} | {cell(type_text(prop))} | {code(prop.get('default'))} | {cell(prop.get('description'))} |"
+            )
+            if prop.get("help_text"):
+                details.append((pname, prop["help_text"].strip()))
+        out.append("")
+        for pname, help_text in details:
+            out.append(f"#### `{pname}`")
+            out.append("")
+            out.append(help_text)
+            out.append("")
+    return "\n".join(out).rstrip() + "\n"
+
+
+def render_samplesheet(schema):
+    items = schema.get("items", {})
+    props = items.get("properties", {})
+    required = set(items.get("required", []))
+    out = [
+        "| Column | Required | Type | Default | Description |",
+        "| --- | --- | --- | --- | --- |",
+    ]
+    for cname, prop in props.items():
+        typ = prop.get("type", "")
+        if isinstance(typ, list):
+            typ = " or ".join(typ)
+        if prop.get("format"):
+            typ = f"{typ} ({prop['format']})"
+        description = prop.get("description") or ""
+        if prop.get("pattern"):
+            description = (description + " " if description else "") + f"Must match `{prop['pattern']}`."
+        out.append(
+            f"| `{cname}` | {'yes' if cname in required else 'no'} | {cell(typ)} | {code(prop.get('default'))} | {cell(description)} |"
+        )
+    unique = schema.get("uniqueEntries") or items.get("uniqueEntries")
+    if unique:
+        out.append("")
+        out.append("Values in " + ", ".join(f"`{u}`" for u in unique) + " must be unique across rows.")
+    return "\n".join(out) + "\n"
+
+
+def replace_block(page_text, name, body):
+    begin = f"<!-- BEGIN GENERATED: {name} -->"
+    end = f"<!-- END GENERATED: {name} -->"
+    pattern = re.compile(re.escape(begin) + r".*?" + re.escape(end), re.DOTALL)
+    if not pattern.search(page_text):
+        raise SystemExit(f"Markers for '{name}' not found")
+    replacement = (
+        f"{begin}\n<!-- Generated by docs/scripts/generate_reference.py. Do not edit by hand. -->\n\n{body}\n{end}"
+    )
+    return pattern.sub(lambda _: replacement, page_text)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--check", action="store_true", help="Exit 1 if a page is out of date; write nothing.")
+    args = parser.parse_args()
+
+    jobs = [
+        (PARAMETERS_PAGE, "parameters", render_parameters(json.loads(PIPELINE_SCHEMA.read_text()))),
+        (SAMPLESHEET_PAGE, "samplesheet", render_samplesheet(json.loads(SAMPLESHEET_SCHEMA.read_text()))),
+    ]
+    stale = []
+    for page, name, body in jobs:
+        current = page.read_text()
+        updated = replace_block(current, name, body)
+        if updated != current:
+            stale.append(page.relative_to(ROOT))
+            if not args.check:
+                page.write_text(updated)
+
+    if args.check and stale:
+        for page in stale:
+            print(f"Out of date: {page}", file=sys.stderr)
+        print("Run: python3 docs/scripts/generate_reference.py", file=sys.stderr)
+        return 1
+    for page in stale:
+        print(f"Updated {page}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
