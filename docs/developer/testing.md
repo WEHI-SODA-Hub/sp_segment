@@ -66,13 +66,22 @@ just wrote. Update GPU-dependent snapshots (CellSAM) on a GPU node.
 
 ### Known state
 
-- `cellposemodel`, `kronos2embeddings` and `smoothmasks` have no snapshot.
-- `sopa_cellpose` has no test.
-- `cellsamsegment - nuclear` and `- whole-cell` (module level): mask md5s
-  differ from the snapshot. Not diagnosed. Do not regenerate them before the
-  CPU determinism question below is answered.
-- `segmentationreport - basic functionality`: the HTML md5 differs. Quarto may
-  write the render date into the HTML. Not confirmed.
+Last full run: 2026-10-14, nf-test 0.9.5, Nextflow 25.10.0, Apptainer, on a
+WEHI A30 GPU node. 38 tests, 16 failed. The same 16 fail on `dev` at c5f1b8e:
+
+- Mesmer and CellSAM tests that run the model (`mesmersegment`,
+  `cellsamsegment`, `mesmer_segment`, `cellsam_segment`,
+  `cellsam_segment_wbacksub`) need a valid `DEEPCELL_ACCESS_TOKEN` Nextflow
+  secret. With an expired token they fail with `API token ... is not valid`.
+- Snapshots that differ and have not been diagnosed: `cellmeasurement - basic
+  functionality` and `- stub`, `segmentationreport - basic functionality`,
+  `sopa_segment - tiff`, `sopa_segment_compartment - tiff - whole-cell` and
+  `- nuclear`, and `sopa_segment_wbacksub - tiff`. Quarto may write the render
+  date into the report HTML (not confirmed).
+- `smoothmasks` has no snapshot of its output masks, and `sopa_cellpose` has no
+  test.
+- To update one test, pass its hash: `nf-test test <file>@<hash>`. Only one
+  `@<hash>` per file is run per command.
 - CellSAM determinism on CPU is not known. `process_gpu` sets
   `accelerator = 1`, so Docker test runs that looked like CPU runs used the GPU.
   To test CPU, set `env.CUDA_VISIBLE_DEVICES = ''` and

@@ -1,0 +1,29 @@
+{
+    "cellposemodel - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        "cpsam_v2:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,17c87d6424f5750c3906f665c8cb8383"
+                ],
+                "models": [
+                    [
+                        "cpsam_v2:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,17c87d6424f5750c3906f665c8cb8383"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-14T12:19:38.218620047",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.0"
+        }
+    }
+}

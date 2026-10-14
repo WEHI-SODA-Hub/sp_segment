@@ -26,11 +26,11 @@
                 ]
             }
         ],
+        "timestamp": "2025-08-25T10:21:33.911858874",
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
-        },
-        "timestamp": "2025-08-25T10:21:33.911858874"
+        }
     },
     "mesmersegment - stub": {
         "content": [
@@ -59,11 +59,11 @@
                 ]
             }
         ],
+        "timestamp": "2025-08-25T09:47:08.357804486",
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
-        },
-        "timestamp": "2025-08-25T09:47:08.357804486"
+        }
     },
     "combinechannels - stub": {
         "content": [
@@ -92,11 +92,11 @@
                 ]
             }
         ],
+        "timestamp": "2025-10-13T21:03:47.343413979",
         "meta": {
             "nf-test": "0.9.2",
             "nextflow": "25.04.4"
-        },
-        "timestamp": "2025-10-13T21:03:47.343413979"
+        }
     },
     "combinechannels - OME-XML tiff": {
         "content": [
@@ -106,7 +106,7 @@
                         {
                             "id": "test"
                         },
-                        "test_combined_channels.tiff:md5,118224d2b43dc95e0b7a64c7ee3900d6"
+                        "test_combined_channels.tiff:md5,f6ffc35b042252f937e68390f384d256"
                     ]
                 ],
                 "1": [
@@ -117,7 +117,7 @@
                         {
                             "id": "test"
                         },
-                        "test_combined_channels.tiff:md5,118224d2b43dc95e0b7a64c7ee3900d6"
+                        "test_combined_channels.tiff:md5,f6ffc35b042252f937e68390f384d256"
                     ]
                 ],
                 "versions": [
@@ -125,11 +125,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-14T12:55:47.834908756",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.4"
-        },
-        "timestamp": "2026-04-14T16:00:48.093136127"
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.0"
+        }
     },
     "combinechannels - multi-membrane combine": {
         "content": [
@@ -139,7 +139,7 @@
                         {
                             "id": "test"
                         },
-                        "test_combined_channels.tiff:md5,69155ed4fd6e566ba83d224ae9192ddc"
+                        "test_combined_channels.tiff:md5,a190a409ca4f04f09eae48d82e2d3bd6"
                     ]
                 ],
                 "1": [
@@ -150,7 +150,7 @@
                         {
                             "id": "test"
                         },
-                        "test_combined_channels.tiff:md5,69155ed4fd6e566ba83d224ae9192ddc"
+                        "test_combined_channels.tiff:md5,a190a409ca4f04f09eae48d82e2d3bd6"
                     ]
                 ],
                 "versions": [
@@ -158,11 +158,11 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-14T12:58:10.79434401",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.4"
-        },
-        "timestamp": "2026-07-13T14:11:53.382725877"
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.0"
+        }
     },
     "combinechannels - non-OME tiff": {
         "content": [
@@ -172,7 +172,7 @@
                         {
                             "id": "test"
                         },
-                        "test_combined_channels.tiff:md5,7734d492417215aea586b07c0e79dc05"
+                        "test_combined_channels.tiff:md5,4fa6b8f59e9aaa8374b4c1d6d96353f4"
                     ]
                 ],
                 "1": [
@@ -183,7 +183,7 @@
                         {
                             "id": "test"
                         },
-                        "test_combined_channels.tiff:md5,7734d492417215aea586b07c0e79dc05"
+                        "test_combined_channels.tiff:md5,4fa6b8f59e9aaa8374b4c1d6d96353f4"
                     ]
                 ],
                 "versions": [
@@ -191,10 +191,10 @@
                 ]
             }
         ],
+        "timestamp": "2026-10-14T12:57:59.165247591",
         "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.4"
-        },
-        "timestamp": "2026-04-14T16:01:14.442763976"
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.0"
+        }
     }
 }
