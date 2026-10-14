@@ -10,9 +10,44 @@
 
 ## Pipeline tools
 
+- [Background_subtraction](https://github.com/SchapiroLabor/Background_subtraction)
+
+  Background subtraction for COMET images, from the Schapiro lab. Cite the
+  repository.
+
 - [Cellpose](https://www.cellpose.org)
 
   > Stringer C, Wang T, Michaelos M, Pachitariu M. Cellpose: a generalist algorithm for cellular segmentation. Nat Methods. 2021 Jan;18(1):100-106. doi: 10.1038/s41592-020-01018-x.
+
+  The default models (`cpsam_v2`, `cpsam`) are Cellpose-SAM:
+
+  > Pachitariu M, Rariden M, Stringer C. Cellpose-SAM: superhuman generalization for cellular segmentation. bioRxiv. 2025.
+
+- [sopa](https://github.com/gustaveroussy/sopa)
+
+  > Blampey Q, Mulder K, Gardet M, Christodoulidis S, Dutertre CA, André F, Ginhoux F, Cournède PH. Sopa: a technology-invariant pipeline for analyses of image-based spatial omics. Nat Commun. 2024;15:4981. doi: 10.1038/s41467-024-48981-z.
+
+- [Mesmer](https://github.com/vanvalenlab/deepcell-tf), run through
+  [MesmerSegmentation](https://github.com/WEHI-SODA-Hub/mesmersegmentation)
+
+  > Greenwald NF, Miller G, Moen E, Kong A, Kagel A, Dougherty T, et al. Whole-cell segmentation of tissue images with human-level performance using large-scale data annotation and deep learning. Nat Biotechnol. 2022;40(4):555-565. doi: 10.1038/s41587-021-01094-0.
+
+- [CellSAM](https://github.com/vanvalenlab/cellSAM)
+
+  > Israel U, Marks M, Dilip R, Li Q, Yu C, Laubscher E, et al. CellSAM: a foundation model for cell segmentation. bioRxiv. 2023.
+
+- [KRONOS2](https://huggingface.co/MahmoodLab/KRONOS2)
+
+  Foundation model for multiplex spatial proteomics, from the Mahmood lab. Cite
+  the publication listed on the model card.
+
+- [cellmeasurement-py](https://github.com/WEHI-SODA-Hub/cellmeasurement-py)
+
+  Cell matching and measurement, from the WEHI SODA Hub.
+
+- [spatialVis](https://github.com/WEHI-SODA-Hub/spatialVis)
+
+  R package used for the segmentation report, from the WEHI SODA Hub.
 
 - [DINOv3](https://github.com/facebookresearch/dinov3)
 
