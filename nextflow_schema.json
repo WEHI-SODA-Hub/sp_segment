@@ -19,8 +19,8 @@
                     "schema": "assets/schema_input.json",
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.(csv|y(a)?ml)$",
-                    "description": "Path to comma-separated file containing information about the samples in the experiment.",
-                    "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row. See [usage docs](https://github.com/WEHI-SODA-Hub/sp_segment/blob/main/docs/usage.md).",
+                    "description": "Path to the samplesheet (CSV or YAML) that lists the images to process.",
+                    "help_text": "One row per image. Required columns: `sample` and `tiff`. See the Samplesheet page of the documentation for every column.",
                     "fa_icon": "fas fa-file-csv"
                 },
                 "outdir": {
@@ -33,7 +33,7 @@
                     "type": "string",
                     "description": "Email address for completion summary.",
                     "fa_icon": "fas fa-envelope",
-                    "help_text": "Set this parameter to your e-mail address to get a summary e-mail with details of the run sent to you when the workflow exits. If set in your user config file (`~/.nextflow/config`) then you don't need to specify this on the command line for every run.",
+                    "help_text": "The pipeline sends a summary e-mail to this address when the run finishes. You can set it in `~/.nextflow/config` instead of on the command line.",
                     "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"
                 }
             }
@@ -46,8 +46,9 @@
             "properties": {
                 "remove_markers": {
                     "type": "string",
-                    "description": "Comma-separated list of marker channels to remove from the background subtracted image. Note the channel name must match exactly (it is case sensitive).",
-                    "fa_icon": "fas fa-eraser"
+                    "description": "Comma-separated channel names to remove from the background-subtracted image. Names are case sensitive.",
+                    "fa_icon": "fas fa-eraser",
+                    "default": "TRITC,Cy5"
                 }
             }
         },
@@ -74,9 +75,11 @@
             "properties": {
                 "combine_method": {
                     "type": "string",
-                    "description": "Method used to combine membrane channels (product or max). Using product is not recommended for large numbers of channels with large images as this may use a lot of memory.",
+                    "description": "How to combine several membrane channels into one: `max` (per-pixel maximum) or `prod` (per-pixel product, rescaled so the maximum is 65535).",
                     "fa_icon": "fas fa-compress-arrows-alt",
-                    "enum": ["max", "prod"]
+                    "enum": ["max", "prod"],
+                    "default": "max",
+                    "help_text": "Used by Mesmer, Cellpose and CellSAM when `membrane_channels` lists more than one channel. `prod` holds every selected channel in memory as float64, so it uses much more memory than `max` on large images with many channels."
                 }
             }
         },
@@ -88,19 +91,22 @@
             "properties": {
                 "technology": {
                     "type": "string",
-                    "description": "Technology used for the imaging. Currently, only COMET is supported via the 'ome_tif' parameter.",
+                    "description": "Image type for the sopa conversion. Only `ome_tif` is supported.",
                     "fa_icon": "fas fa-microscope",
-                    "enum": ["ome_tif"]
+                    "enum": ["ome_tif"],
+                    "default": "ome_tif"
                 },
                 "patch_width_pixel": {
                     "type": "integer",
-                    "description": "Width of patches in pixels.",
-                    "fa_icon": "fas fa-crop"
+                    "description": "Width and height of each square patch, in pixels, for Cellpose segmentation.",
+                    "fa_icon": "fas fa-crop",
+                    "default": 3000
                 },
                 "patch_overlap_pixel": {
                     "type": "integer",
-                    "description": "Pixel overlap of patches. This should be set to at least the size of the largest cell in the image to ensure that cells are not split across patches.",
-                    "fa_icon": "fas fa-crop"
+                    "description": "Overlap between neighbouring patches, in pixels. Set it to at least the diameter of the largest cell.",
+                    "fa_icon": "fas fa-crop",
+                    "default": 250
                 }
             }
         },
@@ -112,27 +118,31 @@
             "properties": {
                 "cellpose_diameter": {
                     "type": "integer",
-                    "description": "Diameters of your cells in pixels. Cellpose rescales the image so they land at the 30 px it was trained on.",
-                    "help_text": "Tells Cellpose the scale of your data. It is passed to sopa as `--diameter` and on to `model.eval`, which turns it into `rescale = 30. / diameter` — 30 being the model's target cell diameter. The image is resized by that factor before the network sees it, and the masks are resized back afterwards, so a cell you say is 60 px across is presented to the network at 30 px.\n\nThe default of 30 therefore asserts your cells are already at the trained scale, which happens to make `rescale` exactly 1.0 and skip the resampling. That is the consequence of the assertion, not the meaning of the number.\n\nCellpose-SAM tolerates a wide range of scales — trained on cell diameters from 7.5 to 120 px, mean 30 — so unlike earlier Cellpose versions this is optional for typical data, and getting it somewhat wrong is not fatal. Two cases where it still matters:\n\n- **Cells well outside 7.5-120 px.** Set the real diameter so they are brought into the range the model handles.\n- **Very large cells you want segmented faster.** Cellpose's own documented example: `--cellpose_diameter 90` downsamples 3x and speeds the run up, at the cost of resolving small objects.\n\nNote it filters nothing — no cell is ever rejected for being the wrong size. Use `--cellpose_min_area` for that.",
-                    "fa_icon": "fas fa-circle"
+                    "description": "Expected cell diameter in pixels. Cellpose resizes the image by 30 / diameter before segmentation.",
+                    "help_text": "Cellpose-SAM models were trained on cell diameters from 7.5 to 120 pixels (mean 30), so the default of 30 suits most data and means no resizing.\n\n- Set the real diameter if your cells are outside 7.5-120 pixels.\n- A larger value (for example `90`) shrinks the image and makes the run faster, but small objects are resolved less well.\n\nThis parameter does not remove any cells. Use `cellpose_min_area` to remove small objects. A value of `0` means no resizing; Cellpose 4 has no automatic diameter estimate.",
+                    "fa_icon": "fas fa-circle",
+                    "default": 30
                 },
                 "cellpose_min_area": {
                     "type": "number",
                     "description": "Discard cells smaller than this many square pixels. Higher keeps fewer cells; 0 keeps every mask.",
-                    "help_text": "sopa's filter rather than Cellpose's: `--min-area`, \"Minimum area (in pixels^2) for a cell to be considered as valid\". It is applied per patch as that patch is segmented, before cells straddling neighbouring patches are resolved.\n\nThe units are **pixels², not microns²**, so it does not follow `--pixel_size_microns`. At COMET's 0.28 um/px the default 200 px² is 15.7 um² — roughly a 4.5 um disc. On a different pixel size the same number means a different biological size, so recompute it.\n\nRaise it to drop debris and segmentation fragments; lower it, or set 0, to keep small or partially-imaged nuclei. It cuts on area alone and knows nothing about shape or confidence — a large piece of junk passes and a genuine small nucleus does not.\n\n`--cellsam_min_area` carries the same default and the same meaning, so switching segmenter does not silently change the size floor. Mesmer's `--mesmer_min_nuclei_area` is a separate setting on nuclei rather than cells and is not aligned with these.",
-                    "fa_icon": "fas fa-arrows-alt"
+                    "help_text": "Applied by sopa to each patch during segmentation. The unit is pixels², not µm², so it does not change with `pixel_size_microns`. At 0.28 µm/pixel (COMET), 200 pixels² is 15.7 µm², about a 4.5 µm diameter disc.\n\n`cellsam_min_area` has the same default and the same unit. `mesmer_min_nuclei_area` is a separate filter on nuclei.",
+                    "fa_icon": "fas fa-arrows-alt",
+                    "default": 200
                 },
                 "cellpose_flow_threshold": {
                     "type": "number",
                     "description": "Maximum flow error allowed for a mask to be kept. Higher finds more cells, including ill-shaped ones; lower keeps fewer, better-formed ones.",
                     "fa_icon": "fas fa-tachometer-alt",
-                    "help_text": "Cellpose's shape check, and the reason it exists: nothing stops the network predicting flows that correspond to no real shape, which it occasionally does where it is uncertain. So having formed the masks, Cellpose recomputes the flow gradients each one implies and takes the mean squared error against the flows the network actually predicted. Masks whose error exceeds this threshold are discarded.\n\nIt therefore rejects on *shape* — a mask has to look like something Cellpose's own flows would produce — and never on how confident the network was. That is `--cellpose_cellprob_threshold`.\n\n- Missing cells you can see in the image? **Raise** it (0.6, 0.8). More masks survive, some of them ragged.\n- Getting too many ill-shaped blobs? **Lower** it (0.2, 0.3). Fewer masks, better formed.\n- `0` turns the check off completely and keeps everything: Cellpose guards the step with `if flow_threshold > 0`.\n\nThe default 0.4 is Cellpose's own. Applies in 2D only — Cellpose skips this step for 3D data."
+                    "help_text": "Cellpose recomputes the flows each mask implies and compares them with the flows the network predicted. Masks with a mean squared error above this value are removed. This filter acts on shape only.\n\n- Raise it (0.6, 0.8) if visible cells are missing.\n- Lower it (0.2, 0.3) if you get ragged, ill-shaped masks.\n- `0` turns the check off.\n\nThe default 0.4 is Cellpose's default.",
+                    "default": 0.4
                 },
                 "cellpose_cellprob_threshold": {
                     "type": "number",
                     "description": "Cutoff on Cellpose's per-pixel cell probability. Lower finds more and larger cells; higher finds fewer and smaller ones.",
                     "fa_icon": "fas fa-check-circle",
-                    "help_text": "The cutoff on the third of Cellpose's three network outputs — flows in X, flows in Y, and cell probability. Pixels above the cutoff are the ones fed into the dynamics step that forms ROIs, so this decides which pixels are eligible to be cell at all.\n\n**It is not a 0-1 probability.** The values are the inputs to a sigmoid centred at zero, so they run from roughly **-6 to +6**, and 0 is the midpoint, not the floor. Both directions are meaningful and the useful range is wide.\n\nUnlike `--cellpose_flow_threshold`, which only decides whether a finished mask survives, this moves **where each cell's boundary falls**. It therefore shifts cell areas, and every per-cell intensity measured over those masks moves with them. Treat a change here as a change to your measurements, not just to your cell count.\n\n- Missing faint or dim cells? **Lower** it (-1, -2). More cells are found, and the ones you already had grow.\n- Segmenting background or dim debris as cells? **Raise** it (1, 2). Fewer cells, and they shrink.\n\nThe default 0.0 is Cellpose's own."
+                    "help_text": "Pixels above this value are used to build cells, so it changes which cells are found and where each cell boundary falls. A change here changes cell areas and therefore every per-cell intensity.\n\nThe value is not a probability between 0 and 1. It is a logit: the useful range is about -6 to +6, and 0 is the midpoint.\n\n- Lower it (-1, -2) to find faint cells and make cells larger.\n- Raise it (1, 2) to stop segmenting background and make cells smaller.\n\nThe default 0.0 is Cellpose's default.",
+                    "default": 0.0
                 },
                 "cellpose_model_type": {
                     "type": "string",
@@ -144,14 +154,15 @@
                 "cellpose_pretrained_model": {
                     "type": "string",
                     "description": "Cellpose model to segment with: cpsam_v2 (default), cpsam, cpdino, cpdino-vitb, or a path to a custom model.",
-                    "help_text": "Selects the Cellpose model. Accepts either a built-in model name or a filesystem path to your own trained model.\n\nBuilt-in models (cellpose 4.2.1.1):\n\n- `cpsam_v2` \u2014 default; the current Cellpose-SAM model.\n- `cpsam` \u2014 the previous Cellpose-SAM model. Use this to reproduce results from before this pipeline moved to cellpose 4.2.\n- `cpdino` \u2014 DINOv3-backbone model added in cellpose 4.2 (ViT-L, ~303M parameters).\n- `cpdino-vitb` \u2014 smaller ViT-B DINOv3 variant.\n\nThe DINO models need Meta's `dinov3` package, which the pinned container carries. Only its architecture code is used \u2014 Cellpose builds the backbone with `pretrained=False` and loads its own weights \u2014 so Meta's gated backbone weights are not required. Note the DINOv3 licence terms in CITATIONS.md if you redistribute the container or publish results using these models.\n\nA path is passed through untouched, so a custom model is loaded directly and no download occurs. Built-in names are fetched once per run by CELLPOSEMODEL, or read from --cellpose_models_dir if you have a pre-staged copy.",
-                    "fa_icon": "fas fa-file-upload"
+                    "help_text": "Built-in models (cellpose 4.2.1.1):\n\n- `cpsam_v2`: default; the current Cellpose-SAM model.\n- `cpsam`: the previous Cellpose-SAM model. Use it to reproduce results from before cellpose 4.2.\n- `cpdino`: DINOv3 backbone (ViT-L).\n- `cpdino-vitb`: smaller DINOv3 backbone (ViT-B).\n\nAny other value is treated as a path to a custom model and must exist; the pipeline checks this at startup. Built-in models are downloaded once per run, or read from `cellpose_models_dir` if set. See CITATIONS.md for the DINOv3 licence terms.",
+                    "fa_icon": "fas fa-file-upload",
+                    "default": "cpsam_v2"
                 },
                 "cellpose_models_dir": {
                     "type": "string",
                     "format": "directory-path",
                     "description": "Directory holding pre-staged Cellpose model weights. If set, the pipeline uses it instead of downloading them.",
-                    "help_text": "Point this at a shared copy of the Cellpose model cache (the directory holding e.g. `cpsam`) to skip the download entirely. Recommended on clusters where compute nodes have no outbound network access.",
+                    "help_text": "A directory that holds the Cellpose model cache (for example a `cpsam_v2` file). Use it when compute nodes have no internet access. The directory must exist and must not be under `/opt`.",
                     "fa_icon": "fas fa-folder-open"
                 }
             }
@@ -161,30 +172,32 @@
             "type": "object",
             "fa_icon": "fas fa-sliders-h",
             "description": "Intensity preprocessing applied before Cellpose segmentation.",
-            "help_text": "The defaults here make the pipeline match Cellpose's own preprocessing contract: rescale to the 1st and 99th percentiles and nothing else.\n\nsopa adds a gaussian filter and CLAHE of its own, neither of which exists in Cellpose, and both are disabled. All of this normalisation is computed per patch, so leaving sopa's stages on makes a cell's segmentation depend on what else landed in its patch and on the value of `--patch_width_pixel`. See the preprocessing section of `docs/usage.md` for the measurements behind these defaults and for how to restore sopa's behaviour.",
+            "help_text": "The defaults make the pipeline match Cellpose's own preprocessing: rescale each patch to its 1st and 99th percentiles and nothing else. sopa's gaussian filter and CLAHE are turned off. To restore sopa's behaviour, set `cellpose_clip_limit` to 0.2 and `cellpose_gaussian_sigma` to 1. See the Cellpose preprocessing page of the documentation for the measurements behind these defaults.",
             "properties": {
                 "cellpose_tile_norm_blocksize": {
                     "type": "integer",
                     "hidden": true,
                     "minimum": 0,
                     "description": "Block size in pixels for Cellpose's tile-local intensity normalisation. 0 uses Cellpose's whole-patch default.",
-                    "help_text": "Segmentation always runs on patches, and normalisation is computed from the patch, so without this a cell's segmentation depends on what else landed in its patch and changing `--patch_width_pixel` changes results. Patch overlap does not help: it resolves cells straddling a boundary, not differing normalisation.\n\nThis is forwarded as `--method-kwargs '{\"normalize\": {\"tile_norm_blocksize\": N, \"percentile\": [1.0, 99.0]}}'`, which sopa passes into `model.eval`, making the percentile statistics local to each block rather than global to the patch.\n\nChoose a block that comfortably contains many nuclei. At COMET's 0.28 um/px with `--cellpose_diameter 30` (8.4 um cells), 512 px is 143 um, about 17 nuclear diameters. Small blocks are actively harmful: a 128 px (36 um) block spans roughly 4 cell diameters, so in sparse tissue it can contain no nuclei at all and its noise is stretched to the full range. Cellpose only guards a flat block when its 1-99 percentile range falls below 1e-3, which such blocks exceed.\n\nNote this does not normalise across the whole image -- nothing in the patch-parallel design ever sees it.",
-                    "fa_icon": "fas fa-th"
+                    "help_text": "When greater than 0, Cellpose computes the 1st/99th percentiles separately for each block of this size inside the patch instead of once for the whole patch.\n\nUse a block much larger than a cell. At 0.28 µm/pixel, 512 pixels is 143 µm (about 17 nuclear diameters). Small blocks (for example 128 pixels) can contain no nuclei in sparse tissue; their noise is then stretched to the full intensity range and results get worse.",
+                    "fa_icon": "fas fa-th",
+                    "default": 0
                 },
                 "cellpose_clip_limit": {
                     "type": "number",
                     "hidden": true,
                     "minimum": 0,
                     "description": "sopa's CLAHE clip limit, applied before Cellpose. Defaults to 0 in this pipeline, disabling CLAHE; null restores sopa's default of 0.2.",
-                    "help_text": "sopa runs `skimage.exposure.equalize_adapthist` on each patch before Cellpose sees it. This is sopa's addition, not part of Cellpose -- Cellpose contains no CLAHE code, and its released weights were trained on percentile-normalised input, so this preprocessing is off that contract.\n\nSetting 0 disables CLAHE. Worth testing: CLAHE is the largest single source of patch-dependence in this stack, and on an all-zero patch it expands the image to the full range, which defeats Cellpose's own empty-patch guard.",
-                    "fa_icon": "fas fa-adjust"
+                    "help_text": "sopa applies CLAHE (`skimage.exposure.equalize_adapthist`) to each patch before Cellpose. Cellpose itself has no CLAHE step and its models were not trained with it. `0` turns CLAHE off. With CLAHE on, results change with `patch_width_pixel`, because the CLAHE kernel size is derived from the patch size.",
+                    "fa_icon": "fas fa-adjust",
+                    "default": 0
                 },
                 "cellpose_clahe_kernel_size": {
                     "type": "integer",
                     "hidden": true,
                     "minimum": 1,
                     "description": "Kernel size in pixels for sopa's CLAHE. Unset uses skimage's default of patch.shape // 8, which scales with patch_width_pixel.",
-                    "help_text": "Left unset, skimage derives the kernel from the patch: 1/8 of its height and width. The contrast-enhancement length scale therefore moves with `--patch_width_pixel` -- 187 px (52 um) at 1500, 375 px (105 um) at 3000, 750 px (210 um) at 6000 -- so the same tissue is enhanced differently purely because of a patching knob.\n\nPinning an absolute value removes that coupling. cellSAM, which also CLAHEs each block, fixes its kernel at 128 px rather than deriving it from the block size.\n\nHas no effect while `--cellpose_clip_limit` is 0.",
+                    "help_text": "If unset, skimage uses 1/8 of the patch height and width: 375 pixels at `patch_width_pixel` 3000. Setting a fixed value stops the kernel size changing with the patch size. Has no effect while `cellpose_clip_limit` is 0.",
                     "fa_icon": "fas fa-ruler-combined"
                 },
                 "cellpose_gaussian_sigma": {
@@ -192,8 +205,9 @@
                     "hidden": true,
                     "minimum": 0,
                     "description": "Sigma for sopa's gaussian smoothing, applied before Cellpose. Defaults to 0 in this pipeline, disabling it; null restores sopa's default of 1.",
-                    "help_text": "Like CLAHE, this is sopa's addition rather than Cellpose's: Cellpose's own smoothing and sharpening parameters (`smooth_radius`, `sharpen_radius`) both default to 0, and it applies neither unless asked.\n\nUnlike CLAHE this is not a source of patch dependence, since a small-sigma convolution is local and only edge reflection differs between patch layouts. Disabling it is therefore about matching Cellpose's preprocessing contract, not about stability. Raise it if your data is noisy enough to need denoising before segmentation.",
-                    "fa_icon": "fas fa-water"
+                    "help_text": "sopa applies a gaussian filter to each patch before Cellpose. Cellpose applies no smoothing by default. `0` turns the filter off. Raise it only if your images are noisy enough to need smoothing before segmentation.",
+                    "fa_icon": "fas fa-water",
+                    "default": 0
                 }
             }
         },
@@ -205,55 +219,63 @@
             "properties": {
                 "mesmer_segmentation_level": {
                     "type": "integer",
-                    "description": "Segmentation level (legacy parameter).",
+                    "description": "Segmentation level passed to Mesmer as `--segmentation-level` (legacy option). Unset by default.",
                     "fa_icon": "fas fa-layer-group",
                     "minimum": 0,
                     "maximum": 10
                 },
                 "mesmer_maxima_threshold": {
                     "type": "number",
-                    "description": "Controls segmentation level directly in mesmer, (lower values = more cells, higher values = fewer cells). ",
+                    "description": "Mesmer maxima threshold. Lower values give more cells; higher values give fewer cells.",
                     "fa_icon": "fas fa-tachometer-alt",
-                    "minimum": 0
+                    "minimum": 0,
+                    "default": 0.1
                 },
                 "mesmer_interior_threshold": {
                     "type": "number",
-                    "description": "Controls how conservative model is in distinguishing cell from background (higher values = more conservative interior therefore smaller nuclei & cells).",
-                    "fa_icon": "fas fa-tachometer-alt"
+                    "description": "Mesmer interior threshold. Higher values give smaller nuclei and cells.",
+                    "fa_icon": "fas fa-tachometer-alt",
+                    "default": 0.3
                 },
                 "mesmer_maxima_smooth": {
                     "type": "number",
-                    "description": "Smooths signal peaks (higher values = less irregular shapes/nuclei).",
+                    "description": "Smoothing applied to Mesmer's maxima signal. Higher values give more regular shapes.",
                     "fa_icon": "fas fa-tachometer-alt",
-                    "minimum": 0
+                    "minimum": 0,
+                    "default": 0
                 },
                 "mesmer_min_nuclei_area": {
                     "type": "number",
-                    "description": "Minimum area of nuclei to keep in square pixels.",
+                    "description": "Minimum nucleus area in pixels². Smaller nuclei are removed by Mesmer.",
                     "fa_icon": "fas fa-arrows-alt",
-                    "minimum": 0
+                    "minimum": 0,
+                    "default": 40
                 },
                 "mesmer_remove_border_cells": {
                     "type": "boolean",
                     "description": "Remove cells that touch the image border.",
-                    "fa_icon": "fas fa-border-all"
+                    "fa_icon": "fas fa-border-all",
+                    "default": true
                 },
                 "mesmer_pixel_expansion": {
                     "type": "integer",
-                    "description": "Manual pixel expansion after segmentation.",
+                    "description": "Number of pixels to expand each Mesmer cell after segmentation.",
                     "fa_icon": "fas fa-expand-arrows-alt",
-                    "minimum": 0
+                    "minimum": 0,
+                    "default": 3
                 },
                 "mesmer_padding": {
                     "type": "integer",
-                    "description": "Number of pixels to crop the image by on each side before segmentation.",
+                    "description": "Number of pixels to crop from each side of the image before Mesmer segmentation.",
                     "fa_icon": "fas fa-crop",
-                    "minimum": 0
+                    "minimum": 0,
+                    "default": 0
                 },
                 "mesmer_transpose_mask": {
                     "type": "boolean",
-                    "description": "Force-transpose the Mesmer output mask. Enable this if the segmentation result appears spatially flipped relative to the input image.",
-                    "fa_icon": "fas fa-exchange-alt"
+                    "description": "Transpose the Mesmer output mask. Enable this only if the mask is flipped relative to the image.",
+                    "fa_icon": "fas fa-exchange-alt",
+                    "default": false
                 }
             }
         },
@@ -266,7 +288,7 @@
                 "cellsam_bbox_threshold": {
                     "type": "number",
                     "default": 0.4,
-                    "description": "Confidence threshold for cell detection. Lower values (0.3-0.4) increase recall for out-of-distribution images.",
+                    "description": "Confidence threshold for CellSAM cell detections. Lower values (0.3-0.4) find more cells on images unlike the training data.",
                     "fa_icon": "fas fa-tachometer-alt",
                     "minimum": 0.0,
                     "maximum": 1.0
@@ -274,7 +296,7 @@
                 "cellsam_block_size": {
                     "type": "integer",
                     "default": 600,
-                    "description": "Tile size for large image processing. Recommended: 256-512 for dense images, 400-600 for sparse.",
+                    "description": "Tile size in pixels for whole-slide CellSAM processing.",
                     "fa_icon": "fas fa-th",
                     "minimum": 128,
                     "maximum": 2048
@@ -282,7 +304,7 @@
                 "cellsam_overlap": {
                     "type": "integer",
                     "default": 250,
-                    "description": "Tile overlap region in pixels. Should encompass typical cell size for proper merging.",
+                    "description": "Overlap between CellSAM tiles, in pixels. Set it to at least the typical cell diameter.",
                     "fa_icon": "fas fa-compress-arrows-alt",
                     "minimum": 0,
                     "maximum": 256
@@ -290,7 +312,7 @@
                 "cellsam_iou_depth": {
                     "type": "integer",
                     "default": 250,
-                    "description": "Depth for IOU-based label merging across tiles. 250 works well for COMET images.",
+                    "description": "Distance in pixels searched for duplicate cells at tile boundaries.",
                     "fa_icon": "fas fa-layer-group",
                     "minimum": 0,
                     "maximum": 256
@@ -298,7 +320,7 @@
                 "cellsam_iou_threshold": {
                     "type": "number",
                     "default": 0.5,
-                    "description": "IOU threshold for merging overlapping labels across tiles.",
+                    "description": "IoU above which two overlapping cells at a tile boundary are merged.",
                     "fa_icon": "fas fa-project-diagram",
                     "minimum": 0.0,
                     "maximum": 1.0
@@ -306,30 +328,32 @@
                 "cellsam_use_wsi": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Enable tiling for large images. Recommended for images with >3000 cells.",
+                    "description": "Process the image in tiles (whole-slide mode). Required for large images.",
                     "fa_icon": "fas fa-th-large"
                 },
                 "cellsam_gauge_cell_size": {
                     "type": "boolean",
-                    "description": "Perform preliminary segmentation to estimate cell sizes.",
-                    "fa_icon": "fas fa-ruler-combined"
+                    "description": "Run a first CellSAM pass to estimate cell size before segmentation.",
+                    "fa_icon": "fas fa-ruler-combined",
+                    "default": false
                 },
                 "cellsam_low_contrast_enhancement": {
                     "type": "boolean",
-                    "description": "Apply contrast enhancement preprocessing for low-contrast images.",
-                    "fa_icon": "fas fa-adjust"
+                    "description": "Apply contrast enhancement before segmentation, for low-contrast images.",
+                    "fa_icon": "fas fa-adjust",
+                    "default": false
                 },
                 "cellsam_model_path": {
                     "type": "string",
-                    "description": "Path to custom CellSAM model weights. If not specified, uses latest generalist model (v1.2 with DEEPCELL_ACCESS_TOKEN).",
+                    "description": "Path to custom CellSAM model weights. If unset, the CellSAM generalist model is used (v1.2 when `DEEPCELL_ACCESS_TOKEN` is set).",
                     "fa_icon": "fas fa-file-medical",
                     "format": "file-path"
                 },
                 "cellsam_min_area": {
                     "type": "integer",
                     "default": 200,
-                    "description": "Discard cells smaller than this many square pixels. Higher keeps fewer cells; 0 disables the filter. Matches cellpose_min_area.",
-                    "help_text": "The same size floor `--cellpose_min_area` applies on the Cellpose path, so a run is not filtered differently just because of which segmenter produced it. Both are in **pixels², not microns²**, and both keep cells whose area is greater than or equal to the threshold.\n\nThe two measure that area slightly differently and are not exactly interchangeable: CellSAM counts the label's pixels, while sopa measures the vectorised polygon after smoothing. Across round and ragged cells the polygon comes out at 0.93-1.00x the pixel count (median 0.99), so 200 here cuts at an equivalent ~202 px on the Cellpose side.\n\nCellSAM applies it once, after the whole-slide tiles have been merged; Cellpose applies it per patch during segmentation. Set 0 to keep every mask, which is what this defaulted to before -- CellSAM ran with no size floor at all while Cellpose had one.",
+                    "description": "Remove cells smaller than this many pixels². `0` keeps every cell. Same default as `cellpose_min_area`.",
+                    "help_text": "CellSAM counts each cell's pixels and applies the filter once, after the tiles are merged. The unit is pixels², not µm². At 0.28 µm/pixel, 200 pixels² is 15.7 µm². Cells with an area equal to the threshold are kept.\n\n`cellpose_min_area` measures the area of the cell polygon instead. On test cells the polygon area was 0.93-1.00 times the pixel count (median 0.99), so the two filters remove almost the same cells.",
                     "fa_icon": "fas fa-compress-arrows-alt"
                 }
             }
@@ -339,20 +363,21 @@
             "type": "object",
             "fa_icon": "fas fa-dna",
             "description": "Options for KRONOS2 per-cell foundation-model embeddings",
-            "help_text": "KRONOS is a foundation model for multiplex spatial proteomic images. These parameters control the embedding extraction step that runs after cell measurement.",
+            "help_text": "KRONOS2 is a foundation model for multiplex spatial proteomics. These parameters control the optional step that adds a 768-value embedding to every cell after cell measurement.",
             "properties": {
                 "enable_kronos": {
                     "type": "boolean",
                     "description": "Enable KRONOS2 per-cell embedding extraction.",
                     "fa_icon": "fas fa-stopwatch",
-                    "help_text": "Set this to `true` to run KRONOS embedding extraction after cell measurement. Requires kronos_model_path and kronos_marker_metadata to be set."
+                    "help_text": "Set to `true` to compute KRONOS2 embeddings after cell measurement. Requires `kronos_model_path`.",
+                    "default": false
                 },
                 "kronos_model_path": {
                     "type": "string",
                     "format": "directory-path",
-                    "description": "Path to a KRONOS2 snapshot directory (or a Hugging Face repo id). The full snapshot is required - the loader imports the bundled dinov2 package - so a hand-picked subset of files will not work.",
+                    "description": "Path to a full KRONOS2 snapshot directory, or a Hugging Face repo id.",
                     "fa_icon": "fas fa-file-medical",
-                    "help_text": "The directory should contain the model checkpoint (e.g. kronos_vits16_model.pt) and optionally a config.json file. Download from https://github.com/mahmoodlab/KRONOS or Hugging Face Hub (MahmoodLab/kronos)."
+                    "help_text": "Request access to `MahmoodLab/KRONOS2` on Hugging Face, then download the full snapshot:\n\n`hf download MahmoodLab/KRONOS2 --local-dir /path/to/KRONOS2 --exclude \"demo_image/*\"`\n\nA partial download does not work, because the loader imports the `dinov2` package bundled in the snapshot. Do not store the snapshot under `/opt`."
                 },
                 "kronos_patch_size": {
                     "type": "integer",
@@ -361,7 +386,7 @@
                     "fa_icon": "fas fa-crop",
                     "minimum": 16,
                     "maximum": 256,
-                    "help_text": "The patch size in pixels for cell-centered crops. Larger patches capture more context but increase computation. Typical values are 32-128."
+                    "help_text": "Side length in pixels of the square patch centred on each cell. Larger patches include more surrounding tissue and take longer."
                 },
                 "kronos_batch_size": {
                     "type": "integer",
@@ -370,7 +395,7 @@
                     "fa_icon": "fas fa-layer-group",
                     "minimum": 1,
                     "maximum": 512,
-                    "help_text": "Number of cell patches to process simultaneously. Larger batch sizes are faster but require more GPU memory."
+                    "help_text": "Number of cell patches per GPU batch. Larger batches are faster and use more GPU memory. Embeddings change very slightly with batch size; 16 reproduces the published values."
                 },
                 "kronos_num_workers": {
                     "type": "integer",
@@ -379,7 +404,7 @@
                     "fa_icon": "fas fa-cogs",
                     "minimum": 0,
                     "maximum": 32,
-                    "help_text": "Controls how many CPU processes load and preprocess patches in parallel while the GPU runs inference. Set to 0 for single-process loading (useful for debugging). On HPC, set this to match the number of CPUs allocated to the KRONOS job for best throughput."
+                    "help_text": "Number of CPU processes that read and prepare patches while the GPU runs. `0` reads in the main process. Set it to the number of CPUs allocated to the task."
                 },
                 "kronos_max_value": {
                     "type": "number",
@@ -388,19 +413,19 @@
                 },
                 "kronos_marker_mapping": {
                     "type": "string",
-                    "description": "JSON file or inline JSON mapping this panel's channel names onto KRONOS2 vocabulary names, e.g. {\"Collagen 4\": \"COLLAGENiv\"}. KRONOS2 matches names exactly (separator-insensitive) with no alias or fuzzy step, so naming variants otherwise fall back to default normalisation stats.",
+                    "description": "JSON file, or an inline JSON object, that maps channel names to KRONOS2 marker names, e.g. {\"Collagen 4\": \"COLLAGENiv\"}.",
                     "fa_icon": "fas fa-exchange-alt",
-                    "help_text": "Provide a JSON string like '{\"CD3e\": \"CD3E\", \"PanCK\": \"PANCK\"}' to manually resolve marker name mismatches between your image channels and the KRONOS metadata. KRONOS performs case-insensitive matching automatically, so only provide mappings for markers that truly differ in name."
+                    "help_text": "KRONOS2 matches marker names exactly, ignoring separators (`CD-8`, `CD_8` and `CD8` match). There is no alias or fuzzy matching, so a spelling variant such as `Cytokeritin` does not match `CYTOKERATIN`. The run fails if any channel does not match, unless `kronos_allow_novel_defaults` is `true`.\n\nThe mapping changes only the names given to KRONOS2. Channel names in the image and the GeoJSON are not changed. A value that is neither an existing file nor valid JSON fails the run."
                 },
                 "kronos_exclude_markers": {
                     "type": "string",
-                    "description": "Comma-separated list of channels not to show KRONOS2, so they contribute nothing to the embedding, e.g. 'Autofluorescence'. Case sensitive, and matched against the image's own channel names before any marker mapping is applied.",
+                    "description": "Comma-separated channel names that KRONOS2 does not read, e.g. 'Autofluorescence'. Other steps still use these channels.",
                     "fa_icon": "fas fa-eye-slash",
-                    "help_text": "Scoped to the embedding step alone: the channel is simply never read, so it stays in the image, remains available to every other process, and keeps any intensity measurements CELLMEASUREMENT wrote for it. Nothing is deleted. Use it for channels that are not markers at all -- autofluorescence, blanks, empty cycles -- where no mapping can help. Contrast `kronos_allow_novel_defaults`, which still feeds an out-of-vocabulary channel to the model, normalised with default statistics. A name matching no channel fails the run and lists the channels that are present, and the nuclear channel cannot be skipped because it is the model's `preferred_dapi`. KRONOS2 attends across the whole channel set, so changing this list changes every cell's embedding -- hold it constant across a cohort."
+                    "help_text": "Use it for channels that are not markers: autofluorescence, blanks, empty cycles. The channel stays in the image and keeps its cell measurements.\n\n- Names are case sensitive and are matched against the image's channel names before `kronos_marker_mapping` is applied.\n- A name that matches no channel fails the run.\n- The nuclear channel cannot be excluded.\n- Excluding a channel changes every cell's embedding. Use the same list for every image in a cohort."
                 },
                 "kronos_nuclear_marker": {
                     "type": "string",
-                    "description": "Channel to treat as the nuclear stain. This is the model's only marker-alias mechanism, so a DRAQ5/Hoechst slide needs it to receive DAPI stats. Defaults to the samplesheet nuclear_channel.",
+                    "description": "Channel that KRONOS2 treats as its DAPI channel. Defaults to the samplesheet `nuclear_channel`.",
                     "fa_icon": "fas fa-circle"
                 },
                 "kronos_isolate_cell": {
@@ -412,7 +437,7 @@
                 "kronos_allow_novel_defaults": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Proceed when markers fall outside KRONOS2's vocabulary (they take default normalisation stats). Off by default so this fails loudly.",
+                    "description": "Continue when a channel name is not in the KRONOS2 vocabulary. That channel is normalised with default statistics. Off by default, so the run fails instead.",
                     "fa_icon": "fas fa-exclamation-triangle"
                 }
             }
@@ -422,14 +447,14 @@
             "type": "object",
             "fa_icon": "fas fa-image",
             "description": "Parameters used for cell measurement.",
-            "help_text": "These parameters controls parameters used by the cellmeasurement step of the pipeline.",
+            "help_text": "Parameters for the cell measurement step (cellmeasurement-py).",
             "properties": {
                 "enable_measurements": {
                     "type": "boolean",
                     "default": true,
                     "description": "Enable cell measurement step.",
                     "fa_icon": "fas fa-stopwatch",
-                    "help_text": "Set this to `false` to skip the cell measurement step of the pipeline. Nuclei and whole-cells will still be merged but compartment metrics will not be calculated (this can save processing time)."
+                    "help_text": "Set to `false` to skip intensity and shape measurements. Cell outlines are still written to the GeoJSON. Skipping saves time on large images."
                 },
                 "percentiles": {
                     "type": "string",
@@ -437,28 +462,28 @@
                     "description": "Comma-separated list of percentiles to calculate for each marker (e.g. 80,90,95,99).",
                     "fa_icon": "fas fa-percentage",
                     "pattern": "^(100|[1-9]?[0-9][\\.]?[0-9]*)(,(100|[1-9]?[0-9][\\.]?[0-9]*))*$",
-                    "help_text": "A comma-separated list of percentiles to calculate for each marker. Each value must be between 0 and 100. Default: 70,80,90,95,99. Skip measurements must be set to `false` to use this parameter."
+                    "help_text": "Each value must be between 0 and 100. Requires `enable_measurements` to be `true`."
                 },
                 "erosion_steps": {
                     "type": "boolean",
                     "default": true,
                     "description": "Measure intensity in 5 equal-area erosion bins working inward from the cell/nucleus boundary.",
                     "fa_icon": "fas fa-ruler-combined",
-                    "help_text": "Divides each cell and nucleus mask into 5 concentric zones of approximately equal area by iterative morphological erosion, then measures mean/median intensity per zone. Adapts automatically to cell size. Set to false to disable. Skip measurements must be set to false to use this parameter."
+                    "help_text": "Splits each cell (and nucleus) into 5 rings of approximately equal area, from the boundary inward, and measures mean and median intensity in each ring. Requires `enable_measurements` to be `true`."
                 },
                 "expansion_steps": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Measure intensity in 5 equal-area annular bins dilated 20 \u00b5m outward from the cell boundary (distance computed from pixel_size_microns).",
+                    "description": "Measure intensity in 5 equal-area annular bins dilated 20 µm outward from the cell boundary (distance computed from pixel_size_microns).",
                     "fa_icon": "fas fa-expand-arrows-alt",
-                    "help_text": "Divides the 20 \u00b5m pericellular zone into 5 rings of approximately equal area and measures mean/median intensity per ring. The total expansion distance is computed automatically from pixel_size_microns. Set to false to disable. Skip measurements must be set to false to use this parameter."
+                    "help_text": "Splits the 20 µm zone outside each cell into 5 rings of approximately equal area and measures mean and median intensity in each ring. The distance in pixels is computed from `pixel_size_microns`. Requires `enable_measurements` to be `true`."
                 },
                 "environment_expansion": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Measure a 20 \u00b5m pericellular 'Environment' compartment (distance computed automatically from pixel_size_microns).",
+                    "description": "Measure a 20 µm pericellular 'Environment' compartment (distance computed automatically from pixel_size_microns).",
                     "fa_icon": "fas fa-circle-notch",
-                    "help_text": "Dilates the cell mask by 20 \u00b5m (converted to pixels via pixel_size_microns) and measures mean, median, min, max, and std dev of every channel in the full zone (cell boundary to outer ring) as one region. This matches CellTune's 'Environment' compartment. Set to false to disable."
+                    "help_text": "Measures mean, median, min, max and standard deviation of every channel in the zone from the cell boundary to 20 µm outside it, as one region (`Environment_20um`). The distance in pixels is computed from `pixel_size_microns`."
                 },
                 "pixel_size_microns": {
                     "type": "number",
@@ -466,21 +491,23 @@
                     "minimum": 0.1,
                     "maximum": 10.0,
                     "fa_icon": "fas fa-ruler-combined",
-                    "help_text": "COMET: 0.28 \u00b5m/px, MIBI: 0.390625 \u00b5m/px, OPAL: 0.4964 \u00b5m/px."
+                    "help_text": "COMET: 0.28. MIBI: 0.390625. OPAL: 0.4964.",
+                    "default": 0.28
                 },
                 "estimate_cell_boundary_dist": {
                     "type": "integer",
-                    "description": "Where no matching membrane ROI exists, expand the nucleus by this many pixels (default = 3.0).",
+                    "description": "For a nucleus with no matching whole-cell ROI, expand the nucleus by this many pixels to make the cell.",
                     "fa_icon": "fas fa-expand-arrows-alt",
-                    "minimum": 0
+                    "minimum": 0,
+                    "default": 3
                 },
                 "neighbors": {
                     "type": "integer",
                     "default": 0,
                     "minimum": 0,
-                    "description": "Number of nearest neighbors for neighborhood feature aggregation (0 = disabled).",
+                    "description": "Number of nearest neighbours used for neighbourhood features. `0` turns them off.",
                     "fa_icon": "fas fa-project-diagram",
-                    "help_text": "For each cell, the max and mean of every numeric measurement are computed across its k closest spatial neighbours (by centroid distance). This produces features like 'Neighbors: Max: CD3: Cell: Mean' and 'Neighbors: Mean: CD3: Cell: Mean'. Set to 0 to disable. Typical values: 5\u201310."
+                    "help_text": "For each cell, the mean of every numeric measurement over its nearest neighbours (up to this number, within 20 µm of the cell centroid) is added as `Neighbours: Mean: <measurement>`. Typical values: 5-10."
                 },
                 "gzip_geojson": {
                     "type": "boolean",
@@ -488,21 +515,21 @@
                     "hidden": true,
                     "description": "Gzip-compress the output GeoJSON files. Produces .geojson.gz instead of .geojson.",
                     "fa_icon": "fas fa-file-archive",
-                    "help_text": "Enable this to gzip-compress the GeoJSON output from cellmeasurement. For large images with hundreds of thousands of cells, the GeoJSON can be 100+ GB uncompressed. Gzip typically achieves 10-20x compression on JSON with floating-point coordinates. The compressed files can be used directly with the import_large_geojson pipeline."
+                    "help_text": "Writes `.geojson.gz` instead of `.geojson`. Whole-slide GeoJSON files can exceed 100 GB uncompressed; gzip usually reduces them 10-20 times. The import_large_geojson pipeline reads the compressed files directly."
                 },
                 "dist_threshold": {
                     "type": "number",
                     "default": 10.0,
                     "description": "Maximum centroid distance in pixels for matching a nucleus to a whole-cell ROI.",
                     "fa_icon": "fas fa-ruler",
-                    "help_text": "Nuclear and whole-cell centroids further apart than this threshold are not matched. Unmatched nuclei receive synthetic cell boundaries via watershed. Lower values enforce stricter matching; higher values tolerate more offset between segmentation models."
+                    "help_text": "A nucleus and a whole-cell ROI whose centroids are further apart than this are not matched. Unmatched nuclei get a cell boundary made by expanding the nucleus (see `estimate_cell_boundary_dist`)."
                 },
                 "downsample_factor": {
                     "type": "number",
                     "default": 1.0,
                     "description": "Downsample factor applied to the image and masks before measurement (1 = no downsampling).",
                     "fa_icon": "fas fa-compress-arrows-alt",
-                    "help_text": "Integer downsample factor >= 2 to speed up measurement on very large images. The image is block-averaged; masks use block-max to preserve labels. Values < 2 are treated as 1 (no downsampling). Note that physical measurements (area, length) are scaled back to original pixel units."
+                    "help_text": "An integer of 2 or more downsamples the image (block mean) and masks (block max) before measurement. Values below 2 mean no downsampling. Area and length measurements are scaled back to full-resolution units."
                 },
                 "tile_size": {
                     "type": "integer",
@@ -510,7 +537,7 @@
                     "description": "Tile size for large image measurement calculations.",
                     "fa_icon": "fas fa-th",
                     "minimum": 128,
-                    "help_text": "The tile size in pixels for cell measurement. Smaller tiles allow parallel processing but create some overhead. Aim for 2-4x more tiles than the thread count."
+                    "help_text": "Measurements are computed on tiles in parallel. Aim for 2-4 times more tiles than CPUs."
                 },
                 "tile_overlap": {
                     "type": "integer",
@@ -518,14 +545,14 @@
                     "description": "Tile overlap region in pixels. Should encompass typical cell size.",
                     "fa_icon": "fas fa-compress-arrows-alt",
                     "minimum": 0,
-                    "help_text": "The overlap between tiles. This should be set to at least the size of the largest cell in the image to ensure that measurements from cells are complete."
+                    "help_text": "Set it to at least the diameter of the largest cell, so every cell is complete in at least one tile."
                 },
                 "geometry_checkpoint_dir": {
                     "type": "string",
                     "format": "directory-path",
                     "description": "Directory for resumable polygon-extraction checkpoints.",
                     "fa_icon": "fas fa-save",
-                    "help_text": "Polygon extraction writes each completed batch of cells to this directory, so a CELLMEASUREMENT task killed by wall-time or OOM resumes from the last completed batch instead of restarting. Must point OUTSIDE the Nextflow work directory: a retry runs in a fresh work directory, so a checkpoint written there would be discarded. Leave unset to disable checkpointing."
+                    "help_text": "Each completed batch of cell polygons is written here, so a CELLMEASUREMENT task that is killed resumes from the last completed batch. The directory must be outside the Nextflow work directory. Checkpoints are not deleted automatically. Leave unset to turn checkpointing off."
                 },
                 "geometry_batch_size": {
                     "type": "integer",
@@ -533,7 +560,7 @@
                     "description": "Cells per polygon-extraction batch, and the checkpoint granularity.",
                     "fa_icon": "fas fa-layer-group",
                     "minimum": 1,
-                    "help_text": "Smaller batches checkpoint more often but add per-batch overhead. At most one batch of work per worker is lost when a job is killed."
+                    "help_text": "Smaller batches are checkpointed more often but add overhead. A killed task loses at most one batch per worker."
                 }
             }
         },
@@ -542,13 +569,14 @@
             "type": "object",
             "fa_icon": "fas fa-image",
             "description": "Parameters used for segmentation report generation.",
-            "help_text": "These parameters controls parameters used by the segmentationreport step of the pipeline.",
+            "help_text": "Parameters for the segmentation QC report.",
             "properties": {
                 "generate_report": {
                     "type": "boolean",
                     "description": "Generate segmentation report.",
                     "fa_icon": "fas fa-stopwatch",
-                    "help_text": "Set this to `true` to generate a segmentation report. It is recommended that enable_measurements is set to `true` for the most comprehensive report. Skipping this step can save on processing time."
+                    "help_text": "Set to `true` to write an HTML QC report per sample. The report is most complete when `enable_measurements` is `true`.",
+                    "default": false
                 }
             }
         },
@@ -564,7 +592,8 @@
                     "hidden": true,
                     "description": "Enable mask smoothing before cell measurement.",
                     "fa_icon": "fas fa-wave-square",
-                    "help_text": "When enabled, segmentation masks are smoothed to reduce polygon complexity before being passed to cellmeasurement. Choose the method with smooth_method."
+                    "help_text": "Smooths the label masks before cell measurement to reduce the number of polygon vertices. Use it if QuPath fails with StackOverflowError when exporting or loading the GeoJSON. Choose the method with `smooth_method`.",
+                    "default": false
                 },
                 "smooth_method": {
                     "type": "string",
@@ -573,7 +602,7 @@
                     "description": "Smoothing algorithm: 'morphological' (disk close+open) or 'shapely' (Douglas-Peucker polygon simplification).",
                     "fa_icon": "fas fa-cogs",
                     "enum": ["morphological", "shapely"],
-                    "help_text": "'morphological' applies binary close then open with a disk kernel to smooth pixel boundaries. 'shapely' extracts the polygon boundary for each label and applies Shapely's simplify (Douglas-Peucker) algorithm, which directly reduces vertex count \u2014 the main cause of StackOverflowError in QuPath GeoJSON export."
+                    "help_text": "`morphological` applies a binary close then open with a disk of radius `smooth_kernel_size`. `shapely` simplifies each cell outline with the Douglas-Peucker algorithm (tolerance `smooth_tolerance`), which reduces the vertex count directly."
                 },
                 "smooth_kernel_size": {
                     "type": "integer",
@@ -581,9 +610,9 @@
                     "default": 2,
                     "minimum": 1,
                     "maximum": 10,
-                    "description": "Disk radius for morphological close+open smoothing (pixels).",
+                    "description": "Disk radius in pixels for `morphological` smoothing.",
                     "fa_icon": "fas fa-circle",
-                    "help_text": "Larger values produce smoother boundaries but may merge nearby cells. Only used when smooth_masks is enabled."
+                    "help_text": "Larger values give smoother outlines but can merge neighbouring cells."
                 },
                 "smooth_n_workers": {
                     "type": "integer",
@@ -591,9 +620,9 @@
                     "default": 8,
                     "minimum": 1,
                     "maximum": 64,
-                    "description": "Number of parallel worker processes for smoothing.",
+                    "description": "Number of worker processes for mask smoothing.",
                     "fa_icon": "fas fa-tasks",
-                    "help_text": "Set to match available CPUs for optimal performance. Should match --cpus-per-task in your resource configuration"
+                    "help_text": "Set it to the number of CPUs allocated to the SMOOTHMASKS task."
                 },
                 "smooth_chunksize": {
                     "type": "integer",
@@ -601,27 +630,27 @@
                     "default": 200,
                     "minimum": 1,
                     "maximum": 10000,
-                    "description": "Number of labels per worker chunk.",
+                    "description": "Number of labels each smoothing worker processes at a time.",
                     "fa_icon": "fas fa-layer-group",
-                    "help_text": "Tune based on cell size distribution. Larger values for many small cells, smaller values for fewer large cells."
+                    "help_text": "Use larger values for many small cells and smaller values for fewer large cells."
                 },
                 "smooth_tolerance": {
                     "type": "number",
                     "hidden": true,
                     "default": 1,
                     "minimum": 0.01,
-                    "description": "[shapely] Douglas-Peucker simplification tolerance in pixels.",
+                    "description": "Douglas-Peucker tolerance in pixels for `shapely` smoothing.",
                     "fa_icon": "fas fa-sliders-h",
-                    "help_text": "Controls how aggressively polygon boundaries are simplified when smooth_method is 'shapely'. Higher values produce simpler (fewer vertex) polygons but less accurate boundaries. Important to minimise vertex count to prevent StackOverflowError in QuPath GeoJSON export. Tune based on typical cell size and boundary complexity. Start with threshold 1 and adjust as needed."
+                    "help_text": "Higher values give simpler outlines with fewer vertices. Start with 1."
                 },
                 "smooth_min_area": {
                     "type": "number",
                     "hidden": true,
                     "default": 0,
                     "minimum": 0,
-                    "description": "[shapely] Minimum polygon area in pixels\u00b2 to retain after simplification.",
+                    "description": "Minimum polygon area in pixels² kept after `shapely` smoothing.",
                     "fa_icon": "fas fa-compress-arrows-alt",
-                    "help_text": "Labels whose simplified polygon area falls below this threshold are removed from the output mask. Useful for discarding fragments created by aggressive simplification. Only used when smooth_method is 'shapely'."
+                    "help_text": "Removes fragments created by simplification. `0` keeps every cell."
                 }
             }
         },
@@ -684,7 +713,8 @@
                     "type": "boolean",
                     "description": "Display version and exit.",
                     "fa_icon": "fas fa-question-circle",
-                    "hidden": true
+                    "hidden": true,
+                    "default": false
                 },
                 "publish_dir_mode": {
                     "type": "string",
@@ -707,13 +737,15 @@
                     "type": "boolean",
                     "description": "Send plain-text email instead of HTML.",
                     "fa_icon": "fas fa-remove-format",
-                    "hidden": true
+                    "hidden": true,
+                    "default": false
                 },
                 "monochrome_logs": {
                     "type": "boolean",
                     "description": "Do not use coloured log outputs.",
                     "fa_icon": "fas fa-palette",
-                    "hidden": true
+                    "hidden": true,
+                    "default": false
                 },
                 "hook_url": {
                     "type": "string",
