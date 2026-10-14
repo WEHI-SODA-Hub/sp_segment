@@ -72,10 +72,12 @@ method and is off by default.
 Requirements: Nextflow 24.04.2 or later, and Apptainer, Singularity or Docker.
 Cellpose, CellSAM and KRONOS2 need a GPU.
 
-Test your setup:
+Test your setup from a clone of the repository (the test samplesheets use paths relative to the repository root):
 
 ```bash
-nextflow run WEHI-SODA-Hub/sp_segment -profile test,singularity --outdir results
+git clone https://github.com/WEHI-SODA-Hub/sp_segment.git
+cd sp_segment
+nextflow run . -profile test,singularity --outdir results
 ```
 
 Write a samplesheet with one row per image:

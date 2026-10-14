@@ -56,9 +56,8 @@ container profile, for example `-profile test,singularity`.
 | `test_cellsam`            | CellSAM             | yes                    |                                                                   |
 | `test_cellsam_no_backsub` | CellSAM             | no                     |                                                                   |
 
-`test`, `test_no_backsub` and `test_multisample` work from any directory. The
-other profiles use samplesheet paths relative to the launch directory, so run
-them from a clone of the repository:
+The test samplesheets give image paths relative to the repository root, so run
+the test profiles from the root of a clone:
 
 ```bash
 git clone https://github.com/WEHI-SODA-Hub/sp_segment.git
