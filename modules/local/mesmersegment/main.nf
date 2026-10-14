@@ -24,9 +24,14 @@ process MESMERSEGMENT {
         membrane_channels.split(":").collect { channel ->
             "--membrane-channel '${channel}'"
         }.join(' ') : ''
+    // Without deepcell_cache_dir the archive goes under \$HOME. When \$HOME is
+    // not mounted or not writable in the container, use the task directory.
+    def home_fallback = params.deepcell_cache_dir ? '' :
+        '[ -w "\$REAL_HOME" ] || REAL_HOME="\$PWD/.deepcell_home"'
     """
     # Phase 1: Serialize model download — first task downloads, others wait
     REAL_HOME="${params.deepcell_cache_dir ? params.deepcell_cache_dir + '/$(whoami)' : '\$HOME'}"
+    ${home_fallback}
     mkdir -p "\$REAL_HOME/.deepcell/models"
     (
         flock -x 200

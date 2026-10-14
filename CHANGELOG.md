@@ -61,9 +61,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Cellpose previously ran on CPU unless a `small`, `medium`, `large` or
   `wehi_*` profile was used.
 - The test profiles read their samplesheets from the pipeline directory.
-- KRONOS2 no longer needs a writable home directory inside the container.
-  transformers wrote its module cache under `$HOME` and failed with
-  `Read-only file system` when the home directory was not mounted.
+- KRONOS2, Mesmer and CellSAM no longer need a writable home directory inside
+  the container. They failed with `Read-only file system` when the home
+  directory was not mounted. Without `deepcell_cache_dir`, Mesmer and CellSAM
+  now keep their model files in the task directory in that case.
 - `deepcell_cache_dir` is created if it does not exist. Previously every
   Mesmer and CellSAM task failed to start until it was created by hand.
 
