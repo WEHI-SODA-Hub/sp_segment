@@ -22,11 +22,16 @@ process MESMERSEGMENT {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def membrane_channel_args = membrane_channels != '' && membrane_channels != [] ?
         membrane_channels.split(":").collect { channel ->
-            "--membrane-channel \"${channel}\""
+            "--membrane-channel '${channel}'"
         }.join(' ') : ''
+    // Without deepcell_cache_dir the archive goes under \$HOME. When \$HOME is
+    // not mounted or not writable in the container, use the task directory.
+    def home_fallback = params.deepcell_cache_dir ? '' :
+        '[ -w "\$REAL_HOME" ] || REAL_HOME="\$PWD/.deepcell_home"'
     """
     # Phase 1: Serialize model download — first task downloads, others wait
     REAL_HOME="${params.deepcell_cache_dir ? params.deepcell_cache_dir + '/$(whoami)' : '\$HOME'}"
+    ${home_fallback}
     mkdir -p "\$REAL_HOME/.deepcell/models"
     (
         flock -x 200
@@ -47,14 +52,15 @@ process MESMERSEGMENT {
     mesmer-segment \\
         "${tiff}" \\
         --compartment ${compartment} \\
-        --nuclear-channel ${nuclear_channel} \\
+        --nuclear-channel '${nuclear_channel}' \\
         ${membrane_channel_args} \\
         ${args} \\
         > "${prefix}_${compartment}.tiff"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        mesmersegmentation: v0.1.0
+        mesmersegmentation: \$(python -c "import importlib.metadata as m; print(m.version('mesmer_segment'))")
+        deepcell: \$(python -c "import importlib.metadata as m; print(m.version('DeepCell'))")
     END_VERSIONS
     """
 
@@ -65,7 +71,8 @@ process MESMERSEGMENT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        mesmersegmentation: v0.1.0
+        mesmersegmentation: \$(python -c "import importlib.metadata as m; print(m.version('mesmer_segment'))")
+        deepcell: \$(python -c "import importlib.metadata as m; print(m.version('DeepCell'))")
     END_VERSIONS
     """
 }

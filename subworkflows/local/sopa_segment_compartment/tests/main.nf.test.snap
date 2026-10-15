@@ -10,15 +10,15 @@
                         [
                             [
                                 [
-                                    "0.parquet:md5,a87466f553760b13b5cd0d8d28fd3936",
-                                    "1.parquet:md5,a70e84e81a474a28af4d6924ac9852e3",
-                                    "2.parquet:md5,2756ad28463b4705d81f617eba6a7690",
-                                    "3.parquet:md5,9570006deedc85ce670cd9235df40071",
-                                    "4.parquet:md5,b79d9156ef6d7b00c74b32b31204803a",
-                                    "5.parquet:md5,d6670803749ac7364e0ae75e447a47f6",
-                                    "6.parquet:md5,11391a79e323cb66ea6aa891f7503b81",
-                                    "7.parquet:md5,58cdd3c82bcf2bb8c403306bde9e6fad",
-                                    "8.parquet:md5,bf99a1aeee1c8e31eba8ff75f83111f6"
+                                    "0.parquet:md5,b08ec3404d88eb4ec3c12e2cf2dd7a11",
+                                    "1.parquet:md5,e14acfdec7a6ef77251aa555d323c2f4",
+                                    "2.parquet:md5,c4ec5776cb3a2dbb88a1bacbfc42edc5",
+                                    "3.parquet:md5,6326f4042b90aa07785c6d4221422467",
+                                    "4.parquet:md5,f8e3e7cfc779cc6109c622c5d89e58dd",
+                                    "5.parquet:md5,47eee11e47a595ee65db51996d28a9a4",
+                                    "6.parquet:md5,0541748d23f0492339a3276b3a6c5107",
+                                    "7.parquet:md5,cd093ef612a33a0b4ebb102a3143c139",
+                                    "8.parquet:md5,78956d156a976c97c98596bbb7576f83"
                                 ],
                                 "patches_file_image:md5,7c5aba41f53293b712fd86d08ed5b36e"
                             ],
@@ -130,7 +130,7 @@
                             ],
                             [
                                 [
-                                    "shapes.parquet:md5,45f198a7cfd8bb0d3a400b094db91693",
+                                    "shapes.parquet:md5,e4951da611344ffbafe26bc288f54041",
                                     "zarr.json:md5,41794a46835cfd9cc1ada843bf21e42f"
                                 ],
                                 [
@@ -148,11 +148,12 @@
                         {
                             "id": "test"
                         },
-                        "test_whole-cell.tiff:md5,158ead9e2b87b8edb8dd97a68dd4b773"
+                        "test_whole-cell.tiff:md5,c337b44dae3f99010ee7a9b790a8c03c"
                     ]
                 ],
                 "2": [
                     "versions.yml:md5,00c78a84d8e13c2a9159863098a37a28",
+                    "versions.yml:md5,44e75fa9d71cb1e00cd87eeecee7b3a3",
                     "versions.yml:md5,49a1720f2a84a49cdc275753a0520d9b",
                     "versions.yml:md5,945a21da2135454e0e736b3d7d6cee79",
                     "versions.yml:md5,99c3dd3bc2bdcdd11e49b7c31aa33a6b"
@@ -162,11 +163,12 @@
                         {
                             "id": "test"
                         },
-                        "test_whole-cell.tiff:md5,158ead9e2b87b8edb8dd97a68dd4b773"
+                        "test_whole-cell.tiff:md5,c337b44dae3f99010ee7a9b790a8c03c"
                     ]
                 ],
                 "versions": [
                     "versions.yml:md5,00c78a84d8e13c2a9159863098a37a28",
+                    "versions.yml:md5,44e75fa9d71cb1e00cd87eeecee7b3a3",
                     "versions.yml:md5,49a1720f2a84a49cdc275753a0520d9b",
                     "versions.yml:md5,945a21da2135454e0e736b3d7d6cee79",
                     "versions.yml:md5,99c3dd3bc2bdcdd11e49b7c31aa33a6b"
@@ -179,15 +181,15 @@
                         [
                             [
                                 [
-                                    "0.parquet:md5,a87466f553760b13b5cd0d8d28fd3936",
-                                    "1.parquet:md5,a70e84e81a474a28af4d6924ac9852e3",
-                                    "2.parquet:md5,2756ad28463b4705d81f617eba6a7690",
-                                    "3.parquet:md5,9570006deedc85ce670cd9235df40071",
-                                    "4.parquet:md5,b79d9156ef6d7b00c74b32b31204803a",
-                                    "5.parquet:md5,d6670803749ac7364e0ae75e447a47f6",
-                                    "6.parquet:md5,11391a79e323cb66ea6aa891f7503b81",
-                                    "7.parquet:md5,58cdd3c82bcf2bb8c403306bde9e6fad",
-                                    "8.parquet:md5,bf99a1aeee1c8e31eba8ff75f83111f6"
+                                    "0.parquet:md5,b08ec3404d88eb4ec3c12e2cf2dd7a11",
+                                    "1.parquet:md5,e14acfdec7a6ef77251aa555d323c2f4",
+                                    "2.parquet:md5,c4ec5776cb3a2dbb88a1bacbfc42edc5",
+                                    "3.parquet:md5,6326f4042b90aa07785c6d4221422467",
+                                    "4.parquet:md5,f8e3e7cfc779cc6109c622c5d89e58dd",
+                                    "5.parquet:md5,47eee11e47a595ee65db51996d28a9a4",
+                                    "6.parquet:md5,0541748d23f0492339a3276b3a6c5107",
+                                    "7.parquet:md5,cd093ef612a33a0b4ebb102a3143c139",
+                                    "8.parquet:md5,78956d156a976c97c98596bbb7576f83"
                                 ],
                                 "patches_file_image:md5,7c5aba41f53293b712fd86d08ed5b36e"
                             ],
@@ -299,7 +301,7 @@
                             ],
                             [
                                 [
-                                    "shapes.parquet:md5,45f198a7cfd8bb0d3a400b094db91693",
+                                    "shapes.parquet:md5,e4951da611344ffbafe26bc288f54041",
                                     "zarr.json:md5,41794a46835cfd9cc1ada843bf21e42f"
                                 ],
                                 [
@@ -314,299 +316,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-07-30T00:13:07.743681143",
+        "timestamp": "2026-10-14T15:17:31.825923539",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "24.04.2"
-        }
-    },
-    "sopa_segment - tiff - whole-cell": {
-        "content": [
-            {
-                "0": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        [
-                            [
-                                [
-                                    "0.parquet:md5,767d788e69a0d57927a2c1632f42f8db"
-                                ],
-                                "patches_file_image:md5,b026324c6904b2a9cb4b88d6d61c81d1"
-                            ],
-                            ".zattrs:md5,f73562e0c37fb0115b37794a1a74974b",
-                            ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                            [
-                                ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                [
-                                    ".zattrs:md5,88568da6903af9fe0e018987dc08cae8",
-                                    ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    [
-                                        ".zarray:md5,693c1a6da0b95db2dcbeef6cdd71799b",
-                                        [
-                                            [
-                                                "0:md5,145adf06fce482a5962026e847ba34bc"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,bda4a0f66e52d9e7010d7315fe223723"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,145adf06fce482a5962026e847ba34bc"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,d0b0a330e9253e2f8f5371781c776278",
-                                        [
-                                            [
-                                                "0:md5,5bad6c314a4c2a971a866c29f26737bb"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,e0f5c1b3f64c87c25e4a7b86f1667927"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,5bad6c314a4c2a971a866c29f26737bb"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,52ff9c3163107de97ee187763db1ae23",
-                                        [
-                                            [
-                                                "0:md5,598ed11b166b832625be3f2ddbd6ecd2"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,78866146a797efe42b527b15d26ab90e"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,598ed11b166b832625be3f2ddbd6ecd2"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,51793604f7aa317fb8b81244e07e021e",
-                                        [
-                                            [
-                                                "0:md5,cc8fab9e913769032dd5403aea144cf7"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,78ddb0bb5197b0ce35fcfd9d549ee7fa"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,cc8fab9e913769032dd5403aea144cf7"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,9fe13f0f19532d31d6ef189dd85135a2",
-                                        [
-                                            [
-                                                "0:md5,f5a4b64cd322ed6cb509fb338d78bbc9"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,0c5dc99a0d1979df7d498a20555f9057"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,f5a4b64cd322ed6cb509fb338d78bbc9"
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ],
-                            [
-                                ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                [
-                                    ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
-                                    ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    "shapes.parquet:md5,b0fb6187c4c7df4dff353ad918b02e37"
-                                ],
-                                [
-                                    ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
-                                    ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    "shapes.parquet:md5,1d72741f51032c25f60816665ba7506b"
-                                ]
-                            ],
-                            "zmetadata:md5,a3a0a0335a8f02b5aeb807496769d4dd"
-                        ]
-                    ]
-                ],
-                "1": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        "test_whole-cell.tiff:md5,6df6ba77ef83b5c5f3c1e22c13efe363"
-                    ]
-                ],
-                "2": [
-                    
-                ],
-                "tiff": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        "test_whole-cell.tiff:md5,6df6ba77ef83b5c5f3c1e22c13efe363"
-                    ]
-                ],
-                "versions": [
-                    
-                ],
-                "zarr": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        [
-                            [
-                                [
-                                    "0.parquet:md5,767d788e69a0d57927a2c1632f42f8db"
-                                ],
-                                "patches_file_image:md5,b026324c6904b2a9cb4b88d6d61c81d1"
-                            ],
-                            ".zattrs:md5,f73562e0c37fb0115b37794a1a74974b",
-                            ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                            [
-                                ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                [
-                                    ".zattrs:md5,88568da6903af9fe0e018987dc08cae8",
-                                    ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    [
-                                        ".zarray:md5,693c1a6da0b95db2dcbeef6cdd71799b",
-                                        [
-                                            [
-                                                "0:md5,145adf06fce482a5962026e847ba34bc"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,bda4a0f66e52d9e7010d7315fe223723"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,145adf06fce482a5962026e847ba34bc"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,d0b0a330e9253e2f8f5371781c776278",
-                                        [
-                                            [
-                                                "0:md5,5bad6c314a4c2a971a866c29f26737bb"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,e0f5c1b3f64c87c25e4a7b86f1667927"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,5bad6c314a4c2a971a866c29f26737bb"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,52ff9c3163107de97ee187763db1ae23",
-                                        [
-                                            [
-                                                "0:md5,598ed11b166b832625be3f2ddbd6ecd2"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,78866146a797efe42b527b15d26ab90e"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,598ed11b166b832625be3f2ddbd6ecd2"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,51793604f7aa317fb8b81244e07e021e",
-                                        [
-                                            [
-                                                "0:md5,cc8fab9e913769032dd5403aea144cf7"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,78ddb0bb5197b0ce35fcfd9d549ee7fa"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,cc8fab9e913769032dd5403aea144cf7"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,9fe13f0f19532d31d6ef189dd85135a2",
-                                        [
-                                            [
-                                                "0:md5,f5a4b64cd322ed6cb509fb338d78bbc9"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,0c5dc99a0d1979df7d498a20555f9057"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,f5a4b64cd322ed6cb509fb338d78bbc9"
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ],
-                            [
-                                ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                [
-                                    ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
-                                    ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    "shapes.parquet:md5,b0fb6187c4c7df4dff353ad918b02e37"
-                                ],
-                                [
-                                    ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
-                                    ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    "shapes.parquet:md5,1d72741f51032c25f60816665ba7506b"
-                                ]
-                            ],
-                            "zmetadata:md5,a3a0a0335a8f02b5aeb807496769d4dd"
-                        ]
-                    ]
-                ]
-            }
-        ],
-        "timestamp": "2025-07-22T12:22:38.860786592",
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.4"
+            "nextflow": "25.10.0"
         }
     },
     "sopa_segment_compartment - tiff - nuclear": {
@@ -620,15 +333,15 @@
                         [
                             [
                                 [
-                                    "0.parquet:md5,dcd2bdf452b30339beede41baec3bcd3",
-                                    "1.parquet:md5,1712e61563e768d359fb8c9e767a6932",
-                                    "2.parquet:md5,bc77c8b1974bb6e18bd59a54f92e0a7a",
-                                    "3.parquet:md5,eebfbc2d1446f98039c389389696cdd5",
-                                    "4.parquet:md5,82dbe72582f32a65918439ccb30f0e4f",
-                                    "5.parquet:md5,beb6adfbcf5ff463b25ee44bc9c8b6cf",
-                                    "6.parquet:md5,1809f26b3e0f88ffe83764b39281fc16",
-                                    "7.parquet:md5,a72e59d71553f6ff047dd5e971aec237",
-                                    "8.parquet:md5,d591719713eaa2bbb11b985a0ae68a80"
+                                    "0.parquet:md5,de6a276c0a9e4358f2cbbb6fc831b55a",
+                                    "1.parquet:md5,ff84f24090af898cef4be0c9b1866c47",
+                                    "2.parquet:md5,5662f115df9f9a06ad69bc2f8821efcf",
+                                    "3.parquet:md5,915722cfc0348e6146aa0ab70a86f4ef",
+                                    "4.parquet:md5,75c025dcc75d1756830d6441aa512760",
+                                    "5.parquet:md5,c7433ff6250229541136c879813cee19",
+                                    "6.parquet:md5,bbbabee8301198250d515b30d45a9e0c",
+                                    "7.parquet:md5,a65d50f40da00f22cd21a4f0910478bf",
+                                    "8.parquet:md5,c6fe8030cdacacd6ec118a96abd16e2e"
                                 ],
                                 "patches_file_image:md5,7c5aba41f53293b712fd86d08ed5b36e"
                             ],
@@ -740,7 +453,7 @@
                             ],
                             [
                                 [
-                                    "shapes.parquet:md5,137d85c972deac43498928e658133dcd",
+                                    "shapes.parquet:md5,3a2ccdcc4fd4f2aef0c85deead8edb0a",
                                     "zarr.json:md5,41794a46835cfd9cc1ada843bf21e42f"
                                 ],
                                 [
@@ -758,11 +471,12 @@
                         {
                             "id": "test"
                         },
-                        "test_nuclear.tiff:md5,5e3086a09e911f0b8f29f4413aafb5ea"
+                        "test_nuclear.tiff:md5,31887e5f7309f0b041aaf6bbb225cff5"
                     ]
                 ],
                 "2": [
                     "versions.yml:md5,00c78a84d8e13c2a9159863098a37a28",
+                    "versions.yml:md5,44e75fa9d71cb1e00cd87eeecee7b3a3",
                     "versions.yml:md5,49a1720f2a84a49cdc275753a0520d9b",
                     "versions.yml:md5,945a21da2135454e0e736b3d7d6cee79",
                     "versions.yml:md5,99c3dd3bc2bdcdd11e49b7c31aa33a6b"
@@ -772,11 +486,12 @@
                         {
                             "id": "test"
                         },
-                        "test_nuclear.tiff:md5,5e3086a09e911f0b8f29f4413aafb5ea"
+                        "test_nuclear.tiff:md5,31887e5f7309f0b041aaf6bbb225cff5"
                     ]
                 ],
                 "versions": [
                     "versions.yml:md5,00c78a84d8e13c2a9159863098a37a28",
+                    "versions.yml:md5,44e75fa9d71cb1e00cd87eeecee7b3a3",
                     "versions.yml:md5,49a1720f2a84a49cdc275753a0520d9b",
                     "versions.yml:md5,945a21da2135454e0e736b3d7d6cee79",
                     "versions.yml:md5,99c3dd3bc2bdcdd11e49b7c31aa33a6b"
@@ -789,15 +504,15 @@
                         [
                             [
                                 [
-                                    "0.parquet:md5,dcd2bdf452b30339beede41baec3bcd3",
-                                    "1.parquet:md5,1712e61563e768d359fb8c9e767a6932",
-                                    "2.parquet:md5,bc77c8b1974bb6e18bd59a54f92e0a7a",
-                                    "3.parquet:md5,eebfbc2d1446f98039c389389696cdd5",
-                                    "4.parquet:md5,82dbe72582f32a65918439ccb30f0e4f",
-                                    "5.parquet:md5,beb6adfbcf5ff463b25ee44bc9c8b6cf",
-                                    "6.parquet:md5,1809f26b3e0f88ffe83764b39281fc16",
-                                    "7.parquet:md5,a72e59d71553f6ff047dd5e971aec237",
-                                    "8.parquet:md5,d591719713eaa2bbb11b985a0ae68a80"
+                                    "0.parquet:md5,de6a276c0a9e4358f2cbbb6fc831b55a",
+                                    "1.parquet:md5,ff84f24090af898cef4be0c9b1866c47",
+                                    "2.parquet:md5,5662f115df9f9a06ad69bc2f8821efcf",
+                                    "3.parquet:md5,915722cfc0348e6146aa0ab70a86f4ef",
+                                    "4.parquet:md5,75c025dcc75d1756830d6441aa512760",
+                                    "5.parquet:md5,c7433ff6250229541136c879813cee19",
+                                    "6.parquet:md5,bbbabee8301198250d515b30d45a9e0c",
+                                    "7.parquet:md5,a65d50f40da00f22cd21a4f0910478bf",
+                                    "8.parquet:md5,c6fe8030cdacacd6ec118a96abd16e2e"
                                 ],
                                 "patches_file_image:md5,7c5aba41f53293b712fd86d08ed5b36e"
                             ],
@@ -909,7 +624,7 @@
                             ],
                             [
                                 [
-                                    "shapes.parquet:md5,137d85c972deac43498928e658133dcd",
+                                    "shapes.parquet:md5,3a2ccdcc4fd4f2aef0c85deead8edb0a",
                                     "zarr.json:md5,41794a46835cfd9cc1ada843bf21e42f"
                                 ],
                                 [
@@ -924,273 +639,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-07-30T00:15:15.88137061",
+        "timestamp": "2026-10-14T15:22:43.981414333",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "24.04.2"
-        }
-    },
-    "sopa_segment - tiff - nuclear": {
-        "content": [
-            {
-                "0": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        [
-                            [
-                                "patches_file_image:md5,b026324c6904b2a9cb4b88d6d61c81d1"
-                            ],
-                            ".zattrs:md5,f73562e0c37fb0115b37794a1a74974b",
-                            ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                            [
-                                ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                [
-                                    ".zattrs:md5,88568da6903af9fe0e018987dc08cae8",
-                                    ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    [
-                                        ".zarray:md5,693c1a6da0b95db2dcbeef6cdd71799b",
-                                        [
-                                            [
-                                                "0:md5,145adf06fce482a5962026e847ba34bc"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,bda4a0f66e52d9e7010d7315fe223723"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,145adf06fce482a5962026e847ba34bc"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,d0b0a330e9253e2f8f5371781c776278",
-                                        [
-                                            [
-                                                "0:md5,5bad6c314a4c2a971a866c29f26737bb"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,e0f5c1b3f64c87c25e4a7b86f1667927"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,5bad6c314a4c2a971a866c29f26737bb"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,52ff9c3163107de97ee187763db1ae23",
-                                        [
-                                            [
-                                                "0:md5,598ed11b166b832625be3f2ddbd6ecd2"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,78866146a797efe42b527b15d26ab90e"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,598ed11b166b832625be3f2ddbd6ecd2"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,51793604f7aa317fb8b81244e07e021e",
-                                        [
-                                            [
-                                                "0:md5,cc8fab9e913769032dd5403aea144cf7"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,78ddb0bb5197b0ce35fcfd9d549ee7fa"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,cc8fab9e913769032dd5403aea144cf7"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,9fe13f0f19532d31d6ef189dd85135a2",
-                                        [
-                                            [
-                                                "0:md5,f5a4b64cd322ed6cb509fb338d78bbc9"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,0c5dc99a0d1979df7d498a20555f9057"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,f5a4b64cd322ed6cb509fb338d78bbc9"
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ],
-                            [
-                                ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                [
-                                    ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
-                                    ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    "shapes.parquet:md5,1d72741f51032c25f60816665ba7506b"
-                                ]
-                            ],
-                            "zmetadata:md5,a3a0a0335a8f02b5aeb807496769d4dd"
-                        ]
-                    ]
-                ],
-                "1": [
-                    
-                ],
-                "2": [
-                    
-                ],
-                "tiff": [
-                    
-                ],
-                "versions": [
-                    
-                ],
-                "zarr": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        [
-                            [
-                                "patches_file_image:md5,b026324c6904b2a9cb4b88d6d61c81d1"
-                            ],
-                            ".zattrs:md5,f73562e0c37fb0115b37794a1a74974b",
-                            ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                            [
-                                ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                [
-                                    ".zattrs:md5,88568da6903af9fe0e018987dc08cae8",
-                                    ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    [
-                                        ".zarray:md5,693c1a6da0b95db2dcbeef6cdd71799b",
-                                        [
-                                            [
-                                                "0:md5,145adf06fce482a5962026e847ba34bc"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,bda4a0f66e52d9e7010d7315fe223723"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,145adf06fce482a5962026e847ba34bc"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,d0b0a330e9253e2f8f5371781c776278",
-                                        [
-                                            [
-                                                "0:md5,5bad6c314a4c2a971a866c29f26737bb"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,e0f5c1b3f64c87c25e4a7b86f1667927"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,5bad6c314a4c2a971a866c29f26737bb"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,52ff9c3163107de97ee187763db1ae23",
-                                        [
-                                            [
-                                                "0:md5,598ed11b166b832625be3f2ddbd6ecd2"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,78866146a797efe42b527b15d26ab90e"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,598ed11b166b832625be3f2ddbd6ecd2"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,51793604f7aa317fb8b81244e07e021e",
-                                        [
-                                            [
-                                                "0:md5,cc8fab9e913769032dd5403aea144cf7"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,78ddb0bb5197b0ce35fcfd9d549ee7fa"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,cc8fab9e913769032dd5403aea144cf7"
-                                            ]
-                                        ]
-                                    ],
-                                    [
-                                        ".zarray:md5,9fe13f0f19532d31d6ef189dd85135a2",
-                                        [
-                                            [
-                                                "0:md5,f5a4b64cd322ed6cb509fb338d78bbc9"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,0c5dc99a0d1979df7d498a20555f9057"
-                                            ]
-                                        ],
-                                        [
-                                            [
-                                                "0:md5,f5a4b64cd322ed6cb509fb338d78bbc9"
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ],
-                            [
-                                ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                [
-                                    ".zattrs:md5,3092d7fd5d51b39416853b3c74211344",
-                                    ".zgroup:md5,e20297935e73dd0154104d4ea53040ab",
-                                    "shapes.parquet:md5,1d72741f51032c25f60816665ba7506b"
-                                ]
-                            ],
-                            "zmetadata:md5,a3a0a0335a8f02b5aeb807496769d4dd"
-                        ]
-                    ]
-                ]
-            }
-        ],
-        "timestamp": "2025-07-22T12:23:29.614171908",
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.4"
+            "nextflow": "25.10.0"
         }
     }
 }

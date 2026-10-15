@@ -7,19 +7,26 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson.gz:md5,76bb3371f60058c0b8240bd78231f58a"
+                        "test.geojson.gz:md5,7cd4f279b641ee89aa05b21c7fdc475b"
                     ]
                 ],
                 "versions": [
+                    "versions.yml:md5,3e79f117d147d8f8aabe6a6d1d154cb8",
+                    "versions.yml:md5,517f5887402f1439d8a03987cdd8a024",
+                    "versions.yml:md5,598205c342babe1603d8353a9d2cf366",
+                    "versions.yml:md5,5eb8a84c5c1f6c5d40c1110120dc0b5e",
                     "versions.yml:md5,68e76b954fa75f68c645487490fb74e9",
-                    "versions.yml:md5,adbd1f31a95590cdd679b5aeca3d340e"
+                    "versions.yml:md5,98741c8592ddb9464d911bd576cfd8c2",
+                    "versions.yml:md5,adbd1f31a95590cdd679b5aeca3d340e",
+                    "versions.yml:md5,b35327a6894879a82edcbc51cc57813a",
+                    "versions.yml:md5,c1bb02634d6f67bb05fba358fd8b3c61"
                 ]
             }
         ],
-        "timestamp": "2026-07-30T00:19:43.658805976",
+        "timestamp": "2026-10-14T15:28:28.43484458",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "24.04.2"
+            "nextflow": "25.10.0"
         }
     }
 }

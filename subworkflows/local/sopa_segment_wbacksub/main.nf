@@ -26,7 +26,7 @@ workflow SOPA_SEGMENT_WBACKSUB {
             ]
         }
     )
-    ch_versions = ch_versions.mix(BACKGROUNDSUBTRACT.out.versions.first())
+    ch_versions = ch_versions.mix(BACKGROUNDSUBTRACT.out.versions)
 
     // Replace tiff with backsub_tif
     ch_sopa_wbacksub
@@ -43,7 +43,7 @@ workflow SOPA_SEGMENT_WBACKSUB {
         ch_sopa,
         ch_cellpose_models
     )
-    ch_versions = ch_versions.mix(SOPA_SEGMENT.out.versions.first())
+    ch_versions = ch_versions.mix(SOPA_SEGMENT.out.versions)
 
     emit:
     annotations          = SOPA_SEGMENT.out.annotations          // channel: [ val(meta), *.geojson ]

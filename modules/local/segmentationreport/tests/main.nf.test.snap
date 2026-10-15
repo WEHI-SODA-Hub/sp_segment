@@ -10,15 +10,11 @@
                         "test.html:md5,00f00398a15e642db20980be7eb63881"
                     ]
                 ],
-                "1": [
-                    
-                ],
+                "1": [],
                 "2": [
                     "versions.yml:md5,36e73e8f080247daa0c3097640cf401c"
                 ],
-                "rds": [
-                    
-                ],
+                "rds": [],
                 "report": [
                     [
                         {
@@ -86,44 +82,5 @@
             "nextflow": "25.04.4"
         },
         "timestamp": "2026-06-09T15:02:23.15353295"
-    },
-    "segmentationreport - add background image": {
-        "content": [
-            {
-                "0": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        "test.html:md5,d8942cb48d048137f4e065d913ce740e"
-                    ]
-                ],
-                "1": [
-                    
-                ],
-                "2": [
-                    "versions.yml:md5,a36295eacb48d679e04b9d2c71e4f0eb"
-                ],
-                "rds": [
-                    
-                ],
-                "report": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        "test.html:md5,d8942cb48d048137f4e065d913ce740e"
-                    ]
-                ],
-                "versions": [
-                    "versions.yml:md5,a36295eacb48d679e04b9d2c71e4f0eb"
-                ]
-            }
-        ],
-        "meta": {
-            "nf-test": "0.9.2",
-            "nextflow": "25.04.4"
-        },
-        "timestamp": "2025-10-09T20:34:55.612758943"
     }
 }

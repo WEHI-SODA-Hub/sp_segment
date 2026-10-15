@@ -24,7 +24,12 @@ process CELLSAMSEGMENT {
     def mem_channel_args = mem_channels.collect { channel ->
         "--membrane-channel '${channel}'"
         }.join(' ')
-    def cache_home = params.deepcell_cache_dir ? "export HOME=\"${params.deepcell_cache_dir}/\$(whoami)\"" : ''
+    // Without deepcell_cache_dir the weights go under \$HOME. When \$HOME is not
+    // mounted or not writable in the container, use the task directory instead
+    // (the weights are then downloaded once per task).
+    def cache_home = params.deepcell_cache_dir ?
+        "export HOME=\"${params.deepcell_cache_dir}/\$(whoami)\"" :
+        '[ -w "\$HOME" ] || export HOME="\$PWD/.task_home"'
 
     """
     ${cache_home}
@@ -39,7 +44,9 @@ process CELLSAMSEGMENT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        cellsam: 0.1.0
+        cellsam: \$(python -c "import importlib.metadata as m; print(m.version('cellSAM'))")
+        segment-anything: \$(python -c "import importlib.metadata as m; print(m.version('segment-anything'))")
+        torch: \$(python -c "import torch; print(torch.__version__)")
     END_VERSIONS
     """
 
@@ -50,7 +57,9 @@ process CELLSAMSEGMENT {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        cellsam: 0.1.0
+        cellsam: \$(python -c "import importlib.metadata as m; print(m.version('cellSAM'))")
+        segment-anything: \$(python -c "import importlib.metadata as m; print(m.version('segment-anything'))")
+        torch: \$(python -c "import torch; print(torch.__version__)")
     END_VERSIONS
     """
 }

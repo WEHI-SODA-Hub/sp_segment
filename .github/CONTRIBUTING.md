@@ -1,7 +1,7 @@
 # WEHI-SODA-Hub/sp_segment: Contributing Guidelines
 
 Hi there!
-Many thanks for taking an interest in improving wehi-soda-hub/spatialproteomics.
+Many thanks for taking an interest in improving WEHI-SODA-Hub/sp_segment.
 
 We try to manage the required tasks for WEHI-SODA-Hub/sp_segment using GitHub issues, you probably came to this page when creating one.
 Please use the pre-filled template to save time.
@@ -23,19 +23,20 @@ If you're not used to this workflow with git, you can start with some [docs from
 
 ## Tests
 
-You have the option to test your changes locally by running the pipeline. For receiving warnings about process selectors and other `debug` information, it is recommended to use the debug profile. Execute all the tests with the following command:
+Test your changes locally before opening a pull request. The commands, the
+test profiles and how to update nf-test snapshots are in
+[docs/developer/testing.md](../docs/developer/testing.md). In short, from the
+root of a clone:
 
 ```bash
-nf-test test --profile debug,test_mesmer,docker --verbose
-nf-test test --profile debug,test_cellpose,docker --verbose
+nextflow run . -profile test,singularity --outdir results/test
+pytest tests/python -q
+nf-test test modules/local/<module> --profile test,singularity
 ```
 
-KRONOS module tests run in stub mode by default to avoid downloading large model checkpoints. To run the KRONOS integration module test, set a pre-downloaded model directory (must contain a `.pt` checkpoint) and run:
-
-```bash
-export KRONOS_MODEL_DIR=/path/to/kronos_model_dir
-nf-test test modules/local/kronosembeddings/tests/main.nf.test --profile debug,test,apptainer --verbose
-```
+Mesmer, CellSAM and KRONOS2 need a GPU and are not run in CI, so run their
+test profiles (`test_mesmer`, `test_cellsam`, `test_mesmer_kronos2`) on a GPU
+node when a change affects them.
 
 When you create a pull request with changes, [GitHub Actions](https://github.com/features/actions) will run automatic tests.
 Typically, pull-requests are only fully reviewed when these tests are passing, though of course we can help out before then.
@@ -60,9 +61,9 @@ These tests are run both with the latest available version of `Nextflow` and als
 
 :warning: Only in the unlikely and regretful event of a release happening with a bug.
 
-- On your own fork, make a new branch `patch` based on `upstream/master`.
+- On your own fork, make a new branch `patch` based on `upstream/main`.
 - Fix the bug, and bump version (X.Y.Z+1).
-- A PR should be made on `master` from patch to directly this particular bug.
+- Open a pull request from `patch` to `main` that fixes only this bug.
 
 ## Pipeline contribution conventions
 

@@ -41,6 +41,8 @@ import time
 import numpy as np
 import tifffile
 
+from tiff_channels import channel_layout, get_channel_names, is_channel_last  # noqa: F401
+
 # ----------------------------------------------------------------------------
 # logging
 # ----------------------------------------------------------------------------
@@ -99,65 +101,8 @@ def scaling_factor(dtype):
 # ----------------------------------------------------------------------------
 
 
-def channel_layout(tif):
-    """How a TIFF stores its channels: ``("stacked" | "split", n_channels)``.
-
-    Two layouts occur in practice. The usual one keeps every channel in a single
-    ``CYX`` series. The other gives each channel its own 2D series, which some
-    OME writers produce -- notably the inForm unmixing export behind the COMET
-    ``_fixed`` images. A reader that only consults ``series[0]`` sees the second
-    as a one-channel image, and since the patch buffer is sized from the *marker*
-    list, numpy then broadcasts that single channel's pixels under every marker's
-    name: an embedding of one channel wearing eight labels, with no error. Both
-    the name list and the pixel reader derive the channel count from here so they
-    cannot disagree about what a channel is.
-    """
-    series = list(getattr(tif, "series", None) or [])
-    if (
-        len(series) > 1
-        and all(len(s.shape) == 2 for s in series)
-        and len({tuple(s.shape) for s in series}) == 1
-    ):
-        return "split", len(series)
-    if series:
-        shape = tuple(series[0].shape)
-        return "stacked", (shape[0] if len(shape) >= 3 else 1)
-    return "stacked", (len(tif.pages) if len(tif.pages) > 1 else 1)
-
-
-def get_channel_names(tiff_path):
-    """Channel names from OME-XML, then ImageJ labels, then numbered fallback.
-
-    Reads metadata only -- no pixel decode. The result always holds exactly one
-    entry per image channel: a channel the metadata leaves unnamed gets a
-    synthesised name rather than being dropped. Dropping shortened the list while
-    leaving the image unchanged, sliding every later name onto the wrong channel
-    index -- and those indices are what ``ChannelReader`` reads pixels by.
-    """
-    with tifffile.TiffFile(tiff_path) as tif:
-        _, n_channels = channel_layout(tif)
-
-        names = []
-        if tif.is_ome:
-            try:
-                from xml.etree import ElementTree as ET
-
-                root = ET.fromstring(tif.ome_metadata)
-                ns = {"ome": "http://www.openmicroscopy.org/Schemas/OME/2016-06"}
-                channels = root.findall(".//ome:Channel", ns) or root.findall(
-                    ".//Channel"
-                )
-                names = [c.get("Name") or c.get("ID") for c in channels]
-            except Exception:
-                names = []
-
-        if not names and getattr(tif, "imagej_metadata", None):
-            if "Labels" in tif.imagej_metadata:
-                names = list(tif.imagej_metadata["Labels"])
-
-    names = [name or f"Channel_{i}" for i, name in enumerate(names[:n_channels])]
-    names += [f"Channel_{i}" for i in range(len(names), n_channels)]
-    return names
+# channel_layout and get_channel_names live in tiff_channels so that every
+# bin/ script reads channels the same way; they are re-exported here.
 
 
 def load_marker_mapping(arg):
@@ -165,19 +110,36 @@ def load_marker_mapping(arg):
 
     Keys beginning with ``_`` are treated as comments and dropped, so the
     shipped example file can document itself.
+
+    A value that is neither a readable JSON file nor inline JSON raises
+    ``ValueError``: falling back to no mapping would hand the model the raw
+    channel names, which is the silent failure the mapping exists to prevent.
     """
     if not arg:
         return {}
     if os.path.isfile(arg):
-        with open(arg) as fh:
-            raw = json.load(fh)
+        try:
+            with open(arg) as fh:
+                raw = json.load(fh)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"--marker-mapping file {arg} is not valid JSON: {exc}") from exc
     else:
         try:
             raw = json.loads(arg)
-        except json.JSONDecodeError:
-            log(f"WARNING: --marker-mapping is neither a file nor valid JSON: {arg}")
-            return {}
-    return {k: v for k, v in raw.items() if not k.startswith("_")}
+        except json.JSONDecodeError as exc:
+            raise ValueError(
+                f"--marker-mapping is neither an existing file nor valid JSON: {arg}"
+            ) from exc
+    if not isinstance(raw, dict):
+        raise ValueError(
+            "--marker-mapping must be a JSON object mapping channel names to "
+            f"KRONOS2 marker names, got: {arg}"
+        )
+    mapping = {k: v for k, v in raw.items() if not k.startswith("_")}
+    bad = [k for k, v in mapping.items() if not isinstance(v, str)]
+    if bad:
+        raise ValueError(f"--marker-mapping values must be strings; not for: {bad}")
+    return mapping
 
 
 def apply_marker_mapping(names, mapping):
@@ -359,6 +321,12 @@ class ChannelReader:
         self._eager = None
 
         with tifffile.TiffFile(self.path) as tif:
+            if is_channel_last(tif):
+                # The windowed reads below index the first axis as channels.
+                raise ValueError(
+                    f"{self.path} stores channels last (YXC); convert it to a "
+                    "CYX OME-TIFF before running KRONOS2"
+                )
             self.layout, self.n_channels = channel_layout(tif)
             series = tif.series[0]
             self.shape = tuple(series.shape)
@@ -389,9 +357,9 @@ class ChannelReader:
             if self.layout == "split":
                 # imread() would hand back series[0] alone, so name the series.
                 with tifffile.TiffFile(self.path) as tif:
-                    self._eager = np.stack(
-                        [tif.series[index].asarray() for index in self.channels]
-                    )
+                    planes = [tif.series[index].asarray() for index in self.channels]
+                    # A series can read as (1, Y, X); keep the plane.
+                    self._eager = np.stack([p.reshape(p.shape[-2:]) for p in planes])
             else:
                 arr = tifffile.imread(self.path)
                 if arr.ndim == 2:
@@ -428,9 +396,9 @@ class ChannelReader:
         if self._eager is not None:
             return self._eager[:, y0:y1, x0:x1]
         if self._zarrs is not None:
-            return np.stack(
-                [np.asarray(arr[y0:y1, x0:x1]) for arr in self._zarrs], axis=0
-            )
+            # Index the last two axes: a split-layout series can be (1, Y, X).
+            planes = [np.asarray(arr[..., y0:y1, x0:x1]) for arr in self._zarrs]
+            return np.stack([p.reshape(p.shape[-2:]) for p in planes], axis=0)
         arr = self._zarr
         if arr.ndim == 2:
             return np.asarray(arr[y0:y1, x0:x1])[np.newaxis]

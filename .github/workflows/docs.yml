@@ -1,0 +1,67 @@
+name: Documentation
+# Builds the MkDocs site on pull requests and deploys it to the gh-pages branch
+# with mike: pushes to dev deploy the "dev" version, published releases deploy
+# "<tag>" with the "latest" alias.
+on:
+  pull_request:
+  push:
+    branches:
+      - dev
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: "docs-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pipeline code
+        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: docs/requirements.txt
+
+      - name: Install MkDocs
+        run: pip install -r docs/requirements.txt
+
+      - name: Check generated reference pages are up to date
+        run: python3 docs/scripts/generate_reference.py --check
+
+      - name: Build site
+        run: mkdocs build --strict
+
+      - name: Configure git for mike
+        if: github.event_name == 'push' || github.event_name == 'release'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin gh-pages --depth=1 || true
+
+      - name: Deploy dev version
+        if: github.event_name == 'push' && github.ref == 'refs/heads/dev' && github.repository == 'WEHI-SODA-Hub/sp_segment'
+        run: |
+          mike deploy --push --update-aliases dev
+          # Until the first release is deployed there is no "latest" version,
+          # so serve "dev" at the site root.
+          if ! mike list | grep -qw latest; then
+            mike set-default --push dev
+          fi
+
+      - name: Deploy release version
+        if: github.event_name == 'release' && github.repository == 'WEHI-SODA-Hub/sp_segment'
+        run: |
+          mike deploy --push --update-aliases "${{ github.event.release.tag_name }}" latest
+          mike set-default --push latest
