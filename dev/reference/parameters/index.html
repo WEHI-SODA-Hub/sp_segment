@@ -1,0 +1,2811 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Cell segmentation and measurement for COMET, MIBI and OPAL multiplex images">
+      
+      
+      
+        <link rel="canonical" href="https://wehi-soda-hub.github.io/sp_segment/dev/reference/parameters/">
+      
+      
+        <link rel="prev" href="../samplesheet/">
+      
+      
+        <link rel="next" href="../../output/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Parameters - sp_segment</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#parameters" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="sp_segment" class="md-header__button md-logo" aria-label="sp_segment" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.46 6.28 11.05 9c-2.58.26-4.55 2.41-4.55 5a5 5 0 0 0 5 5c2.05 0 3.81-1.23 4.58-3H13.5v-2h8v2h-2.25a8.05 8.05 0 0 1-2.46 4h2.71v2h-16v-2h2.71a8 8 0 0 1-2.71-6c0-3.63 2.46-6.8 5.96-7.72m3.28-4.21.76 1.3.86-.5 3.5 6.06-3.47 2-3.5-6.06.87-.5-.76-1.3z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sp_segment
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Parameters
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/WEHI-SODA-Hub/sp_segment" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    WEHI-SODA-Hub/sp_segment
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="sp_segment" class="md-nav__button md-logo" aria-label="sp_segment" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.46 6.28 11.05 9c-2.58.26-4.55 2.41-4.55 5a5 5 0 0 0 5 5c2.05 0 3.81-1.23 4.58-3H13.5v-2h8v2h-2.25a8.05 8.05 0 0 1-2.46 4h2.71v2h-16v-2h2.71a8 8 0 0 1-2.71-6c0-3.63 2.46-6.8 5.96-7.72m3.28-4.21.76 1.3.86-.5 3.5 6.06-3.47 2-3.5-6.06.87-.5-.76-1.3z"/></svg>
+
+    </a>
+    sp_segment
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/WEHI-SODA-Hub/sp_segment" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    WEHI-SODA-Hub/sp_segment
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install and test
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../wehi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running at WEHI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../usage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Running the pipeline
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to guides
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to guides
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/choose-segmenter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Choose a segmentation method
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/large-images/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Large and dense images
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/multiple-methods/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run several methods on one image
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/kronos2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KRONOS2 embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/resume-measurement/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resume a killed measurement task
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/qupath/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    View results in QuPath
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../samplesheet/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Samplesheet
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameters
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parameters
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#inputoutput-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input/output options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#background-subtraction-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Background subtraction options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#combine-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Combine options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cell-processing-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell processing options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sopa-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SOPA options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cellpose-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cellpose options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cellpose-preprocessing-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cellpose preprocessing options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mesmer-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mesmer options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cellsam-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CellSAM options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kronos2-embedding-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        KRONOS2 embedding options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cell-measurement-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell measurement options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#report-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Report options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mask-smoothing-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mask smoothing options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#institutional-config-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Institutional config options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generic-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generic options
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Outputs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../profiles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resource profiles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Background
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Background
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../background/cellpose/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cellpose settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../background/min-area/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Minimum cell area
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../background/membrane-channels/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Combining membrane channels
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../background/tiling-and-straight-edges/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tiling and straight cell edges
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../background/kronos2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    KRONOS2 marker handling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release notes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../citations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Citations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Developer guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer/contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contributing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer/documentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Documentation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer/releasing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Releasing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#inputoutput-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input/output options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#background-subtraction-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Background subtraction options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#combine-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Combine options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cell-processing-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell processing options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sopa-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SOPA options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cellpose-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cellpose options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cellpose-preprocessing-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cellpose preprocessing options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mesmer-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mesmer options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cellsam-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CellSAM options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kronos2-embedding-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        KRONOS2 embedding options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cell-measurement-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell measurement options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#report-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Report options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mask-smoothing-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mask smoothing options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#institutional-config-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Institutional config options
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generic-options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Generic options
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/WEHI-SODA-Hub/sp_segment/edit/dev/docs/reference/parameters.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+
+
+<h1 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h1>
+<p>Set parameters on the command line with two dashes (<code>--cellpose_diameter 40</code>)
+or in a params file passed with <code>-params-file</code>. Do not set them in a <code>-c</code>
+config file.</p>
+<p>Parameters marked hidden are left out of <code>--help</code> and the Seqera Platform
+launch form unless hidden parameters are shown (<code>--show_hidden</code>). They work the
+same as other parameters.</p>
+<p>This page is generated from <code>nextflow_schema.json</code>.</p>
+<!-- BEGIN GENERATED: parameters -->
+<!-- Generated by docs/scripts/generate_reference.py. Do not edit by hand. -->
+
+<h2 id="inputoutput-options">Input/output options<a class="headerlink" href="#inputoutput-options" title="Permanent link">&para;</a></h2>
+<p>Define where the pipeline should find input data and save output data.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#input"><code>input</code></a> (required)</td>
+<td>string</td>
+<td></td>
+<td>Path to the samplesheet (CSV or YAML) that lists the images to process.</td>
+</tr>
+<tr>
+<td><code>outdir</code> (required)</td>
+<td>string</td>
+<td></td>
+<td>The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.</td>
+</tr>
+<tr>
+<td><a href="#email"><code>email</code></a></td>
+<td>string</td>
+<td></td>
+<td>Email address for completion summary.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="input"><code>input</code><a class="headerlink" href="#input" title="Permanent link">&para;</a></h4>
+<p>One row per image. Required columns: <code>sample</code> and <code>tiff</code>. See the Samplesheet page of the documentation for every column.</p>
+<h4 id="email"><code>email</code><a class="headerlink" href="#email" title="Permanent link">&para;</a></h4>
+<p>The pipeline sends a summary e-mail to this address when the run finishes. You can set it in <code>~/.nextflow/config</code> instead of on the command line.</p>
+<h2 id="background-subtraction-options">Background subtraction options<a class="headerlink" href="#background-subtraction-options" title="Permanent link">&para;</a></h2>
+<p>Parameters used for background subtraction.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>remove_markers</code></td>
+<td>string</td>
+<td><code>TRITC,Cy5</code></td>
+<td>Comma-separated channel names to remove from the background-subtracted image. Names are case sensitive.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="combine-options">Combine options<a class="headerlink" href="#combine-options" title="Permanent link">&para;</a></h2>
+<p>Parameters used for combining membrane channels.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#combine_method"><code>combine_method</code></a></td>
+<td>string: <code>max</code>, <code>norm_mean</code></td>
+<td><code>max</code></td>
+<td>How to combine several membrane channels into one. <code>max</code>: the per-pixel maximum. <code>norm_mean</code>: the mean of the channels after rescaling each to its own 50th-99.5th percentile.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="combine_method"><code>combine_method</code><a class="headerlink" href="#combine_method" title="Permanent link">&para;</a></h4>
+<p>Used when <code>membrane_channels</code> lists more than one channel. <code>max</code> is used by Mesmer, Cellpose and CellSAM. <code>norm_mean</code> is used by Cellpose and CellSAM only; a sample that runs Mesmer with <code>norm_mean</code> and more than one membrane channel stops the run at startup. With <code>max</code>, a dim marker is hidden wherever a brighter marker has signal; <code>norm_mean</code> puts every marker on the same scale. See <a href="https://wehi-soda-hub.github.io/sp_segment/background/membrane-channels/">Combining membrane channels</a>.</p>
+<h2 id="cell-processing-options">Cell processing options<a class="headerlink" href="#cell-processing-options" title="Permanent link">&para;</a></h2>
+<p>Parameters used for cell processing.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#use_whole_cell_only"><code>use_whole_cell_only</code></a></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Use only the whole-cell segmentation to process cells (skip nuclear segmentation).</td>
+</tr>
+</tbody>
+</table>
+<h4 id="use_whole_cell_only"><code>use_whole_cell_only</code><a class="headerlink" href="#use_whole_cell_only" title="Permanent link">&para;</a></h4>
+<p>Defaults to <code>true</code>: only the whole-cell segmentation is used to process cells. Nuclei are not segmented and nuclear measurements are not produced; cell, erosion, and expansion measurements are kept. Set to <code>false</code> to also segment nuclei and measure them.</p>
+<h2 id="sopa-options">SOPA options<a class="headerlink" href="#sopa-options" title="Permanent link">&para;</a></h2>
+<p>Parameters used by SOPA for image patching.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>technology</code></td>
+<td>string: <code>ome_tif</code></td>
+<td><code>ome_tif</code></td>
+<td>Image type for the sopa conversion. Only <code>ome_tif</code> is supported.</td>
+</tr>
+<tr>
+<td><code>patch_width_pixel</code></td>
+<td>integer</td>
+<td><code>3000</code></td>
+<td>Width and height of each square patch, in pixels, for Cellpose segmentation.</td>
+</tr>
+<tr>
+<td><code>patch_overlap_pixel</code></td>
+<td>integer</td>
+<td><code>250</code></td>
+<td>Overlap between neighbouring patches, in pixels. Set it to at least the diameter of the largest cell.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cellpose-options">Cellpose options<a class="headerlink" href="#cellpose-options" title="Permanent link">&para;</a></h2>
+<p>Parameters used by Cellpose for the cell segmentation.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#cellpose_diameter"><code>cellpose_diameter</code></a></td>
+<td>integer</td>
+<td><code>30</code></td>
+<td>Expected cell diameter in pixels. Cellpose resizes the image by 30 / diameter before segmentation.</td>
+</tr>
+<tr>
+<td><a href="#cellpose_min_area"><code>cellpose_min_area</code></a></td>
+<td>number</td>
+<td><code>100</code></td>
+<td>Discard cells smaller than this many square pixels. Higher keeps fewer cells; 0 keeps every mask.</td>
+</tr>
+<tr>
+<td><a href="#cellpose_flow_threshold"><code>cellpose_flow_threshold</code></a></td>
+<td>number</td>
+<td><code>0.4</code></td>
+<td>Maximum flow error allowed for a mask to be kept. Higher finds more cells, including ill-shaped ones; lower keeps fewer, better-formed ones.</td>
+</tr>
+<tr>
+<td><a href="#cellpose_cellprob_threshold"><code>cellpose_cellprob_threshold</code></a></td>
+<td>number</td>
+<td><code>0.0</code></td>
+<td>Cutoff on Cellpose's per-pixel cell probability. Lower finds more and larger cells; higher finds fewer and smaller ones.</td>
+</tr>
+<tr>
+<td><a href="#cellpose_model_type"><code>cellpose_model_type</code></a> (hidden)</td>
+<td>string</td>
+<td></td>
+<td>Retired. Cellpose 4 ignores --model-type; use cellpose_pretrained_model instead.</td>
+</tr>
+<tr>
+<td><a href="#cellpose_pretrained_model"><code>cellpose_pretrained_model</code></a></td>
+<td>string</td>
+<td><code>cpsam_v2</code></td>
+<td>Cellpose model to segment with: cpsam_v2 (default), cpsam, cpdino, cpdino-vitb, or a path to a custom model.</td>
+</tr>
+<tr>
+<td><a href="#cellpose_models_dir"><code>cellpose_models_dir</code></a></td>
+<td>string</td>
+<td></td>
+<td>Directory holding pre-staged Cellpose model weights. If set, the pipeline uses it instead of downloading them.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="cellpose_diameter"><code>cellpose_diameter</code><a class="headerlink" href="#cellpose_diameter" title="Permanent link">&para;</a></h4>
+<p>Cellpose-SAM models were trained on cell diameters from 7.5 to 120 pixels (mean 30), so the default of 30 suits most data and means no resizing.</p>
+<ul>
+<li>Set the real diameter if your cells are outside 7.5-120 pixels.</li>
+<li>A larger value (for example <code>90</code>) shrinks the image and makes the run faster, but small objects are resolved less well.</li>
+</ul>
+<p>This parameter does not remove any cells. Use <code>cellpose_min_area</code> to remove small objects. A value of <code>0</code> means no resizing; Cellpose 4 has no automatic diameter estimate.</p>
+<h4 id="cellpose_min_area"><code>cellpose_min_area</code><a class="headerlink" href="#cellpose_min_area" title="Permanent link">&para;</a></h4>
+<p>Applied by sopa to each patch during segmentation. The unit is pixels², not µm², so it does not change with <code>pixel_size_microns</code>. At 0.28 µm/pixel (COMET), 100 pixels² is 7.8 µm², about a 3.2 µm diameter disc.</p>
+<p><code>cellsam_min_area</code> uses the same unit and defaults to 200. <code>mesmer_min_nuclei_area</code> is a separate filter on nuclei.</p>
+<h4 id="cellpose_flow_threshold"><code>cellpose_flow_threshold</code><a class="headerlink" href="#cellpose_flow_threshold" title="Permanent link">&para;</a></h4>
+<p>Cellpose recomputes the flows each mask implies and compares them with the flows the network predicted. Masks with a mean squared error above this value are removed. This filter acts on shape only.</p>
+<ul>
+<li>Raise it (0.6, 0.8) if visible cells are missing.</li>
+<li>Lower it (0.2, 0.3) if you get ragged, ill-shaped masks.</li>
+<li><code>0</code> turns the check off.</li>
+</ul>
+<p>The default 0.4 is Cellpose's default.</p>
+<h4 id="cellpose_cellprob_threshold"><code>cellpose_cellprob_threshold</code><a class="headerlink" href="#cellpose_cellprob_threshold" title="Permanent link">&para;</a></h4>
+<p>Pixels above this value are used to build cells, so it changes which cells are found and where each cell boundary falls. A change here changes cell areas and therefore every per-cell intensity.</p>
+<p>The value is not a probability between 0 and 1. It is a logit: the useful range is about -6 to +6, and 0 is the midpoint.</p>
+<ul>
+<li>Lower it (-1, -2) to find faint cells and make cells larger.</li>
+<li>Raise it (1, 2) to stop segmenting background and make cells smaller.</li>
+</ul>
+<p>The default 0.0 is Cellpose's default.</p>
+<h4 id="cellpose_model_type"><code>cellpose_model_type</code><a class="headerlink" href="#cellpose_model_type" title="Permanent link">&para;</a></h4>
+<p>Cellpose &gt;=4.0.1 logs <code>model_type argument is not used in v4.0.1+. Ignoring this argument</code>, and sopa only reads it on the cellpose&lt;4 code path, so it never had any effect on a v4 run. Setting it now raises an error rather than being silently discarded.</p>
+<h4 id="cellpose_pretrained_model"><code>cellpose_pretrained_model</code><a class="headerlink" href="#cellpose_pretrained_model" title="Permanent link">&para;</a></h4>
+<p>Built-in models (cellpose 4.2.1.1):</p>
+<ul>
+<li><code>cpsam_v2</code>: default; the current Cellpose-SAM model.</li>
+<li><code>cpsam</code>: the previous Cellpose-SAM model. Use it to reproduce results from before cellpose 4.2.</li>
+<li><code>cpdino</code>: DINOv3 backbone (ViT-L).</li>
+<li><code>cpdino-vitb</code>: smaller DINOv3 backbone (ViT-B).</li>
+</ul>
+<p>Any other value is treated as a path to a custom model and must exist; the pipeline checks this at startup. Built-in models are downloaded once per run, or read from <code>cellpose_models_dir</code> if set. See CITATIONS.md for the DINOv3 licence terms.</p>
+<h4 id="cellpose_models_dir"><code>cellpose_models_dir</code><a class="headerlink" href="#cellpose_models_dir" title="Permanent link">&para;</a></h4>
+<p>A directory that holds the Cellpose model cache (for example a <code>cpsam_v2</code> file). Use it when compute nodes have no internet access. The directory must exist and must not be under <code>/opt</code>.</p>
+<h2 id="cellpose-preprocessing-options">Cellpose preprocessing options<a class="headerlink" href="#cellpose-preprocessing-options" title="Permanent link">&para;</a></h2>
+<p>Intensity preprocessing applied before Cellpose segmentation.</p>
+<p>The defaults make the pipeline match Cellpose's own preprocessing: rescale each patch to its 1st and 99th percentiles and nothing else. sopa's gaussian filter and CLAHE are turned off. To restore sopa's behaviour, set <code>cellpose_clip_limit</code> to 0.2 and <code>cellpose_gaussian_sigma</code> to 1. See the Cellpose preprocessing page of the documentation for the measurements behind these defaults.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#cellpose_tile_norm_blocksize"><code>cellpose_tile_norm_blocksize</code></a> (hidden)</td>
+<td>integer</td>
+<td><code>0</code></td>
+<td>Block size in pixels for Cellpose's tile-local intensity normalisation. 0 uses Cellpose's whole-patch default.</td>
+</tr>
+<tr>
+<td><a href="#cellpose_clip_limit"><code>cellpose_clip_limit</code></a> (hidden)</td>
+<td>number</td>
+<td><code>0</code></td>
+<td>sopa's CLAHE clip limit, applied before Cellpose. Defaults to 0 in this pipeline, disabling CLAHE; null restores sopa's default of 0.2.</td>
+</tr>
+<tr>
+<td><a href="#cellpose_clahe_kernel_size"><code>cellpose_clahe_kernel_size</code></a> (hidden)</td>
+<td>integer</td>
+<td></td>
+<td>Kernel size in pixels for sopa's CLAHE. Unset uses skimage's default of patch.shape // 8, which scales with patch_width_pixel.</td>
+</tr>
+<tr>
+<td><a href="#cellpose_gaussian_sigma"><code>cellpose_gaussian_sigma</code></a> (hidden)</td>
+<td>number</td>
+<td><code>0</code></td>
+<td>Sigma for sopa's gaussian smoothing, applied before Cellpose. Defaults to 0 in this pipeline, disabling it; null restores sopa's default of 1.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="cellpose_tile_norm_blocksize"><code>cellpose_tile_norm_blocksize</code><a class="headerlink" href="#cellpose_tile_norm_blocksize" title="Permanent link">&para;</a></h4>
+<p>When greater than 0, Cellpose computes the 1st/99th percentiles separately for each block of this size inside the patch instead of once for the whole patch.</p>
+<p>Use a block much larger than a cell. At 0.28 µm/pixel, 512 pixels is 143 µm (about 17 nuclear diameters). Small blocks (for example 128 pixels) can contain no nuclei in sparse tissue; their noise is then stretched to the full intensity range and results get worse.</p>
+<h4 id="cellpose_clip_limit"><code>cellpose_clip_limit</code><a class="headerlink" href="#cellpose_clip_limit" title="Permanent link">&para;</a></h4>
+<p>sopa applies CLAHE (<code>skimage.exposure.equalize_adapthist</code>) to each patch before Cellpose. Cellpose itself has no CLAHE step and its models were not trained with it. <code>0</code> turns CLAHE off. With CLAHE on, results change with <code>patch_width_pixel</code>, because the CLAHE kernel size is derived from the patch size.</p>
+<h4 id="cellpose_clahe_kernel_size"><code>cellpose_clahe_kernel_size</code><a class="headerlink" href="#cellpose_clahe_kernel_size" title="Permanent link">&para;</a></h4>
+<p>If unset, skimage uses 1/8 of the patch height and width: 375 pixels at <code>patch_width_pixel</code> 3000. Setting a fixed value stops the kernel size changing with the patch size. Has no effect while <code>cellpose_clip_limit</code> is 0.</p>
+<h4 id="cellpose_gaussian_sigma"><code>cellpose_gaussian_sigma</code><a class="headerlink" href="#cellpose_gaussian_sigma" title="Permanent link">&para;</a></h4>
+<p>sopa applies a gaussian filter to each patch before Cellpose. Cellpose applies no smoothing by default. <code>0</code> turns the filter off. Raise it only if your images are noisy enough to need smoothing before segmentation.</p>
+<h2 id="mesmer-options">Mesmer options<a class="headerlink" href="#mesmer-options" title="Permanent link">&para;</a></h2>
+<p>Parameters used by the MesmerSegmentation tool.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mesmer_segmentation_level</code></td>
+<td>integer</td>
+<td></td>
+<td>Segmentation level passed to Mesmer as <code>--segmentation-level</code> (legacy option). Unset by default.</td>
+</tr>
+<tr>
+<td><code>mesmer_maxima_threshold</code></td>
+<td>number</td>
+<td><code>0.1</code></td>
+<td>Mesmer maxima threshold. Lower values give more cells; higher values give fewer cells.</td>
+</tr>
+<tr>
+<td><code>mesmer_interior_threshold</code></td>
+<td>number</td>
+<td><code>0.3</code></td>
+<td>Mesmer interior threshold. Higher values give smaller nuclei and cells.</td>
+</tr>
+<tr>
+<td><code>mesmer_maxima_smooth</code></td>
+<td>number</td>
+<td><code>0</code></td>
+<td>Smoothing applied to Mesmer's maxima signal. Higher values give more regular shapes.</td>
+</tr>
+<tr>
+<td><code>mesmer_min_nuclei_area</code></td>
+<td>number</td>
+<td><code>40</code></td>
+<td>Minimum nucleus area in pixels². Smaller nuclei are removed by Mesmer.</td>
+</tr>
+<tr>
+<td><code>mesmer_remove_border_cells</code></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Remove cells that touch the image border.</td>
+</tr>
+<tr>
+<td><code>mesmer_pixel_expansion</code></td>
+<td>integer</td>
+<td><code>3</code></td>
+<td>Number of pixels to expand each Mesmer cell after segmentation.</td>
+</tr>
+<tr>
+<td><code>mesmer_padding</code></td>
+<td>integer</td>
+<td><code>0</code></td>
+<td>Number of pixels to crop from each side of the image before Mesmer segmentation.</td>
+</tr>
+<tr>
+<td><code>mesmer_transpose_mask</code></td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Transpose the Mesmer output mask. Enable this only if the mask is flipped relative to the image.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cellsam-options">CellSAM options<a class="headerlink" href="#cellsam-options" title="Permanent link">&para;</a></h2>
+<p>Parameters used by CellSAM for foundation model cell segmentation.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cellsam_bbox_threshold</code></td>
+<td>number</td>
+<td><code>0.4</code></td>
+<td>Confidence threshold for CellSAM cell detections. Lower values (0.3-0.4) find more cells on images unlike the training data.</td>
+</tr>
+<tr>
+<td><code>cellsam_block_size</code></td>
+<td>integer</td>
+<td><code>600</code></td>
+<td>Tile size in pixels for whole-slide CellSAM processing.</td>
+</tr>
+<tr>
+<td><code>cellsam_overlap</code></td>
+<td>integer</td>
+<td><code>250</code></td>
+<td>Overlap between CellSAM tiles, in pixels. Set it to at least the typical cell diameter.</td>
+</tr>
+<tr>
+<td><code>cellsam_iou_depth</code></td>
+<td>integer</td>
+<td><code>250</code></td>
+<td>Distance in pixels searched for duplicate cells at tile boundaries.</td>
+</tr>
+<tr>
+<td><code>cellsam_iou_threshold</code></td>
+<td>number</td>
+<td><code>0.5</code></td>
+<td>IoU above which two overlapping cells at a tile boundary are merged.</td>
+</tr>
+<tr>
+<td><code>cellsam_use_wsi</code></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Process the image in tiles (whole-slide mode). Required for large images.</td>
+</tr>
+<tr>
+<td><code>cellsam_gauge_cell_size</code></td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Run a first CellSAM pass to estimate cell size before segmentation.</td>
+</tr>
+<tr>
+<td><code>cellsam_low_contrast_enhancement</code></td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Apply contrast enhancement before segmentation, for low-contrast images.</td>
+</tr>
+<tr>
+<td><code>cellsam_model_path</code></td>
+<td>string</td>
+<td></td>
+<td>Path to custom CellSAM model weights. If unset, the CellSAM generalist model is used (v1.2 when <code>DEEPCELL_ACCESS_TOKEN</code> is set).</td>
+</tr>
+<tr>
+<td><a href="#cellsam_min_area"><code>cellsam_min_area</code></a></td>
+<td>integer</td>
+<td><code>200</code></td>
+<td>Remove cells smaller than this many pixels². <code>0</code> keeps every cell.</td>
+</tr>
+<tr>
+<td><a href="#cellsam_remove_border_cells"><code>cellsam_remove_border_cells</code></a></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Remove CellSAM cells that touch the image edge.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="cellsam_min_area"><code>cellsam_min_area</code><a class="headerlink" href="#cellsam_min_area" title="Permanent link">&para;</a></h4>
+<p>CellSAM counts each cell's pixels and applies the filter once, after the tiles are merged. The unit is pixels², not µm². At 0.28 µm/pixel, 200 pixels² is 15.7 µm². Cells with an area equal to the threshold are kept.</p>
+<p><code>cellpose_min_area</code> measures the area of the cell polygon instead. On test cells the polygon area was 0.93-1.00 times the pixel count (median 0.99), so at the same value the two filters remove almost the same cells. <code>cellpose_min_area</code> defaults to 100.</p>
+<h4 id="cellsam_remove_border_cells"><code>cellsam_remove_border_cells</code><a class="headerlink" href="#cellsam_remove_border_cells" title="Permanent link">&para;</a></h4>
+<p>Cells cut by the image edge are incomplete, so they are removed by default. Set to <code>false</code> to keep them.</p>
+<h2 id="kronos2-embedding-options">KRONOS2 embedding options<a class="headerlink" href="#kronos2-embedding-options" title="Permanent link">&para;</a></h2>
+<p>Options for KRONOS2 per-cell foundation-model embeddings</p>
+<p>KRONOS2 is a foundation model for multiplex spatial proteomics. These parameters control the optional step that adds a 768-value embedding to every cell after cell measurement.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#enable_kronos"><code>enable_kronos</code></a></td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Enable KRONOS2 per-cell embedding extraction.</td>
+</tr>
+<tr>
+<td><a href="#kronos_model_path"><code>kronos_model_path</code></a></td>
+<td>string</td>
+<td></td>
+<td>Path to a full KRONOS2 snapshot directory, or a Hugging Face repo id.</td>
+</tr>
+<tr>
+<td><a href="#kronos_patch_size"><code>kronos_patch_size</code></a></td>
+<td>integer</td>
+<td><code>64</code></td>
+<td>Size of cell-centered patches to extract for KRONOS inference.</td>
+</tr>
+<tr>
+<td><a href="#kronos_batch_size"><code>kronos_batch_size</code></a></td>
+<td>integer</td>
+<td><code>16</code></td>
+<td>Batch size for inference. KRONOS2 runs fp32 and cuBLAS picks batch-dependent kernels, so this shifts embeddings slightly; 16 reproduces the published values.</td>
+</tr>
+<tr>
+<td><a href="#kronos_num_workers"><code>kronos_num_workers</code></a></td>
+<td>integer</td>
+<td><code>4</code></td>
+<td>Number of parallel DataLoader workers for loading and preprocessing cell patches.</td>
+</tr>
+<tr>
+<td><code>kronos_max_value</code></td>
+<td>number</td>
+<td></td>
+<td>Override the intensity divisor. Unset derives it from the image dtype (uint8=255, uint16=65535, float=400), matching KRONOS2 itself.</td>
+</tr>
+<tr>
+<td><a href="#kronos_marker_mapping"><code>kronos_marker_mapping</code></a></td>
+<td>string</td>
+<td></td>
+<td>JSON file, or an inline JSON object, that maps channel names to KRONOS2 marker names, e.g. {"Collagen 4": "COLLAGENiv"}.</td>
+</tr>
+<tr>
+<td><a href="#kronos_exclude_markers"><code>kronos_exclude_markers</code></a></td>
+<td>string</td>
+<td></td>
+<td>Comma-separated channel names that KRONOS2 does not read, e.g. 'Autofluorescence'. Other steps still use these channels.</td>
+</tr>
+<tr>
+<td><code>kronos_nuclear_marker</code></td>
+<td>string</td>
+<td></td>
+<td>Channel that KRONOS2 treats as its DAPI channel. Defaults to the samplesheet <code>nuclear_channel</code>.</td>
+</tr>
+<tr>
+<td><code>kronos_isolate_cell</code></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Zero pixels outside the target cell so each embedding describes that cell rather than its surrounding neighbourhood.</td>
+</tr>
+<tr>
+<td><code>kronos_allow_novel_defaults</code></td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Continue when a channel name is not in the KRONOS2 vocabulary. That channel is normalised with default statistics. Off by default, so the run fails instead.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="enable_kronos"><code>enable_kronos</code><a class="headerlink" href="#enable_kronos" title="Permanent link">&para;</a></h4>
+<p>Set to <code>true</code> to compute KRONOS2 embeddings after cell measurement. Requires <code>kronos_model_path</code>.</p>
+<h4 id="kronos_model_path"><code>kronos_model_path</code><a class="headerlink" href="#kronos_model_path" title="Permanent link">&para;</a></h4>
+<p>Request access to <code>MahmoodLab/KRONOS2</code> on Hugging Face, then download the full snapshot:</p>
+<p><code>hf download MahmoodLab/KRONOS2 --local-dir /path/to/KRONOS2 --exclude "demo_image/*"</code></p>
+<p>A partial download does not work, because the loader imports the <code>dinov2</code> package bundled in the snapshot. Do not store the snapshot under <code>/opt</code>.</p>
+<h4 id="kronos_patch_size"><code>kronos_patch_size</code><a class="headerlink" href="#kronos_patch_size" title="Permanent link">&para;</a></h4>
+<p>Side length in pixels of the square patch centred on each cell. Larger patches include more surrounding tissue and take longer.</p>
+<h4 id="kronos_batch_size"><code>kronos_batch_size</code><a class="headerlink" href="#kronos_batch_size" title="Permanent link">&para;</a></h4>
+<p>Number of cell patches per GPU batch. Larger batches are faster and use more GPU memory. Embeddings change very slightly with batch size; 16 reproduces the published values.</p>
+<h4 id="kronos_num_workers"><code>kronos_num_workers</code><a class="headerlink" href="#kronos_num_workers" title="Permanent link">&para;</a></h4>
+<p>Number of CPU processes that read and prepare patches while the GPU runs. <code>0</code> reads in the main process. Set it to the number of CPUs allocated to the task.</p>
+<h4 id="kronos_marker_mapping"><code>kronos_marker_mapping</code><a class="headerlink" href="#kronos_marker_mapping" title="Permanent link">&para;</a></h4>
+<p>KRONOS2 matches marker names exactly, ignoring separators (<code>CD-8</code>, <code>CD_8</code> and <code>CD8</code> match). There is no alias or fuzzy matching, so a spelling variant such as <code>Cytokeritin</code> does not match <code>CYTOKERATIN</code>. The run fails if any channel does not match, unless <code>kronos_allow_novel_defaults</code> is <code>true</code>.</p>
+<p>The mapping changes only the names given to KRONOS2. Channel names in the image and the GeoJSON are not changed. A value that is neither an existing file nor valid JSON fails the run.</p>
+<h4 id="kronos_exclude_markers"><code>kronos_exclude_markers</code><a class="headerlink" href="#kronos_exclude_markers" title="Permanent link">&para;</a></h4>
+<p>Use it for channels that are not markers: autofluorescence, blanks, empty cycles. The channel stays in the image and keeps its cell measurements.</p>
+<ul>
+<li>Names are case sensitive and are matched against the image's channel names before <code>kronos_marker_mapping</code> is applied.</li>
+<li>A name that matches no channel fails the run.</li>
+<li>The nuclear channel cannot be excluded.</li>
+<li>Excluding a channel changes every cell's embedding. Use the same list for every image in a cohort.</li>
+</ul>
+<h2 id="cell-measurement-options">Cell measurement options<a class="headerlink" href="#cell-measurement-options" title="Permanent link">&para;</a></h2>
+<p>Parameters used for cell measurement.</p>
+<p>Parameters for the cell measurement step (cellmeasurement-py).</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#enable_measurements"><code>enable_measurements</code></a></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Enable cell measurement step.</td>
+</tr>
+<tr>
+<td><a href="#percentiles"><code>percentiles</code></a></td>
+<td>string</td>
+<td><code>70,80,90,95,99</code></td>
+<td>Comma-separated list of percentiles to calculate for each marker (e.g. 80,90,95,99).</td>
+</tr>
+<tr>
+<td><a href="#erosion_steps"><code>erosion_steps</code></a></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Measure intensity in 5 equal-area erosion bins working inward from the cell/nucleus boundary.</td>
+</tr>
+<tr>
+<td><a href="#expansion_steps"><code>expansion_steps</code></a></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Measure intensity in 5 equal-area annular bins dilated 20 µm outward from the cell boundary (distance computed from pixel_size_microns).</td>
+</tr>
+<tr>
+<td><a href="#environment_expansion"><code>environment_expansion</code></a></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Measure a 20 µm pericellular 'Environment' compartment (distance computed automatically from pixel_size_microns).</td>
+</tr>
+<tr>
+<td><a href="#pixel_size_microns"><code>pixel_size_microns</code></a></td>
+<td>number</td>
+<td><code>0.28</code></td>
+<td>Pixel size in microns.</td>
+</tr>
+<tr>
+<td><code>estimate_cell_boundary_dist</code></td>
+<td>integer</td>
+<td><code>3</code></td>
+<td>For a nucleus with no matching whole-cell ROI, expand the nucleus by this many pixels to make the cell.</td>
+</tr>
+<tr>
+<td><a href="#neighbors"><code>neighbors</code></a></td>
+<td>integer</td>
+<td><code>0</code></td>
+<td>Number of nearest neighbours used for neighbourhood features. <code>0</code> turns them off.</td>
+</tr>
+<tr>
+<td><a href="#gzip_geojson"><code>gzip_geojson</code></a> (hidden)</td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Gzip-compress the output GeoJSON files. Produces .geojson.gz instead of .geojson.</td>
+</tr>
+<tr>
+<td><a href="#dist_threshold"><code>dist_threshold</code></a></td>
+<td>number</td>
+<td><code>10.0</code></td>
+<td>Maximum centroid distance in pixels for matching a nucleus to a whole-cell ROI.</td>
+</tr>
+<tr>
+<td><a href="#downsample_factor"><code>downsample_factor</code></a></td>
+<td>number</td>
+<td><code>1.0</code></td>
+<td>Downsample factor applied to the image and masks before measurement (1 = no downsampling).</td>
+</tr>
+<tr>
+<td><a href="#tile_size"><code>tile_size</code></a></td>
+<td>integer</td>
+<td><code>2048</code></td>
+<td>Tile size for large image measurement calculations.</td>
+</tr>
+<tr>
+<td><a href="#tile_overlap"><code>tile_overlap</code></a></td>
+<td>integer</td>
+<td><code>200</code></td>
+<td>Tile overlap region in pixels. Should encompass typical cell size.</td>
+</tr>
+<tr>
+<td><a href="#geometry_checkpoint_dir"><code>geometry_checkpoint_dir</code></a></td>
+<td>string</td>
+<td></td>
+<td>Directory for resumable polygon-extraction checkpoints.</td>
+</tr>
+<tr>
+<td><a href="#geometry_batch_size"><code>geometry_batch_size</code></a></td>
+<td>integer</td>
+<td><code>2000</code></td>
+<td>Cells per polygon-extraction batch, and the checkpoint granularity.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="enable_measurements"><code>enable_measurements</code><a class="headerlink" href="#enable_measurements" title="Permanent link">&para;</a></h4>
+<p>Set to <code>false</code> to skip intensity and shape measurements. Cell outlines are still written to the GeoJSON. Skipping saves time on large images.</p>
+<h4 id="percentiles"><code>percentiles</code><a class="headerlink" href="#percentiles" title="Permanent link">&para;</a></h4>
+<p>Each value must be between 0 and 100. Requires <code>enable_measurements</code> to be <code>true</code>.</p>
+<h4 id="erosion_steps"><code>erosion_steps</code><a class="headerlink" href="#erosion_steps" title="Permanent link">&para;</a></h4>
+<p>Splits each cell (and nucleus) into 5 rings of approximately equal area, from the boundary inward, and measures mean and median intensity in each ring. Requires <code>enable_measurements</code> to be <code>true</code>.</p>
+<h4 id="expansion_steps"><code>expansion_steps</code><a class="headerlink" href="#expansion_steps" title="Permanent link">&para;</a></h4>
+<p>Splits the 20 µm zone outside each cell into 5 rings of approximately equal area and measures mean and median intensity in each ring. The distance in pixels is computed from <code>pixel_size_microns</code>. Requires <code>enable_measurements</code> to be <code>true</code>.</p>
+<h4 id="environment_expansion"><code>environment_expansion</code><a class="headerlink" href="#environment_expansion" title="Permanent link">&para;</a></h4>
+<p>Measures mean, median, min, max and standard deviation of every channel in the zone from the cell boundary to 20 µm outside it, as one region (<code>Environment_20um</code>). The distance in pixels is computed from <code>pixel_size_microns</code>.</p>
+<h4 id="pixel_size_microns"><code>pixel_size_microns</code><a class="headerlink" href="#pixel_size_microns" title="Permanent link">&para;</a></h4>
+<p>COMET: 0.28. MIBI: 0.390625. OPAL: 0.4964.</p>
+<h4 id="neighbors"><code>neighbors</code><a class="headerlink" href="#neighbors" title="Permanent link">&para;</a></h4>
+<p>For each cell, the mean of every numeric measurement over its nearest neighbours (up to this number, within 20 µm of the cell centroid) is added as <code>Neighbours: Mean: &lt;measurement&gt;</code>. Typical values: 5-10.</p>
+<h4 id="gzip_geojson"><code>gzip_geojson</code><a class="headerlink" href="#gzip_geojson" title="Permanent link">&para;</a></h4>
+<p>Writes <code>.geojson.gz</code> instead of <code>.geojson</code>. Whole-slide GeoJSON files can exceed 100 GB uncompressed; gzip usually reduces them 10-20 times. The import_large_geojson pipeline reads the compressed files directly.</p>
+<h4 id="dist_threshold"><code>dist_threshold</code><a class="headerlink" href="#dist_threshold" title="Permanent link">&para;</a></h4>
+<p>A nucleus and a whole-cell ROI whose centroids are further apart than this are not matched. Unmatched nuclei get a cell boundary made by expanding the nucleus (see <code>estimate_cell_boundary_dist</code>).</p>
+<h4 id="downsample_factor"><code>downsample_factor</code><a class="headerlink" href="#downsample_factor" title="Permanent link">&para;</a></h4>
+<p>An integer of 2 or more downsamples the image (block mean) and masks (block max) before measurement. Values below 2 mean no downsampling. Area and length measurements are scaled back to full-resolution units.</p>
+<h4 id="tile_size"><code>tile_size</code><a class="headerlink" href="#tile_size" title="Permanent link">&para;</a></h4>
+<p>Measurements are computed on tiles in parallel. Aim for 2-4 times more tiles than CPUs.</p>
+<h4 id="tile_overlap"><code>tile_overlap</code><a class="headerlink" href="#tile_overlap" title="Permanent link">&para;</a></h4>
+<p>Set it to at least the diameter of the largest cell, so every cell is complete in at least one tile.</p>
+<h4 id="geometry_checkpoint_dir"><code>geometry_checkpoint_dir</code><a class="headerlink" href="#geometry_checkpoint_dir" title="Permanent link">&para;</a></h4>
+<p>Each completed batch of cell polygons is written here, so a CELLMEASUREMENT task that is killed resumes from the last completed batch. The directory must be outside the Nextflow work directory. Checkpoints are not deleted automatically. Leave unset to turn checkpointing off.</p>
+<h4 id="geometry_batch_size"><code>geometry_batch_size</code><a class="headerlink" href="#geometry_batch_size" title="Permanent link">&para;</a></h4>
+<p>Smaller batches are checkpointed more often but add overhead. A killed task loses at most one batch per worker.</p>
+<h2 id="report-options">Report options<a class="headerlink" href="#report-options" title="Permanent link">&para;</a></h2>
+<p>Parameters used for segmentation report generation.</p>
+<p>Parameters for the segmentation QC report.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#generate_report"><code>generate_report</code></a></td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Generate segmentation report.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="generate_report"><code>generate_report</code><a class="headerlink" href="#generate_report" title="Permanent link">&para;</a></h4>
+<p>Set to <code>true</code> to write an HTML QC report per sample. The report is most complete when <code>enable_measurements</code> is <code>true</code>.</p>
+<h2 id="mask-smoothing-options">Mask smoothing options<a class="headerlink" href="#mask-smoothing-options" title="Permanent link">&para;</a></h2>
+<p>Parameters for optional mask smoothing before cell measurement.</p>
+<p>Enable mask smoothing to reduce polygon complexity in segmentation masks. This can prevent StackOverflowError in QuPath's GeoJSON export when cell ROIs have overly complex/jagged boundaries.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#smooth_masks"><code>smooth_masks</code></a> (hidden)</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Enable mask smoothing before cell measurement.</td>
+</tr>
+<tr>
+<td><a href="#smooth_method"><code>smooth_method</code></a> (hidden)</td>
+<td>string: <code>morphological</code>, <code>shapely</code></td>
+<td><code>morphological</code></td>
+<td>Smoothing algorithm: 'morphological' (disk close+open) or 'shapely' (Douglas-Peucker polygon simplification).</td>
+</tr>
+<tr>
+<td><a href="#smooth_kernel_size"><code>smooth_kernel_size</code></a> (hidden)</td>
+<td>integer</td>
+<td><code>2</code></td>
+<td>Disk radius in pixels for <code>morphological</code> smoothing.</td>
+</tr>
+<tr>
+<td><a href="#smooth_n_workers"><code>smooth_n_workers</code></a> (hidden)</td>
+<td>integer</td>
+<td><code>8</code></td>
+<td>Number of worker processes for mask smoothing.</td>
+</tr>
+<tr>
+<td><a href="#smooth_chunksize"><code>smooth_chunksize</code></a> (hidden)</td>
+<td>integer</td>
+<td><code>200</code></td>
+<td>Number of labels each smoothing worker processes at a time.</td>
+</tr>
+<tr>
+<td><a href="#smooth_tolerance"><code>smooth_tolerance</code></a> (hidden)</td>
+<td>number</td>
+<td><code>1</code></td>
+<td>Douglas-Peucker tolerance in pixels for <code>shapely</code> smoothing.</td>
+</tr>
+<tr>
+<td><a href="#smooth_min_area"><code>smooth_min_area</code></a> (hidden)</td>
+<td>number</td>
+<td><code>0</code></td>
+<td>Minimum polygon area in pixels² kept after <code>shapely</code> smoothing.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="smooth_masks"><code>smooth_masks</code><a class="headerlink" href="#smooth_masks" title="Permanent link">&para;</a></h4>
+<p>Smooths the label masks before cell measurement to reduce the number of polygon vertices. Use it if QuPath fails with StackOverflowError when exporting or loading the GeoJSON. Choose the method with <code>smooth_method</code>.</p>
+<h4 id="smooth_method"><code>smooth_method</code><a class="headerlink" href="#smooth_method" title="Permanent link">&para;</a></h4>
+<p><code>morphological</code> applies a binary close then open with a disk of radius <code>smooth_kernel_size</code>. <code>shapely</code> simplifies each cell outline with the Douglas-Peucker algorithm (tolerance <code>smooth_tolerance</code>), which reduces the vertex count directly.</p>
+<h4 id="smooth_kernel_size"><code>smooth_kernel_size</code><a class="headerlink" href="#smooth_kernel_size" title="Permanent link">&para;</a></h4>
+<p>Larger values give smoother outlines but can merge neighbouring cells.</p>
+<h4 id="smooth_n_workers"><code>smooth_n_workers</code><a class="headerlink" href="#smooth_n_workers" title="Permanent link">&para;</a></h4>
+<p>Set it to the number of CPUs allocated to the SMOOTHMASKS task.</p>
+<h4 id="smooth_chunksize"><code>smooth_chunksize</code><a class="headerlink" href="#smooth_chunksize" title="Permanent link">&para;</a></h4>
+<p>Use larger values for many small cells and smaller values for fewer large cells.</p>
+<h4 id="smooth_tolerance"><code>smooth_tolerance</code><a class="headerlink" href="#smooth_tolerance" title="Permanent link">&para;</a></h4>
+<p>Higher values give simpler outlines with fewer vertices. Start with 1.</p>
+<h4 id="smooth_min_area"><code>smooth_min_area</code><a class="headerlink" href="#smooth_min_area" title="Permanent link">&para;</a></h4>
+<p>Removes fragments created by simplification. <code>0</code> keeps every cell.</p>
+<h2 id="institutional-config-options">Institutional config options<a class="headerlink" href="#institutional-config-options" title="Permanent link">&para;</a></h2>
+<p>Parameters used to describe centralised config profiles. These should not be edited.</p>
+<p>The centralised nf-core configuration profiles use a handful of pipeline parameters to describe themselves. This information is then printed to the Nextflow log when you run a pipeline. You should not need to change these values when you run a pipeline.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>custom_config_version</code> (hidden)</td>
+<td>string</td>
+<td><code>master</code></td>
+<td>Git commit id for Institutional configs.</td>
+</tr>
+<tr>
+<td><a href="#custom_config_base"><code>custom_config_base</code></a> (hidden)</td>
+<td>string</td>
+<td><code>https://raw.githubusercontent.com/nf-core/configs/master</code></td>
+<td>Base directory for Institutional configs.</td>
+</tr>
+<tr>
+<td><code>config_profile_name</code> (hidden)</td>
+<td>string</td>
+<td></td>
+<td>Institutional config name.</td>
+</tr>
+<tr>
+<td><code>config_profile_description</code> (hidden)</td>
+<td>string</td>
+<td></td>
+<td>Institutional config description.</td>
+</tr>
+<tr>
+<td><code>config_profile_contact</code> (hidden)</td>
+<td>string</td>
+<td></td>
+<td>Institutional config contact information.</td>
+</tr>
+<tr>
+<td><code>config_profile_url</code> (hidden)</td>
+<td>string</td>
+<td></td>
+<td>Institutional config URL link.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="custom_config_base"><code>custom_config_base</code><a class="headerlink" href="#custom_config_base" title="Permanent link">&para;</a></h4>
+<p>If you're running offline, Nextflow will not be able to fetch the institutional config files from the internet. If you don't need them, then this is not a problem. If you do need them, you should download the files from the repo and tell Nextflow where to find them with this parameter.</p>
+<h2 id="generic-options">Generic options<a class="headerlink" href="#generic-options" title="Permanent link">&para;</a></h2>
+<p>Less common options for the pipeline, typically set in a config file.</p>
+<p>These options are common to all nf-core pipelines and allow you to customise some of the core preferences for how the pipeline runs.</p>
+<p>Typically these options would be set in a Nextflow config file loaded for all pipeline runs, such as <code>~/.nextflow/config</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version</code> (hidden)</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Display version and exit.</td>
+</tr>
+<tr>
+<td><a href="#publish_dir_mode"><code>publish_dir_mode</code></a> (hidden)</td>
+<td>string: <code>symlink</code>, <code>rellink</code>, <code>link</code>, <code>copy</code>, <code>copyNoFollow</code>, <code>move</code></td>
+<td><code>copy</code></td>
+<td>Method used to save pipeline results to output directory.</td>
+</tr>
+<tr>
+<td><a href="#email_on_fail"><code>email_on_fail</code></a> (hidden)</td>
+<td>string</td>
+<td></td>
+<td>Email address for completion summary, only when pipeline fails.</td>
+</tr>
+<tr>
+<td><code>plaintext_email</code> (hidden)</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Send plain-text email instead of HTML.</td>
+</tr>
+<tr>
+<td><code>monochrome_logs</code> (hidden)</td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Do not use coloured log outputs.</td>
+</tr>
+<tr>
+<td><a href="#hook_url"><code>hook_url</code></a> (hidden)</td>
+<td>string</td>
+<td></td>
+<td>Incoming hook URL for messaging service</td>
+</tr>
+<tr>
+<td><code>validate_params</code> (hidden)</td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Boolean whether to validate parameters against the schema at runtime</td>
+</tr>
+<tr>
+<td><code>pipelines_testdata_base_path</code> (hidden)</td>
+<td>string</td>
+<td><code>https://raw.githubusercontent.com/nf-core/test-datasets/</code></td>
+<td>Base URL or local path to location of pipeline test dataset files</td>
+</tr>
+<tr>
+<td><a href="#deepcell_cache_dir"><code>deepcell_cache_dir</code></a></td>
+<td>string</td>
+<td></td>
+<td>Base directory for caching DeepCell/CellSAM model weights. The current username is appended automatically.</td>
+</tr>
+<tr>
+<td><a href="#container_cache_dir"><code>container_cache_dir</code></a></td>
+<td>string</td>
+<td></td>
+<td>Directory for the Apptainer/Singularity image cache. Set this on any cluster where $HOME has a quota.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="publish_dir_mode"><code>publish_dir_mode</code><a class="headerlink" href="#publish_dir_mode" title="Permanent link">&para;</a></h4>
+<p>The Nextflow <code>publishDir</code> option specifies which intermediate files should be saved to the output directory. This option tells the pipeline what method should be used to move these files. See <a href="https://www.nextflow.io/docs/latest/process.html#publishdir">Nextflow docs</a> for details.</p>
+<h4 id="email_on_fail"><code>email_on_fail</code><a class="headerlink" href="#email_on_fail" title="Permanent link">&para;</a></h4>
+<p>An email address to send a summary email to when the pipeline is completed - ONLY sent if the pipeline does not exit successfully.</p>
+<h4 id="hook_url"><code>hook_url</code><a class="headerlink" href="#hook_url" title="Permanent link">&para;</a></h4>
+<p>Incoming hook URL for messaging service. Currently, MS Teams and Slack are supported.</p>
+<h4 id="deepcell_cache_dir"><code>deepcell_cache_dir</code><a class="headerlink" href="#deepcell_cache_dir" title="Permanent link">&para;</a></h4>
+<p>Set this to redirect the DeepCell model cache away from the home directory. The current username is resolved at runtime and appended, so models are cached at {deepcell_cache_dir}/{username}/.deepcell/models/. Set to null to use $HOME instead.</p>
+<h4 id="container_cache_dir"><code>container_cache_dir</code><a class="headerlink" href="#container_cache_dir" title="Permanent link">&para;</a></h4>
+<p>Sets apptainer.cacheDir and singularity.cacheDir, so converted .img files are written here rather than under the work directory. This covers only half of a pull: Apptainer unpacks the OCI layers it converts from into $APPTAINER_CACHEDIR (default ~/.apptainer/cache), which Nextflow cannot set because it pulls images from its own process rather than from a task. Export APPTAINER_CACHEDIR and SINGULARITY_CACHEDIR to the same filesystem before launching; the pipeline errors at startup if this parameter is set without them.</p>
+<!-- END GENERATED: parameters -->
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../samplesheet/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Samplesheet">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Samplesheet
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../output/" class="md-footer__link md-footer__link--next" aria-label="Next: Outputs">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Outputs
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      WEHI SODA Hub. Released under the MIT licence.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.code.copy", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.top", "search.highlight", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

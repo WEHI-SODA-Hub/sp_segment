@@ -1,0 +1,9 @@
+{
+    "_comment": "Maps this panel's channel names to KRONOS2 vocabulary names. Keys that start with an underscore are ignored.",
+
+    "Collagen 4": "COLLAGENiv",
+    "Cytokeritin": "CYTOKERATIN",
+    "VISA": "VISTA",
+
+    "_note_dapi": "The nuclear channel needs no entry. The pipeline passes the samplesheet nuclear_channel (or --kronos_nuclear_marker) to KRONOS2 as its DAPI channel."
+}
