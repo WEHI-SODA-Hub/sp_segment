@@ -7,22 +7,20 @@
                         {
                             "id": "test_wbacksub"
                         },
-                        "test_wbacksub.geojson.gz:md5,738c19547226d3f63bf2af6c082fb8d2"
+                        "test_wbacksub.geojson.gz:md5,72f89cc986e585cc1f18cdc6bc77e7a3"
                     ]
                 ],
                 "nuclear_segmentation_mask": [
-                    [
-                        {
-                            "id": "test_wbacksub"
-                        },
-                        "test_wbacksub_nuclear.tiff:md5,d043551e6940bd86d72557596d98aff7"
-                    ]
+                    
                 ],
                 "report": [
                     
                 ],
                 "versions": [
                     "versions.yml:md5,190ed3ef9c713c670798c907d354d57f",
+                    "versions.yml:md5,39d9e066f04506634e98efe59affbee4",
+                    "versions.yml:md5,3e149c61072a86f8395192975a6b9c12",
+                    "versions.yml:md5,cbfcc561af7af89c6fcd1c00518f3221",
                     "versions.yml:md5,fba1e9b0ce3eb984a535e53a86d31f43"
                 ],
                 "wholecell_segmentation_mask": [
@@ -30,15 +28,15 @@
                         {
                             "id": "test_wbacksub"
                         },
-                        "test_wbacksub_whole-cell.tiff:md5,9148fa787370fa34bd165cf1f8b041ac"
+                        "test_wbacksub_whole-cell.tiff:md5,93f4ab8e8c3bbc9929b2408a8cc41c03"
                     ]
                 ]
             }
         ],
-        "timestamp": "2026-07-29T09:54:48.614930871",
+        "timestamp": "2026-10-14T15:04:25.249947656",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "24.04.2"
+            "nextflow": "25.10.0"
         }
     }
 }

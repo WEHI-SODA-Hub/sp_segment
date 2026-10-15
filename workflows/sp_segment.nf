@@ -194,6 +194,15 @@ workflow SP_SEGMENT {
         ch_cellsam.cellsam_only
     )
 
+    ch_versions = ch_versions
+        .mix(BACKGROUNDSUBTRACT.out.versions)
+        .mix(MESMER_SEGMENT.out.versions)
+        .mix(MESMER_SEGMENT_WBACKSUB.out.versions)
+        .mix(SOPA_SEGMENT.out.versions)
+        .mix(SOPA_SEGMENT_WBACKSUB.out.versions)
+        .mix(CELLSAM_SEGMENT.out.versions)
+        .mix(CELLSAM_SEGMENT_WBACKSUB.out.versions)
+
     //
     // Optional KRONOS embedding extraction
     //
@@ -232,6 +241,12 @@ workflow SP_SEGMENT {
             _membrane_channels -> [ meta, nuclear_channel ]
         }
 
+        // A mapping file is staged so the container can read it; inline JSON
+        // is passed through ext.args instead (conf/modules.config).
+        def mapping = params.kronos_marker_mapping?.toString()?.trim()
+        ch_kronos_mapping = mapping && !mapping.startsWith('{') ?
+            file(mapping, checkIfExists: true) : []
+
         // Everything is joined on meta before the call: Nextflow consumes
         // separate channels positionally, so mixing six upstream sources that
         // finish at different times could otherwise pair one sample's image
@@ -247,7 +262,8 @@ workflow SP_SEGMENT {
                 .map { meta, tiff, _whole_cell_mask, geojson, nuclear_channel ->
                     [ meta, tiff, geojson, nuclear_channel ]
                 },
-            file(params.kronos_model_path)
+            file(params.kronos_model_path),
+            ch_kronos_mapping
         )
         ch_versions = ch_versions.mix(KRONOS2EMBEDDINGS.out.versions.first())
     }

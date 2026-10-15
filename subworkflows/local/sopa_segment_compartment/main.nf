@@ -64,7 +64,7 @@ workflow SOPA_SEGMENT_COMPARTMENT {
         SOPA_CONVERT.out.spatial_data,
         ch_cellpose_models
     )
-    ch_versions = ch_versions.mix(SOPA_CELLPOSE.out.versions.first())
+    ch_versions = ch_versions.mix(SOPA_CELLPOSE.out.versions)
 
     //
     // Convert nuclear segmentation parquet to tiff

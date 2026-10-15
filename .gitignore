@@ -3,8 +3,8 @@ work/
 data/
 results/
 .DS_Store
-testing/
-testing*
+/testing/
+/testing*
 *.pyc
 null/
 .nf-test*
@@ -18,3 +18,6 @@ kronos2_marker_vocabulary.csv
 kronos2_markers.md
 marker_metadata.csv
 KRONOS2/
+
+# Local analysis scripts and results (not part of the pipeline)
+experiments/

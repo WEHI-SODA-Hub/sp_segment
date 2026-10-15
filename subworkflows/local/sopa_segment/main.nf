@@ -53,7 +53,7 @@ workflow SOPA_SEGMENT {
             'nuclear',
             ch_cellpose_models
         )
-        ch_versions = ch_versions.mix(SOPA_SEGMENT_NUCLEAR.out.versions.first())
+        ch_versions = ch_versions.mix(SOPA_SEGMENT_NUCLEAR.out.versions)
     }
 
     //
@@ -64,7 +64,7 @@ workflow SOPA_SEGMENT {
         'whole-cell',
         ch_cellpose_models
     )
-    ch_versions = ch_versions.mix(SOPA_SEGMENT_WHOLECELL.out.versions.first())
+    ch_versions = ch_versions.mix(SOPA_SEGMENT_WHOLECELL.out.versions)
 
     //
     // Create a channel for cell measurement

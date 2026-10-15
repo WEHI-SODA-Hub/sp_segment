@@ -7,24 +7,18 @@
                         {
                             "id": "test"
                         },
-                        "test.geojson.gz:md5,a9e5773abb4d02acde1efb7d260a09bc"
+                        "test.geojson.gz:md5,b9931d44830828d86e18e3fb3f5e024e"
                     ]
                 ],
                 "nuclear_tif": [
-                    [
-                        {
-                            "id": "test"
-                        },
-                        "test_nuclear.tiff:md5,07dc3d7f48a3ebf926fe82d6d68175af"
-                    ]
+                    
                 ],
                 "report": [
                     
                 ],
                 "versions": [
-                    "versions.yml:md5,020f6b6c73631bfaf9a42689d3222190",
-                    "versions.yml:md5,7b6297bb104ce980748a3b972439d412",
-                    "versions.yml:md5,ec8fbc92050f538763cdc496a2986c88"
+                    "versions.yml:md5,4582ec37a46f9eab10dc7fd9805c3146",
+                    "versions.yml:md5,4f0fb099980dca9e4d39fbb498919dee"
                 ],
                 "whole_cell_tif": [
                     [
@@ -36,10 +30,10 @@
                 ]
             }
         ],
-        "timestamp": "2026-07-29T10:54:02.052648452",
+        "timestamp": "2026-10-14T15:05:26.733783915",
         "meta": {
             "nf-test": "0.9.5",
-            "nextflow": "24.04.2"
+            "nextflow": "25.10.0"
         }
     }
 }
