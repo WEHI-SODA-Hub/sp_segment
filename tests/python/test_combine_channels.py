@@ -118,7 +118,35 @@ def test_norm_mean_all_constant_gives_zeros():
 
 def test_to_uint16_clips_negative_floats():
     out = to_uint16(np.array([-3.0, 1.6, 70000.0], dtype=np.float32))
-    assert out.tolist() == [0, 2, 65535]
+    assert out.tolist() == [0, 1, 65535]
+
+
+def test_to_uint16_scales_small_floats():
+    # Float values 0-5 in steps of 0.01 keep all 501 levels (rounding the raw
+    # values would keep 6), in the same order, with the maximum at 65535.
+    values = np.arange(0, 5.001, 0.01, dtype=np.float32)
+    out = to_uint16(values)
+    assert out.dtype == np.uint16
+    assert out.max() == 65535 and out.min() == 0
+    assert len(np.unique(out)) == len(values)
+    assert np.all(np.diff(out.astype(int)) > 0)
+
+
+def test_to_uint16_all_zero_float():
+    assert not to_uint16(np.zeros((3, 4), dtype=np.float32)).any()
+
+
+def test_to_uint16_keeps_integers():
+    data = np.array([0, 7, 300, 70000], dtype=np.int32)
+    assert to_uint16(data).tolist() == [0, 7, 300, 65535]
+    u16 = np.array([1, 2, 3], dtype=np.uint16)
+    assert to_uint16(u16) is u16
+
+
+def test_max_of_small_floats_keeps_resolution():
+    planes = np.stack([np.array([[0.2, 1.4]], dtype=np.float32), np.array([[0.7, 0.3]], dtype=np.float32)])
+    out = combine(planes, CombineMethod.MAX)
+    assert out.tolist() == [[round(0.7 / 1.4 * 65535), 65535]]
 
 
 # ---------------------------------------------------------------------------

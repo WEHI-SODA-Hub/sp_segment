@@ -63,6 +63,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   outputs, dropped samples or crashed.
 - Channel names can contain any character except `"`, `'`, `:` and `,`, and
   names with spaces are passed correctly to every tool.
+- `combine_channels` keeps the resolution of float images. Float channels (for
+  example OPAL component data, often with values below 50) were rounded to
+  integers before segmentation, which left few intensity levels: a channel
+  with values 0–5 kept 6. Float channels now have negative values set to 0
+  and are scaled so their maximum is 65535 before rounding. Integer images
+  are unchanged.
 - `combine_channels` reads images that store one channel per OME Image (COMET
   `_fixed` exports), panels with a repeated channel name, and TIFFs with a
   plain JSON description. It reads only the nuclear and membrane channels and
