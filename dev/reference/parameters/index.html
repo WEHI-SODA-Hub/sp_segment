@@ -458,6 +458,8 @@
       
         
       
+        
+      
     
     
     
@@ -546,6 +548,34 @@
     
   
     Large and dense images
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/expand-cells/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Expand cells
   
 
     
@@ -1899,10 +1929,34 @@ same as other parameters.</p>
 <td><code>true</code></td>
 <td>Use only the whole-cell segmentation to process cells (skip nuclear segmentation).</td>
 </tr>
+<tr>
+<td><a href="#cell_expansion_microns"><code>cell_expansion_microns</code></a></td>
+<td>number</td>
+<td><code>0</code></td>
+<td>Grow each cell outward by this distance in µm. 0 turns expansion off.</td>
+</tr>
+<tr>
+<td><a href="#expand_only_without_membrane"><code>expand_only_without_membrane</code></a></td>
+<td>boolean</td>
+<td><code>false</code></td>
+<td>Grow only nuclei that have no whole-cell (membrane) segmentation. Nuclei are segmented for this even when <code>use_whole_cell_only</code> is true.</td>
+</tr>
 </tbody>
 </table>
 <h4 id="use_whole_cell_only"><code>use_whole_cell_only</code><a class="headerlink" href="#use_whole_cell_only" title="Permanent link">&para;</a></h4>
 <p>Defaults to <code>true</code>: only the whole-cell segmentation is used to process cells. Nuclei are not segmented and nuclear measurements are not produced; cell, erosion, and expansion measurements are kept. Set to <code>false</code> to also segment nuclei and measure them.</p>
+<h4 id="cell_expansion_microns"><code>cell_expansion_microns</code><a class="headerlink" href="#cell_expansion_microns" title="Permanent link">&para;</a></h4>
+<p>Each background pixel within this distance of a cell is added to the nearest cell, so growth stops where two cells meet. The distance is converted to pixels with <code>pixel_size_microns</code> and rounded (minimum 1 pixel). Use it when the whole-cell masks are nucleus-sized, for example when the nuclear channel is also used as the membrane channel.</p>
+<p>Which cells are grown depends on <code>expand_only_without_membrane</code> and <code>use_whole_cell_only</code>:</p>
+<ul>
+<li><code>expand_only_without_membrane = false</code>, <code>use_whole_cell_only = true</code>: every cell is grown.</li>
+<li><code>expand_only_without_membrane = false</code>, <code>use_whole_cell_only = false</code>: every whole-cell mask is grown, without growing into nuclei that have no whole-cell mask. Nuclei with no whole-cell mask are then grown by the same distance.</li>
+<li><code>expand_only_without_membrane = true</code> (either <code>use_whole_cell_only</code>): nuclei are segmented, and only nuclei with no whole-cell mask are grown. Whole-cell masks are kept as segmented.</li>
+</ul>
+<p>When set, it replaces <code>estimate_cell_boundary_dist</code>.</p>
+<h4 id="expand_only_without_membrane"><code>expand_only_without_membrane</code><a class="headerlink" href="#expand_only_without_membrane" title="Permanent link">&para;</a></h4>
+<p>Cells found by the whole-cell segmentation keep their segmented outline. A nucleus that does not overlap any whole-cell mask is grown by <code>cell_expansion_microns</code> to make its cell. This is the approach used by 10x Xenium multimodal cell segmentation. Only used when <code>cell_expansion_microns</code> is above 0.</p>
+<p>The nuclei come from a separate nuclear segmentation. If <code>use_whole_cell_only</code> is true, that segmentation is run anyway and the run logs a warning: every sample is segmented twice, so the run can take up to about twice as long to segment, and nuclear measurements are produced.</p>
 <h2 id="sopa-options">SOPA options<a class="headerlink" href="#sopa-options" title="Permanent link">&para;</a></h2>
 <p>Parameters used by SOPA for image patching.</p>
 <table>
@@ -2388,7 +2442,7 @@ same as other parameters.</p>
 <td><code>estimate_cell_boundary_dist</code></td>
 <td>integer</td>
 <td><code>3</code></td>
-<td>For a nucleus with no matching whole-cell ROI, expand the nucleus by this many pixels to make the cell.</td>
+<td>For a nucleus with no matching whole-cell ROI, expand the nucleus by this many pixels to make the cell. Ignored when <code>cell_expansion_microns</code> is above 0.</td>
 </tr>
 <tr>
 <td><a href="#neighbors"><code>neighbors</code></a></td>

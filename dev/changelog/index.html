@@ -458,6 +458,8 @@
       
         
       
+        
+      
     
     
     
@@ -546,6 +548,34 @@
     
   
     Large and dense images
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/expand-cells/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Expand cells
   
 
     
@@ -1912,6 +1942,13 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 </ul>
 <h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
 <ul>
+<li><code>cell_expansion_microns</code> (default <code>0</code>, off) grows each cell outward by a
+  fixed distance in µm. Growth stops where two cells meet. A new <code>EXPANDCELLS</code>
+  step runs before measurement when it is set.</li>
+<li><code>expand_only_without_membrane</code> (default <code>false</code>). Only nuclei that have no
+  whole-cell mask are grown; whole-cell masks keep their segmented outline.
+  Nuclei are segmented for this even when <code>use_whole_cell_only</code> is <code>true</code>, and
+  the run logs a warning that segmentation can take up to about twice as long.</li>
 <li><code>combine_method norm_mean</code> for Cellpose and CellSAM. Each membrane channel is
   rescaled to its own 50th–99.5th percentile, then the channels are averaged,
   so a dim marker is not hidden by a bright one. <code>max</code> stays the default. A
@@ -1927,6 +1964,10 @@ and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semant
 </ul>
 <h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
 <ul>
+<li><code>membrane_channels</code> set to the nuclear channel (for example <code>DAPI</code>) failed
+  in Cellpose with <code>InvalidIndexError</code>, because the combined image had two
+  channels with the same name. The membrane copy is now named
+  <code>&lt;nuclear&gt;_membrane</code>.</li>
 <li><strong>:warning: Background subtraction could use another sample's markers
   file.</strong> With two or more <code>run_backsub</code> samples in one run, an image could be
   corrected with another slide's exposure times and background channels.
