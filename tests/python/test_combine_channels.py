@@ -215,6 +215,15 @@ def test_cli_single_membrane_keeps_its_name(stacked_tiff, tmp_path):
     assert get_channel_names(out) == ["DAPI", "Pan CK"]
 
 
+def test_cli_nuclear_as_membrane_gets_a_unique_name(stacked_tiff, tmp_path):
+    out = tmp_path / "combined.tiff"
+    result = _run(stacked_tiff, out, "--nuclear-channel", "DAPI", "--membrane-channel", "DAPI")
+    assert result.returncode == 0, result.stderr
+    assert get_channel_names(out) == ["DAPI", "DAPI_membrane"]
+    nuclear, membrane = read_channels(out, [0, 1])
+    np.testing.assert_array_equal(nuclear, membrane)
+
+
 def test_cli_norm_mean(stacked_tiff, tmp_path):
     out = tmp_path / "combined.tiff"
     result = _run(stacked_tiff, out, "--nuclear-channel", "DAPI",

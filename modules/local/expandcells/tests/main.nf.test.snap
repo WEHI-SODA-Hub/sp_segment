@@ -1,0 +1,101 @@
+{
+    "expandcells - whole-cell only": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_whole-cell_expanded.tiff:md5,2e213633faf19efccc822ec0142b13ff"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,60ea6227bff2c3c3e38213e0917186bd"
+                ],
+                "mask": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_whole-cell_expanded.tiff:md5,2e213633faf19efccc822ec0142b13ff"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,60ea6227bff2c3c3e38213e0917186bd"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-27T14:01:38.570107553",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.0"
+        }
+    },
+    "expandcells - with nuclear mask": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_whole-cell_expanded.tiff:md5,4e3a62cfaab7d8a67463eb9ddd36c565"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,60ea6227bff2c3c3e38213e0917186bd"
+                ],
+                "mask": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_whole-cell_expanded.tiff:md5,4e3a62cfaab7d8a67463eb9ddd36c565"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,60ea6227bff2c3c3e38213e0917186bd"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-27T14:01:47.093391262",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.0"
+        }
+    },
+    "expandcells - stub": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test_stub"
+                        },
+                        "test_stub_whole-cell_expanded.tiff:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,60ea6227bff2c3c3e38213e0917186bd"
+                ],
+                "mask": [
+                    [
+                        {
+                            "id": "test_stub"
+                        },
+                        "test_stub_whole-cell_expanded.tiff:md5,d41d8cd98f00b204e9800998ecf8427e"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,60ea6227bff2c3c3e38213e0917186bd"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-27T14:01:55.104973242",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.0"
+        }
+    }
+}

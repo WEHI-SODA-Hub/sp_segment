@@ -2,9 +2,11 @@ include { COMBINECHANNELS                                    } from '../../../mo
 include { SOPA_SEGMENT_COMPARTMENT as SOPA_SEGMENT_NUCLEAR   } from '../sopa_segment_compartment/main.nf'
 include { SOPA_SEGMENT_COMPARTMENT as SOPA_SEGMENT_WHOLECELL } from '../sopa_segment_compartment/main.nf'
 include { CELLMEASUREMENT                                    } from '../../../modules/local/cellmeasurement/main.nf'
+include { EXPANDCELLS                                        } from '../../../modules/local/expandcells/main.nf'
 include { SMOOTHMASKS as SMOOTHMASKS_NUC                     } from '../../../modules/local/smoothmasks/main.nf'
 include { SMOOTHMASKS as SMOOTHMASKS_WC                      } from '../../../modules/local/smoothmasks/main.nf'
 include { SEGMENTATIONREPORT                                 } from '../../../modules/local/segmentationreport/main.nf'
+include { segmentNuclei } from '../utils_nfcore_sp_segment_pipeline'
 
 workflow SOPA_SEGMENT {
 
@@ -25,19 +27,21 @@ workflow SOPA_SEGMENT {
     ch_versions = ch_versions.mix(COMBINECHANNELS.out.versions.first())
 
     // Replace tiff with combined_tiff
-    // If there are multiple membrane channels, rename to 'combined_membrane'
+    // If there are multiple membrane channels, rename to 'combined_membrane'.
+    // If the membrane channel is the nuclear channel, COMBINECHANNELS writes
+    // the copy as '<nuclear>_membrane' so the channel names stay unique.
     COMBINECHANNELS.out.combined_tiff
         .join( ch_sopa, by: 0 )
         .map { meta, combined_tiff, _tiff, nuclear_channel, membrane_channels ->
-            def membrane_name = membrane_channels.split(':').size() == 1 ?
-                membrane_channels : 'combined_membrane'
+            def membrane_name = membrane_channels.split(':').size() > 1 ? 'combined_membrane' :
+                membrane_channels == nuclear_channel ? "${nuclear_channel}_membrane" : membrane_channels
             [ meta, combined_tiff, nuclear_channel, membrane_name ]
         }.set { ch_combined }
 
     //
-    // Run segmentation for nuclear compartment (skipped if use_whole_cell_only is true)
+    // Run segmentation for nuclear compartment (skipped unless segmentNuclei())
     //
-    if (!params.use_whole_cell_only) {
+    if (segmentNuclei()) {
         SOPA_SEGMENT_NUCLEAR(
             ch_combined.map {
                 meta,
@@ -69,7 +73,7 @@ workflow SOPA_SEGMENT {
     //
     // Create a channel for cell measurement
     //
-    if (params.use_whole_cell_only) {
+    if (!segmentNuclei()) {
         // In whole-cell-only mode, provide whole-cell mask as a placeholder for the
         // nuclear input channel; CELLMEASUREMENT omits --nuclear-mask in this mode.
         SOPA_SEGMENT_WHOLECELL.out.tiff
@@ -109,7 +113,7 @@ workflow SOPA_SEGMENT {
     // Optional mask smoothing to reduce polygon complexity
     //
     if (params.smooth_masks) {
-        if (!params.use_whole_cell_only) {
+        if (segmentNuclei()) {
             SMOOTHMASKS_NUC(
                 ch_cellmeasurement.map {
                     meta, _tiff, nuclear_tiff, _wholecell_tiff -> [meta, nuclear_tiff]
@@ -121,7 +125,7 @@ workflow SOPA_SEGMENT {
                 meta, _tiff, _nuclear_tiff, wholecell_tiff -> [meta, wholecell_tiff]
             }
         )
-        if (!params.use_whole_cell_only) {
+        if (segmentNuclei()) {
             ch_cellmeasurement
                 .map { meta, tiff, _nuclear_tiff, _wholecell_tiff -> [meta, tiff] }
                 .join(SMOOTHMASKS_NUC.out.smoothed_mask)
@@ -136,6 +140,23 @@ workflow SOPA_SEGMENT {
                 .set { ch_cellmeasurement }
         }
         ch_versions = ch_versions.mix(SMOOTHMASKS_WC.out.versions.first())
+    }
+
+    //
+    // Optional cell expansion. With expand_only_without_membrane, only nuclei
+    // with no whole-cell mask are grown, which CELLMEASUREMENT does itself.
+    //
+    if (params.cell_expansion_microns && !params.expand_only_without_membrane) {
+        EXPANDCELLS(
+            ch_cellmeasurement.map {
+                meta, _tiff, nuclear_mask, whole_cell_mask -> [meta, nuclear_mask, whole_cell_mask]
+            }
+        )
+        ch_cellmeasurement
+            .map { meta, tiff, nuclear_mask, _whole_cell_mask -> [meta, tiff, nuclear_mask] }
+            .join(EXPANDCELLS.out.mask)
+            .set { ch_cellmeasurement }
+        ch_versions = ch_versions.mix(EXPANDCELLS.out.versions.first())
     }
 
     //

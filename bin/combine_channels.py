@@ -87,6 +87,11 @@ def combine(planes: np.ndarray, method: CombineMethod) -> np.ndarray:
     raise ValueError(f"unknown combine method: {method}")
 
 
+def membrane_copy_name(nuclear_channel: str) -> str:
+    '''Output name of the membrane channel when it is the nuclear channel.'''
+    return f"{nuclear_channel}_membrane"
+
+
 def channel_index(name: str, channel_names: List[str]) -> int:
     '''Index of a channel name; fails with the list of available names.'''
     try:
@@ -201,6 +206,10 @@ def main(
     else:
         membrane = to_uint16(read_channels(tiff, membrane_indices)[0])
         membrane_name = membrane_channel[0]
+        # The nuclear channel can also be the membrane channel (nuclear-only
+        # input). Channel names must be unique for sopa, so rename the copy.
+        if membrane_name == nuclear_channel:
+            membrane_name = membrane_copy_name(nuclear_channel)
 
     # Report what was combined so it stays visible in the process log
     # (downstream segmenters only see the single combined membrane channel).
