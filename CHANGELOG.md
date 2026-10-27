@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `cell_expansion_microns` (default `0`, off) grows each cell outward by a
+  fixed distance in µm. Growth stops where two cells meet. A new `EXPANDCELLS`
+  step runs before measurement when it is set.
+- `expand_only_without_membrane` (default `false`). Only nuclei that have no
+  whole-cell mask are grown; whole-cell masks keep their segmented outline.
+  Nuclei are segmented for this even when `use_whole_cell_only` is `true`, and
+  the run logs a warning that segmentation can take up to about twice as long.
 - `combine_method norm_mean` for Cellpose and CellSAM. Each membrane channel is
   rescaled to its own 50th–99.5th percentile, then the channels are averaged,
   so a dim marker is not hidden by a bright one. `max` stays the default. A
@@ -36,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `membrane_channels` set to the nuclear channel (for example `DAPI`) failed
+  in Cellpose with `InvalidIndexError`, because the combined image had two
+  channels with the same name. The membrane copy is now named
+  `<nuclear>_membrane`.
 - **:warning: Background subtraction could use another sample's markers
   file.** With two or more `run_backsub` samples in one run, an image could be
   corrected with another slide's exposure times and background channels.

@@ -88,6 +88,7 @@ nav:
   - How-to guides:
       - Choose a segmentation method: how-to/choose-segmenter.md
       - Large and dense images: how-to/large-images.md
+      - Expand cells: how-to/expand-cells.md
       - Run several methods on one image: how-to/multiple-methods.md
       - KRONOS2 embeddings: how-to/kronos2.md
       - Resume a killed measurement task: how-to/resume-measurement.md

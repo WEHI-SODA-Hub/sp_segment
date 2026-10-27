@@ -64,6 +64,21 @@
                     "description": "Use only the whole-cell segmentation to process cells (skip nuclear segmentation).",
                     "fa_icon": "fas fa-stopwatch",
                     "help_text": "Defaults to `true`: only the whole-cell segmentation is used to process cells. Nuclei are not segmented and nuclear measurements are not produced; cell, erosion, and expansion measurements are kept. Set to `false` to also segment nuclei and measure them."
+                },
+                "cell_expansion_microns": {
+                    "type": "number",
+                    "default": 0,
+                    "minimum": 0,
+                    "description": "Grow each cell outward by this distance in µm. 0 turns expansion off.",
+                    "fa_icon": "fas fa-expand-arrows-alt",
+                    "help_text": "Each background pixel within this distance of a cell is added to the nearest cell, so growth stops where two cells meet. The distance is converted to pixels with `pixel_size_microns` and rounded (minimum 1 pixel). Use it when the whole-cell masks are nucleus-sized, for example when the nuclear channel is also used as the membrane channel.\n\nWhich cells are grown depends on `expand_only_without_membrane` and `use_whole_cell_only`:\n\n- `expand_only_without_membrane = false`, `use_whole_cell_only = true`: every cell is grown.\n- `expand_only_without_membrane = false`, `use_whole_cell_only = false`: every whole-cell mask is grown, without growing into nuclei that have no whole-cell mask. Nuclei with no whole-cell mask are then grown by the same distance.\n- `expand_only_without_membrane = true` (either `use_whole_cell_only`): nuclei are segmented, and only nuclei with no whole-cell mask are grown. Whole-cell masks are kept as segmented.\n\nWhen set, it replaces `estimate_cell_boundary_dist`."
+                },
+                "expand_only_without_membrane": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Grow only nuclei that have no whole-cell (membrane) segmentation. Nuclei are segmented for this even when `use_whole_cell_only` is true.",
+                    "fa_icon": "fas fa-object-ungroup",
+                    "help_text": "Cells found by the whole-cell segmentation keep their segmented outline. A nucleus that does not overlap any whole-cell mask is grown by `cell_expansion_microns` to make its cell. This is the approach used by 10x Xenium multimodal cell segmentation. Only used when `cell_expansion_microns` is above 0.\n\nThe nuclei come from a separate nuclear segmentation. If `use_whole_cell_only` is true, that segmentation is run anyway and the run logs a warning: every sample is segmented twice, so the run can take up to about twice as long to segment, and nuclear measurements are produced."
                 }
             }
         },
@@ -503,7 +518,7 @@
                 },
                 "estimate_cell_boundary_dist": {
                     "type": "integer",
-                    "description": "For a nucleus with no matching whole-cell ROI, expand the nucleus by this many pixels to make the cell.",
+                    "description": "For a nucleus with no matching whole-cell ROI, expand the nucleus by this many pixels to make the cell. Ignored when `cell_expansion_microns` is above 0.",
                     "fa_icon": "fas fa-expand-arrows-alt",
                     "minimum": 0,
                     "default": 3

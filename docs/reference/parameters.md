@@ -58,10 +58,30 @@ Parameters used for cell processing.
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | [`use_whole_cell_only`](#use_whole_cell_only) | boolean | `true` | Use only the whole-cell segmentation to process cells (skip nuclear segmentation). |
+| [`cell_expansion_microns`](#cell_expansion_microns) | number | `0` | Grow each cell outward by this distance in µm. 0 turns expansion off. |
+| [`expand_only_without_membrane`](#expand_only_without_membrane) | boolean | `false` | Grow only nuclei that have no whole-cell (membrane) segmentation. Nuclei are segmented for this even when `use_whole_cell_only` is true. |
 
 #### `use_whole_cell_only`
 
 Defaults to `true`: only the whole-cell segmentation is used to process cells. Nuclei are not segmented and nuclear measurements are not produced; cell, erosion, and expansion measurements are kept. Set to `false` to also segment nuclei and measure them.
+
+#### `cell_expansion_microns`
+
+Each background pixel within this distance of a cell is added to the nearest cell, so growth stops where two cells meet. The distance is converted to pixels with `pixel_size_microns` and rounded (minimum 1 pixel). Use it when the whole-cell masks are nucleus-sized, for example when the nuclear channel is also used as the membrane channel.
+
+Which cells are grown depends on `expand_only_without_membrane` and `use_whole_cell_only`:
+
+- `expand_only_without_membrane = false`, `use_whole_cell_only = true`: every cell is grown.
+- `expand_only_without_membrane = false`, `use_whole_cell_only = false`: every whole-cell mask is grown, without growing into nuclei that have no whole-cell mask. Nuclei with no whole-cell mask are then grown by the same distance.
+- `expand_only_without_membrane = true` (either `use_whole_cell_only`): nuclei are segmented, and only nuclei with no whole-cell mask are grown. Whole-cell masks are kept as segmented.
+
+When set, it replaces `estimate_cell_boundary_dist`.
+
+#### `expand_only_without_membrane`
+
+Cells found by the whole-cell segmentation keep their segmented outline. A nucleus that does not overlap any whole-cell mask is grown by `cell_expansion_microns` to make its cell. This is the approach used by 10x Xenium multimodal cell segmentation. Only used when `cell_expansion_microns` is above 0.
+
+The nuclei come from a separate nuclear segmentation. If `use_whole_cell_only` is true, that segmentation is run anyway and the run logs a warning: every sample is segmented twice, so the run can take up to about twice as long to segment, and nuclear measurements are produced.
 
 ## SOPA options
 
@@ -290,7 +310,7 @@ Parameters for the cell measurement step (cellmeasurement-py).
 | [`expansion_steps`](#expansion_steps) | boolean | `true` | Measure intensity in 5 equal-area annular bins dilated 20 µm outward from the cell boundary (distance computed from pixel_size_microns). |
 | [`environment_expansion`](#environment_expansion) | boolean | `true` | Measure a 20 µm pericellular 'Environment' compartment (distance computed automatically from pixel_size_microns). |
 | [`pixel_size_microns`](#pixel_size_microns) | number | `0.28` | Pixel size in microns. |
-| `estimate_cell_boundary_dist` | integer | `3` | For a nucleus with no matching whole-cell ROI, expand the nucleus by this many pixels to make the cell. |
+| `estimate_cell_boundary_dist` | integer | `3` | For a nucleus with no matching whole-cell ROI, expand the nucleus by this many pixels to make the cell. Ignored when `cell_expansion_microns` is above 0. |
 | [`neighbors`](#neighbors) | integer | `0` | Number of nearest neighbours used for neighbourhood features. `0` turns them off. |
 | [`gzip_geojson`](#gzip_geojson) (hidden) | boolean | `true` | Gzip-compress the output GeoJSON files. Produces .geojson.gz instead of .geojson. |
 | [`dist_threshold`](#dist_threshold) | number | `10.0` | Maximum centroid distance in pixels for matching a nucleus to a whole-cell ROI. |

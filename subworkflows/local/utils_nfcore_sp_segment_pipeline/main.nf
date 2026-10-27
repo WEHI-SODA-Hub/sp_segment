@@ -175,6 +175,22 @@ workflow PIPELINE_INITIALISATION {
     }
 
     //
+    // expand_only_without_membrane needs nuclei to decide which cells have no
+    // whole-cell mask. In whole-cell-only mode nuclei are then segmented as
+    // well (see segmentNuclei), which adds a second segmentation per sample.
+    //
+    if (params.cell_expansion_microns && params.expand_only_without_membrane && params.use_whole_cell_only) {
+        log.warn(
+            "expand_only_without_membrane is true, so nuclei are segmented although use_whole_cell_only is true.\n" +
+            "This runs a second segmentation for every sample, and the run can take much longer " +
+            "(up to about twice the segmentation time). Nuclear measurements are also produced."
+        )
+    }
+    if (params.expand_only_without_membrane && !params.cell_expansion_microns) {
+        log.warn("expand_only_without_membrane has no effect while cell_expansion_microns is 0.")
+    }
+
+    //
     // deepcell_cache_dir is bind-mounted into the Mesmer and CellSAM
     // containers, and a bind source that does not exist stops the container
     // from starting ("mount source ... doesn't exist"). The modules create
@@ -273,6 +289,16 @@ workflow PIPELINE_COMPLETION {
 
 //
 // Validate channels from input samplesheet
+//
+// Whether nuclei are segmented. They are when use_whole_cell_only is false,
+// and also when expand_only_without_membrane needs them to find the cells
+// that have no whole-cell mask.
+//
+def segmentNuclei() {
+    return !params.use_whole_cell_only ||
+        (params.cell_expansion_microns && params.expand_only_without_membrane) as boolean
+}
+
 //
 // Each row is [ meta, run_backsub, run_mesmer, run_cellpose, run_cellsam,
 // tiff, nuclear_channel, membrane_channels ]. The schema checks each value on

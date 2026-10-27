@@ -1,10 +1,12 @@
 include { MESMERSEGMENT as MESMERWC  } from '../../../modules/local/mesmersegment/main.nf'
 include { MESMERSEGMENT as MESMERNUC } from '../../../modules/local/mesmersegment/main.nf'
 include { CELLMEASUREMENT            } from '../../../modules/local/cellmeasurement/main.nf'
+include { EXPANDCELLS                } from '../../../modules/local/expandcells/main.nf'
 include { SMOOTHMASKS as SMOOTHMASKS_NUC } from '../../../modules/local/smoothmasks/main.nf'
 include { SMOOTHMASKS as SMOOTHMASKS_WC  } from '../../../modules/local/smoothmasks/main.nf'
 include { COMBINECHANNELS            } from '../../../modules/local/combinechannels/main.nf'
 include { SEGMENTATIONREPORT         } from '../../../modules/local/segmentationreport/main.nf'
+include { segmentNuclei } from '../utils_nfcore_sp_segment_pipeline'
 
 workflow MESMER_SEGMENT {
 
@@ -44,9 +46,9 @@ workflow MESMER_SEGMENT {
 
 
     //
-    // Run MESMERSEGMENT module for nuclear segmentation (skipped if use_whole_cell_only is true)
+    // Run MESMERSEGMENT module for nuclear segmentation (skipped unless segmentNuclei())
     //
-    if (!params.use_whole_cell_only) {
+    if (segmentNuclei()) {
         MESMERNUC(
             ch_mesmer,
             "nuclear"
@@ -55,7 +57,7 @@ workflow MESMER_SEGMENT {
     }
 
     // Create channel for CELLMEASUREMENT input adding the segmentation masks
-    if (params.use_whole_cell_only) {
+    if (!segmentNuclei()) {
         // In whole-cell-only mode, provide whole-cell mask as a placeholder for the
         // nuclear input channel; CELLMEASUREMENT omits --nuclear-mask in this mode.
         ch_mesmer_segment
@@ -103,7 +105,7 @@ workflow MESMER_SEGMENT {
     // Optional mask smoothing to reduce polygon complexity
     //
     if (params.smooth_masks) {
-        if (!params.use_whole_cell_only) {
+        if (segmentNuclei()) {
             SMOOTHMASKS_NUC(
                 ch_cellmeasurement.map {
                     sample, _tiff, nuclear_mask, _whole_cell_mask -> [sample, nuclear_mask]
@@ -115,7 +117,7 @@ workflow MESMER_SEGMENT {
                 sample, _tiff, _nuclear_mask, whole_cell_mask -> [sample, whole_cell_mask]
             }
         )
-        if (!params.use_whole_cell_only) {
+        if (segmentNuclei()) {
             ch_cellmeasurement
                 .map { sample, tiff, _nuclear_mask, _whole_cell_mask -> [sample, tiff] }
                 .join(SMOOTHMASKS_NUC.out.smoothed_mask)
@@ -130,6 +132,23 @@ workflow MESMER_SEGMENT {
                 .set { ch_cellmeasurement }
         }
         ch_versions = ch_versions.mix(SMOOTHMASKS_WC.out.versions.first())
+    }
+
+    //
+    // Optional cell expansion. With expand_only_without_membrane, only nuclei
+    // with no whole-cell mask are grown, which CELLMEASUREMENT does itself.
+    //
+    if (params.cell_expansion_microns && !params.expand_only_without_membrane) {
+        EXPANDCELLS(
+            ch_cellmeasurement.map {
+                sample, _tiff, nuclear_mask, whole_cell_mask -> [sample, nuclear_mask, whole_cell_mask]
+            }
+        )
+        ch_cellmeasurement
+            .map { sample, tiff, nuclear_mask, _whole_cell_mask -> [sample, tiff, nuclear_mask] }
+            .join(EXPANDCELLS.out.mask)
+            .set { ch_cellmeasurement }
+        ch_versions = ch_versions.mix(EXPANDCELLS.out.versions.first())
     }
 
     //
@@ -219,7 +238,7 @@ workflow MESMER_SEGMENT {
     emit:
     annotations      = ch_annotations                  // channel: [ val(meta), *.geojson ]
     whole_cell_tif   = MESMERWC.out.segmentation_mask    // channel: [ val(meta), *.tiff ]
-    nuclear_tif      = params.use_whole_cell_only ? channel.empty() : MESMERNUC.out.segmentation_mask   // channel: [ val(meta), *.tiff ]
+    nuclear_tif      = !segmentNuclei() ? channel.empty() : MESMERNUC.out.segmentation_mask   // channel: [ val(meta), *.tiff ]
     kronos_input     = ch_kronos_input                   // channel: [ val(meta), tiff, whole_cell_mask ]
     report           = ch_report                         // channel: [ val(meta), *.html ] OPTIONAL
 
