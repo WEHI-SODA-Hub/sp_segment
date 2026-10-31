@@ -139,7 +139,7 @@
                         {
                             "id": "test"
                         },
-                        "test_combined_channels.tiff:md5,4fa6b8f59e9aaa8374b4c1d6d96353f4"
+                        "test_combined_channels.tiff:md5,a45407e1675f6f0c6adab4222da3879e"
                     ]
                 ],
                 "1": [
@@ -150,7 +150,7 @@
                         {
                             "id": "test"
                         },
-                        "test_combined_channels.tiff:md5,4fa6b8f59e9aaa8374b4c1d6d96353f4"
+                        "test_combined_channels.tiff:md5,a45407e1675f6f0c6adab4222da3879e"
                     ]
                 ],
                 "versions": [
@@ -158,7 +158,7 @@
                 ]
             }
         ],
-        "timestamp": "2026-10-14T12:57:59.165247591",
+        "timestamp": "2026-10-31T14:27:06.54895702",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "25.10.0"

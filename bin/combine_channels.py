@@ -44,14 +44,23 @@ NORM_HIGH_PERCENTILE = 99.5
 
 def to_uint16(data: np.ndarray) -> np.ndarray:
     '''
-    Cast to uint16 without wrapping: values are rounded and clipped to
-    0..65535. A plain astype() wraps negative floats (e.g. from background
-    subtraction) to large positive values.
+    Cast to uint16 without wrapping or losing float resolution.
+
+    Integer data is clipped to 0..65535. Float data has negative values set
+    to 0 (e.g. from background subtraction), is scaled so its maximum is
+    65535, then rounded. Rounding the raw values would leave few levels for
+    small-valued float images (OPAL component data with values 0-5 would
+    keep 6). The segmenters normalise each channel by its own range or
+    percentiles, so only the resolution matters, not the scale.
     '''
     if data.dtype == np.uint16:
         return data
     if np.issubdtype(data.dtype, np.floating):
-        data = np.rint(data)
+        data = np.clip(data, 0, None).astype(np.float32)
+        peak = float(data.max())
+        if peak > 0:
+            data *= np.float32(UINT16_MAX / peak)
+        return np.rint(data).astype(np.uint16)
     return np.clip(data, 0, UINT16_MAX).astype(np.uint16)
 
 
