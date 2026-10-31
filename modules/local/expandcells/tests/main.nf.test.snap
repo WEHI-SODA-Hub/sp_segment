@@ -32,6 +32,39 @@
             "nextflow": "25.10.0"
         }
     },
+    "expandcells - expand_only_without_membrane": {
+        "content": [
+            {
+                "0": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_whole-cell_expanded.tiff:md5,4d9b41ff5613cbb0793353453d9f3ff5"
+                    ]
+                ],
+                "1": [
+                    "versions.yml:md5,60ea6227bff2c3c3e38213e0917186bd"
+                ],
+                "mask": [
+                    [
+                        {
+                            "id": "test"
+                        },
+                        "test_whole-cell_expanded.tiff:md5,4d9b41ff5613cbb0793353453d9f3ff5"
+                    ]
+                ],
+                "versions": [
+                    "versions.yml:md5,60ea6227bff2c3c3e38213e0917186bd"
+                ]
+            }
+        ],
+        "timestamp": "2026-10-31T14:20:41.225955292",
+        "meta": {
+            "nf-test": "0.9.5",
+            "nextflow": "25.10.0"
+        }
+    },
     "expandcells - with nuclear mask": {
         "content": [
             {

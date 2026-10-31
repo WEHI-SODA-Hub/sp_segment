@@ -24,10 +24,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cell_expansion_microns` (default `0`, off) grows each cell outward by a
   fixed distance in µm. Growth stops where two cells meet. A new `EXPANDCELLS`
   step runs before measurement when it is set.
-- `expand_only_without_membrane` (default `false`). Only nuclei that have no
-  whole-cell mask are grown; whole-cell masks keep their segmented outline.
-  Nuclei are segmented for this even when `use_whole_cell_only` is `true`, and
-  the run logs a warning that segmentation can take up to about twice as long.
+- `expand_only_without_membrane` (default `false`). Each sample is also
+  segmented from the nuclear channel alone. Whole-cell masks that match their
+  nuclear-channel mask (IoU of at least `expand_match_iou`, default `0.8`) are
+  grown, and nuclear-channel masks with no whole-cell mask are added as cells
+  and grown. Other whole-cell masks keep their outline, and no cell is
+  removed. The second segmentation runs even when `use_whole_cell_only` is
+  `true`, and the run logs a warning that segmentation can take up to about
+  twice as long. Cells that are almost all nucleus, such as tumour cells in
+  dense areas, also match their nuclear-channel mask and are grown; the run
+  logs a warning about this when the option is on.
 - `combine_method norm_mean` for Cellpose and CellSAM. Each membrane channel is
   rescaled to its own 50th–99.5th percentile, then the channels are averaged,
   so a dim marker is not hidden by a bright one. `max` stays the default. A
