@@ -2,7 +2,8 @@
 
 The strip-by-strip expansion must give the same mask as expanding the whole
 image at once (``skimage.segmentation.expand_labels``), and with a nuclear mask
-it must leave nuclei that have no whole-cell label untouched.
+it must leave nuclei that have no whole-cell label untouched. With --match-iou,
+only cells that match their nucleus and nuclei with no whole-cell label grow.
 
 Pure python -- no pipeline run required.
 """
@@ -12,7 +13,7 @@ import pytest
 import tifffile
 from skimage.segmentation import expand_labels
 
-from expand_cells import expand_block, expand_mask, main
+from expand_cells import expand_block, expand_mask, expand_matched, main, match_to_nuclei
 
 
 def _random_mask(shape, n_cells, radius, seed):
@@ -97,3 +98,85 @@ def test_cli_rejects_zero_distance(tmp_path):
     with pytest.raises(SystemExit):
         main(["--whole-cell-mask", str(wc_path), "--distance-px", "0",
               "--output", str(tmp_path / "o.tiff")])
+
+
+def _match_masks():
+    """Cell 1 = its nucleus (IoU 1). Cell 2 is much larger than its nucleus.
+    Cell 3 has no nucleus. Nucleus 4 has no whole-cell label."""
+    whole_cell = np.zeros((40, 60), dtype=np.uint16)
+    nuclear = np.zeros_like(whole_cell)
+    whole_cell[5:10, 5:10] = 1
+    nuclear[5:10, 5:10] = 1
+    whole_cell[5:25, 25:45] = 2
+    nuclear[12:16, 33:37] = 2
+    whole_cell[30:35, 5:10] = 3
+    nuclear[30:35, 50:55] = 4
+    return whole_cell, nuclear
+
+
+def test_match_to_nuclei():
+    whole_cell, nuclear = _match_masks()
+    expand_cell, new_nuclei, best_iou = match_to_nuclei(whole_cell, nuclear, 0.7, strip_rows=7)
+    assert best_iou[1] == 1.0
+    assert best_iou[2] == pytest.approx(16 / 400)
+    assert best_iou[3] == 0
+    assert list(np.nonzero(expand_cell)[0]) == [1]
+    assert list(np.nonzero(new_nuclei)[0]) == [4]
+
+
+@pytest.mark.parametrize("strip_rows", [3, 11, 1000])
+def test_expand_matched(strip_rows):
+    whole_cell, nuclear = _match_masks()
+    out = np.zeros(whole_cell.shape, dtype=np.uint32)
+    summary = expand_matched(whole_cell, nuclear, 2, out, 0.7, strip_rows=strip_rows)
+    assert summary == {"expanded_whole_cell": 1, "added_nuclei": 1}
+    # Cell 1 matches its nucleus: grown.
+    assert np.count_nonzero(out == 1) > 25
+    # Cells 2 and 3 keep their outline; nothing is removed.
+    np.testing.assert_array_equal(out == 2, whole_cell == 2)
+    np.testing.assert_array_equal(out == 3, whole_cell == 3)
+    # Nucleus 4 is added as label 3 + 4 = 7 and grown.
+    new = out == 7
+    assert np.all(new[nuclear == 4])
+    assert np.count_nonzero(new) > 25
+    # Same result as expand_labels, restricted to the cells that may grow.
+    seeds = whole_cell.astype(np.uint32)
+    seeds[nuclear == 4] = 7
+    ref = expand_labels(seeds, 2)
+    ref[np.isin(ref, [2, 3]) & (seeds == 0)] = 0
+    np.testing.assert_array_equal(out, ref)
+
+
+def test_expanded_cell_does_not_take_pixels_nearer_another_cell():
+    whole_cell = np.zeros((1, 21), dtype=np.uint16)
+    nuclear = np.zeros_like(whole_cell)
+    whole_cell[0, 5] = 1      # matches its nucleus: grows
+    nuclear[0, 5] = 1
+    whole_cell[0, 10:13] = 2  # no nucleus: keeps its outline
+    out = np.zeros(whole_cell.shape, dtype=np.uint32)
+    expand_matched(whole_cell, nuclear, 6, out, 0.7)
+    assert list(out[0, :8]) == [1] * 8   # pixel 7: 2 from cell 1, 3 from cell 2
+    assert not out[0, 8:10].any()        # nearer cell 2, which does not grow
+    assert list(out[0, 10:13]) == [2, 2, 2]
+    assert not out[0, 13:].any()
+
+
+def test_cli_match_iou(tmp_path):
+    whole_cell, nuclear = _match_masks()
+    wc_path, nuc_path = tmp_path / "wc.tiff", tmp_path / "nuc.tiff"
+    tifffile.imwrite(wc_path, whole_cell, compression="zlib")
+    tifffile.imwrite(nuc_path, nuclear, compression="zlib")
+    out_path = tmp_path / "out.tiff"
+    main(["--whole-cell-mask", str(wc_path), "--nuclear-mask", str(nuc_path),
+          "--distance-px", "2", "--match-iou", "0.7", "--output", str(out_path)])
+    out = tifffile.imread(out_path)
+    assert out.dtype == np.uint32
+    assert set(np.unique(out)) == {0, 1, 2, 3, 7}
+
+
+def test_cli_match_iou_needs_nuclear_mask(tmp_path):
+    wc_path = tmp_path / "wc.tiff"
+    tifffile.imwrite(wc_path, np.zeros((5, 5), dtype=np.uint32))
+    with pytest.raises(SystemExit):
+        main(["--whole-cell-mask", str(wc_path), "--distance-px", "2",
+              "--match-iou", "0.7", "--output", str(tmp_path / "o.tiff")])

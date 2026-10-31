@@ -175,15 +175,23 @@ workflow PIPELINE_INITIALISATION {
     }
 
     //
-    // expand_only_without_membrane needs nuclei to decide which cells have no
-    // whole-cell mask. In whole-cell-only mode nuclei are then segmented as
-    // well (see segmentNuclei), which adds a second segmentation per sample.
+    // expand_only_without_membrane compares each whole-cell mask with a
+    // segmentation of the nuclear channel alone. In whole-cell-only mode that
+    // segmentation is run as well (see segmentNuclei), a second segmentation
+    // per sample.
     //
     if (params.cell_expansion_microns && params.expand_only_without_membrane && params.use_whole_cell_only) {
         log.warn(
             "expand_only_without_membrane is true, so nuclei are segmented although use_whole_cell_only is true.\n" +
             "This runs a second segmentation for every sample, and the run can take much longer " +
-            "(up to about twice the segmentation time). Nuclear measurements are also produced."
+            "(up to about twice the segmentation time)."
+        )
+    }
+    if (params.cell_expansion_microns && params.expand_only_without_membrane) {
+        log.warn(
+            "expand_only_without_membrane also grows cells that are almost all nucleus, for example tumour cells in dense areas,\n" +
+            "because their whole-cell mask matches the nucleus. Cells at the edge of a dense area can grow by the full " +
+            "cell_expansion_microns. Check the outlines in such areas."
         )
     }
     if (params.expand_only_without_membrane && !params.cell_expansion_microns) {
@@ -291,8 +299,8 @@ workflow PIPELINE_COMPLETION {
 // Validate channels from input samplesheet
 //
 // Whether nuclei are segmented. They are when use_whole_cell_only is false,
-// and also when expand_only_without_membrane needs them to find the cells
-// that have no whole-cell mask.
+// and also when expand_only_without_membrane compares the whole-cell masks
+// with a segmentation of the nuclear channel alone.
 //
 def segmentNuclei() {
     return !params.use_whole_cell_only ||
