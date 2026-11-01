@@ -1939,7 +1939,13 @@ same as other parameters.</p>
 <td><a href="#expand_only_without_membrane"><code>expand_only_without_membrane</code></a></td>
 <td>boolean</td>
 <td><code>false</code></td>
-<td>Grow only nuclei that have no whole-cell (membrane) segmentation. Nuclei are segmented for this even when <code>use_whole_cell_only</code> is true.</td>
+<td>Grow only the cells that the membrane channels did not change. Nuclei are segmented for this even when <code>use_whole_cell_only</code> is true.</td>
+</tr>
+<tr>
+<td><a href="#expand_match_iou"><code>expand_match_iou</code></a> (hidden)</td>
+<td>number</td>
+<td><code>0.8</code></td>
+<td>With <code>expand_only_without_membrane</code>, a whole-cell mask is grown when its intersection over union with the best-matching nuclear-channel mask is at least this value.</td>
 </tr>
 </tbody>
 </table>
@@ -1951,12 +1957,21 @@ same as other parameters.</p>
 <ul>
 <li><code>expand_only_without_membrane = false</code>, <code>use_whole_cell_only = true</code>: every cell is grown.</li>
 <li><code>expand_only_without_membrane = false</code>, <code>use_whole_cell_only = false</code>: every whole-cell mask is grown, without growing into nuclei that have no whole-cell mask. Nuclei with no whole-cell mask are then grown by the same distance.</li>
-<li><code>expand_only_without_membrane = true</code> (either <code>use_whole_cell_only</code>): nuclei are segmented, and only nuclei with no whole-cell mask are grown. Whole-cell masks are kept as segmented.</li>
+<li><code>expand_only_without_membrane = true</code> (either <code>use_whole_cell_only</code>): only cells that the membrane channels did not change are grown. See <code>expand_only_without_membrane</code>.</li>
 </ul>
 <p>When set, it replaces <code>estimate_cell_boundary_dist</code>.</p>
 <h4 id="expand_only_without_membrane"><code>expand_only_without_membrane</code><a class="headerlink" href="#expand_only_without_membrane" title="Permanent link">&para;</a></h4>
-<p>Cells found by the whole-cell segmentation keep their segmented outline. A nucleus that does not overlap any whole-cell mask is grown by <code>cell_expansion_microns</code> to make its cell. This is the approach used by 10x Xenium multimodal cell segmentation. Only used when <code>cell_expansion_microns</code> is above 0.</p>
-<p>The nuclei come from a separate nuclear segmentation. If <code>use_whole_cell_only</code> is true, that segmentation is run anyway and the run logs a warning: every sample is segmented twice, so the run can take up to about twice as long to segment, and nuclear measurements are produced.</p>
+<p>Each sample is segmented twice: from the nuclear channel alone, and from the nuclear and membrane channels (the whole-cell segmentation). Only used when <code>cell_expansion_microns</code> is above 0.</p>
+<ul>
+<li>A whole-cell mask whose best-matching nuclear-channel mask has an intersection over union of at least <code>expand_match_iou</code> is grown by <code>cell_expansion_microns</code>. The membrane channels added nothing to this cell, so its mask is about nucleus-sized.</li>
+<li>A nuclear-channel mask that touches no whole-cell mask is added as a cell and grown.</li>
+<li>Every other whole-cell mask keeps its segmented outline. No cell is removed.</li>
+</ul>
+<p>A pixel is given to a grown cell only if that cell is the nearest cell, so grown cells do not take space next to cells that keep their outline.</p>
+<p>Cells that are almost all nucleus, for example tumour cells in dense areas, also have a whole-cell mask that matches the nucleus. These cells are grown as well, although their outline is already correct. Inside densely packed areas growth is small, because cells stop where they meet. Cells at the edge of a dense area can grow by the full distance into the space next to them. Check the outlines in such areas, and use a smaller <code>cell_expansion_microns</code> or leave this option off if the cells there should not grow.</p>
+<p>If <code>use_whole_cell_only</code> is true, the second segmentation is run anyway and the run logs a warning: segmentation can take up to about twice as long. Nuclear measurements are produced only when <code>use_whole_cell_only</code> is false.</p>
+<h4 id="expand_match_iou"><code>expand_match_iou</code><a class="headerlink" href="#expand_match_iou" title="Permanent link">&para;</a></h4>
+<p>Higher values grow fewer cells: only whole-cell masks that are almost the same as the nuclear-channel mask. Lower values also grow cells whose whole-cell mask is somewhat larger than the nucleus. If one mask lies inside the other, an IoU of 0.8 means the larger mask has 1.25 times the area of the smaller one.</p>
 <h2 id="sopa-options">SOPA options<a class="headerlink" href="#sopa-options" title="Permanent link">&para;</a></h2>
 <p>Parameters used by SOPA for image patching.</p>
 <table>
