@@ -59,7 +59,8 @@ Parameters used for cell processing.
 | --- | --- | --- | --- |
 | [`use_whole_cell_only`](#use_whole_cell_only) | boolean | `true` | Use only the whole-cell segmentation to process cells (skip nuclear segmentation). |
 | [`cell_expansion_microns`](#cell_expansion_microns) | number | `0` | Grow each cell outward by this distance in µm. 0 turns expansion off. |
-| [`expand_only_without_membrane`](#expand_only_without_membrane) | boolean | `false` | Grow only nuclei that have no whole-cell (membrane) segmentation. Nuclei are segmented for this even when `use_whole_cell_only` is true. |
+| [`expand_only_without_membrane`](#expand_only_without_membrane) | boolean | `false` | Grow only the cells that the membrane channels did not change. Nuclei are segmented for this even when `use_whole_cell_only` is true. |
+| [`expand_match_iou`](#expand_match_iou) (hidden) | number | `0.8` | With `expand_only_without_membrane`, a whole-cell mask is grown when its intersection over union with the best-matching nuclear-channel mask is at least this value. |
 
 #### `use_whole_cell_only`
 
@@ -73,15 +74,27 @@ Which cells are grown depends on `expand_only_without_membrane` and `use_whole_c
 
 - `expand_only_without_membrane = false`, `use_whole_cell_only = true`: every cell is grown.
 - `expand_only_without_membrane = false`, `use_whole_cell_only = false`: every whole-cell mask is grown, without growing into nuclei that have no whole-cell mask. Nuclei with no whole-cell mask are then grown by the same distance.
-- `expand_only_without_membrane = true` (either `use_whole_cell_only`): nuclei are segmented, and only nuclei with no whole-cell mask are grown. Whole-cell masks are kept as segmented.
+- `expand_only_without_membrane = true` (either `use_whole_cell_only`): only cells that the membrane channels did not change are grown. See `expand_only_without_membrane`.
 
 When set, it replaces `estimate_cell_boundary_dist`.
 
 #### `expand_only_without_membrane`
 
-Cells found by the whole-cell segmentation keep their segmented outline. A nucleus that does not overlap any whole-cell mask is grown by `cell_expansion_microns` to make its cell. This is the approach used by 10x Xenium multimodal cell segmentation. Only used when `cell_expansion_microns` is above 0.
+Each sample is segmented twice: from the nuclear channel alone, and from the nuclear and membrane channels (the whole-cell segmentation). Only used when `cell_expansion_microns` is above 0.
 
-The nuclei come from a separate nuclear segmentation. If `use_whole_cell_only` is true, that segmentation is run anyway and the run logs a warning: every sample is segmented twice, so the run can take up to about twice as long to segment, and nuclear measurements are produced.
+- A whole-cell mask whose best-matching nuclear-channel mask has an intersection over union of at least `expand_match_iou` is grown by `cell_expansion_microns`. The membrane channels added nothing to this cell, so its mask is about nucleus-sized.
+- A nuclear-channel mask that touches no whole-cell mask is added as a cell and grown.
+- Every other whole-cell mask keeps its segmented outline. No cell is removed.
+
+A pixel is given to a grown cell only if that cell is the nearest cell, so grown cells do not take space next to cells that keep their outline.
+
+Cells that are almost all nucleus, for example tumour cells in dense areas, also have a whole-cell mask that matches the nucleus. These cells are grown as well, although their outline is already correct. Inside densely packed areas growth is small, because cells stop where they meet. Cells at the edge of a dense area can grow by the full distance into the space next to them. Check the outlines in such areas, and use a smaller `cell_expansion_microns` or leave this option off if the cells there should not grow.
+
+If `use_whole_cell_only` is true, the second segmentation is run anyway and the run logs a warning: segmentation can take up to about twice as long. Nuclear measurements are produced only when `use_whole_cell_only` is false.
+
+#### `expand_match_iou`
+
+Higher values grow fewer cells: only whole-cell masks that are almost the same as the nuclear-channel mask. Lower values also grow cells whose whole-cell mask is somewhat larger than the nucleus. If one mask lies inside the other, an IoU of 0.8 means the larger mask has 1.25 times the area of the smaller one.
 
 ## SOPA options
 

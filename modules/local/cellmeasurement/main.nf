@@ -22,10 +22,10 @@ process CELLMEASUREMENT {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    // Nuclei are segmented in paired mode, and also when expand_only_without_membrane
-    // needs them (segmentNuclei() in utils_nfcore_sp_segment_pipeline).
-    def segment_nuclei = (!params.use_whole_cell_only || (params.cell_expansion_microns && params.expand_only_without_membrane))
-    def nuclear_mask_flag = segment_nuclei ? "--nuclear-mask ${nuclear_mask}" : ''
+    // The nuclear mask is used only in paired mode. With expand_only_without_membrane
+    // in whole-cell-only mode, nuclei are segmented for EXPANDCELLS alone, and the
+    // nuclear input here is not passed on.
+    def nuclear_mask_flag = params.use_whole_cell_only ? '' : "--nuclear-mask ${nuclear_mask}"
     // Resolved against the launch directory, not the task work directory, so the
     // checkpoint survives the fresh work dir that Nextflow allocates on retry.
     def checkpoint_flag = params.geometry_checkpoint_dir ?

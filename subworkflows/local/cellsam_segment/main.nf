@@ -151,10 +151,11 @@ workflow CELLSAM_SEGMENT {
     }
 
     //
-    // Optional cell expansion. With expand_only_without_membrane, only nuclei
-    // with no whole-cell mask are grown, which CELLMEASUREMENT does itself.
+    // Optional cell expansion. With expand_only_without_membrane, only cells
+    // whose whole-cell mask matches their nucleus (expand_match_iou), and
+    // nuclei with no whole-cell mask, are grown; other cells keep their outline.
     //
-    if (params.cell_expansion_microns && !params.expand_only_without_membrane) {
+    if (params.cell_expansion_microns) {
         EXPANDCELLS(
             ch_cellmeasurement.map {
                 sample, _tiff, nuclear_mask, whole_cell_mask -> [sample, nuclear_mask, whole_cell_mask]
